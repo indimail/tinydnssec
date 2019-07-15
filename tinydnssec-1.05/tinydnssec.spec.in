@@ -164,8 +164,8 @@ if [ -d curvedns-%{curvedns_version} ] ; then
   %{__mkdir_p} %{buildroot}%{_prefix}/sbin
   %{__mkdir_p} %{buildroot}%{_mandir}/man8
   %{__mkdir_p} %{buildroot}%{_sysconfdir}
-  %{__install} -m 0755 curvedns %{buildroot}%{_prefix}/bin
-  %{__install} -m 0755 curvedns-keygen %{buildroot}%{_prefix}/sbin
+  %{__install} -m 0755 -s curvedns %{buildroot}%{_prefix}/bin
+  %{__install} -m 0755 -s curvedns-keygen %{buildroot}%{_prefix}/sbin
   %{__install} -m 0644 curvedns.8 curvedns-keygen.8 %{buildroot}%{_mandir}/man8
   %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
   cd ..
