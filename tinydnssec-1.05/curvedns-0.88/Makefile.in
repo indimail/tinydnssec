@@ -81,7 +81,7 @@ curvedns-keygen.o: curvedns-keygen.c
 
 # The targets:
 curvedns: debug.o ip.o misc.o cache.a event.a dnscurve.o dns.o curvedns.o
-	$(CC) $(LDFLAGS) debug.o ip.o misc.o dnscurve.o dns.o cache.a event.a curvedns.o $(EXTRALIB) -lnacl -o curvedns
+	$(CC) -z noexecstack $(LDFLAGS) debug.o ip.o misc.o dnscurve.o dns.o cache.a event.a curvedns.o $(EXTRALIB) -lnacl -o curvedns
 
 curvedns-keygen: curvedns-keygen.o debug.o ip.o misc.o
 	$(CC) $(LDFLAGS) curvedns-keygen.o debug.o ip.o misc.o -lnacl -o curvedns-keygen
