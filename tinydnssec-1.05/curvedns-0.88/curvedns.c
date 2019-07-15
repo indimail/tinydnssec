@@ -193,6 +193,10 @@ int main(int argc, char *argv[]) {
 
 	// Do exactly this ;]
 	debug_log(DEBUG_INFO, "main(): throwing away root privileges\n");
+	if (setgroups(0, 0)) {
+		debug_log(DEBUG_FATAL, "main(): unable to drop supplementary groups\n");
+		return 1;
+	}
 	if (setgid(gid) != 0) {
 		debug_log(DEBUG_FATAL, "main(): unable to set gid\n");
 		return 1;
