@@ -2,6 +2,12 @@
 
 SHELL=/bin/sh
 curvedns_version=0.88
+version=$(shell cat conf-version)
+release=$(shell cat conf-release)
+
+edit = sed \
+	-e 's}@version\@}$(version)}g' \
+	-e 's|@release\@|$(release)|g'
 
 default: it
 
@@ -1369,6 +1375,9 @@ compile dns-notify.c dns-notify.h
 dns-notify: \
 load dns-notify.o
 	./load dns-notify
+
+tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog
+	(cat $@.in;./catChangeLog) | $(edit) > $@
 
 clean:
 	rm -f `cat TARGETS` data data.cdb test/[ot]*
