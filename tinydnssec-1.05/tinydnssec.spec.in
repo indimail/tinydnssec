@@ -34,8 +34,8 @@
 %global _sysconfdir /etc/indimail
 %global _prefix            /usr
 Name: tinydnssec
-Version: 1.05
-Release: 1.1%{?dist}
+Version: @version@
+Release: @release@%{?dist}
 Summary: DNS suite
 %if %{undefined suse_version} && %{undefined sles_version}
 Group: System Environment/Base
@@ -398,27 +398,3 @@ do
 done
 
 %changelog
-* Tue May 22 2018 12:45:06 +0530 mbhangui@gmail.com 1.05--1.1%{?dist}
-Release 1.1 Start 11/04/2017
-1.  Added dnsgetroot
-2.  added str_diffn()
-3.  added comments for dempsky's patch djbdns<=1.05 lets AXFRed subdomains overwrite domains
-4.  fixed debian/prerm script
-5.  added selinux rules for tinydns
-6.  added Pre-Depends daemontools
-7.  remove tinydns, dnscache service on uninstall
-8.  shutdown tinydns, dnsccache service on uninstall
-9.  added compile time option to add dnssec support
-10. tinydnssec - added SRV patch
-11. added native SRV type to tinydns-data
-12. makes axfr-get decompose SRV and PTR records and write them out in native format
-13. added curvedns
-14. fixed typo in debian/postrm.in
-15. (rpm, debian) - create tinydnssec, dqcache, curvedns service config
-16. added dqcache-conf, curvedns-conf programs
-17. added compile time option to add dnssec, curvedns support
-18. added djbdns.7 man page
-19. Changed dns accounts to Gtinydns, Gdnslog, Gdnscache
-20. added man page for random-ip, dnsgetroot
-21. use qmaill for loguser
-22. upgraded dnscurve to version 0.88
