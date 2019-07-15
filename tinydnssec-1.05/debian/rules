@@ -75,8 +75,8 @@ install: build
 		mkdir -p $(DESTDIR)$(prefix)/sbin ; \
 		mkdir -p $(DESTDIR)$(prefix)/share/man/man8 ; \
 		mkdir -p $(DESTDIR)$(sysconfdir) ; \
-		install -m 0755 curvedns $(DESTDIR)$(prefix)/bin ; \
-		install -m 0755 curvedns-keygen $(DESTDIR)$(prefix)/sbin ; \
+		install -m 0755 -s curvedns $(DESTDIR)$(prefix)/bin ; \
+		install -m 0755 -s curvedns-keygen $(DESTDIR)$(prefix)/sbin ; \
 		install -m 0644 curvedns.8 curvedns-keygen.8 $(DESTDIR)$(prefix)/share/man/man8 ; \
 		install -m 0600 curvedns.private.key $(DESTDIR)$(sysconfdir)/curvedns.private.key ; \
 		cd .. ; \
