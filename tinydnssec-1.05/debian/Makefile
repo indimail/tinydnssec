@@ -1,6 +1,6 @@
 prefix=/usr
-version=1.05
-release=1.2
+version=$(shell cat ../conf-version)
+release=$(shell cat ../conf-release)
 sysconfdir=/etc/indimail
 #
 
@@ -25,6 +25,9 @@ preinst: preinst.in
 	$(edit) $@.in > $@
 tinydnssec.dsc: tinydnssec.dsc.in Makefile
 	$(edit) $@.in > $@
+changelog: changelog.in ../conf-release ../conf-version
+	(cat $@.in; echo "";\
+	echo " -- Manvendra Bhangui <manvendra@indimail.org>  `date +'%a, %d %b %Y %H:%S:%M %z'`" )| $(edit) > $@
 dummy.tar.gz: README
 	tar cf - README |gzip > $@
 debian.tar.gz: copyright rules control changelog compat postinst \
