@@ -337,6 +337,7 @@ else
     ln -s %{_sysconfdir}/dnscache /service/dnscache
   fi
 fi
+echo > /service/.svscan/variables/UNSHARE
 for i in tinydns dqcache curvedns
 do
   if [ " $i" = " dqcache" ] ; then
@@ -390,6 +391,7 @@ do
     %{__rm} -rf %{_sysconfdir}/$i
   fi
 done
+> /service/.svscan/variables/UNSHARE
 for i in Gtinydns Gdnscache
 do
   echo "Removing user $i"
