@@ -1,17 +1,14 @@
 #!/bin/sh
 set -x
-rcsflag=0
 make clean
 make distclean
 ver=1.05
-if [ -d RCS ] ; then
-	rcsflag=1
-	mv RCS ../RCStinydnssec
-fi
 cd ..
-tar cf - tinydnssec-$ver |gzip -c > /usr/local/src/indimail/rpmbuild/SOURCES/tinydnssec-$ver.tar.gz
-cd tinydnssec-$ver
-if [ $rcsflag -eq 1 ] ; then
-	mv ../RCStinydnssec ./RCS
+if [ -f $HOME/.rpmmacros ] ; then
+	topdir=`grep ^%_topdir $HOME/.rpmmacros|awk '{print $2}'`
+else
+	topdir=$HOME/rpmbuild
 fi
-rpmbuild -bb tinydnssec.spec
+tar cf - tinydnssec-$ver | gzip -c > $topdir/SOURCES/tinydnssec-$ver.tar.gz
+cd tinydnssec-$ver
+rpmbuild -ba --clean tinydnssec.spec
