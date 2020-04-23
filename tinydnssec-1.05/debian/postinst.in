@@ -50,6 +50,7 @@ else
     ln -sf ${sysconfdir}/dnscache /service/dnscache || true
   fi
 fi
+echo > /service/.svscan/variables/UNSHARE
 for i in tinydns dqcache curvedns
 do
   if [ " $i" = " dqcache" ] ; then

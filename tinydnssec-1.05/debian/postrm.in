@@ -60,6 +60,7 @@ esac
 #
 # Debian silliness
 #
+> /service/.svscan/variables/UNSHARE
 if [ " $1" = " purge" ] ; then
 	for i in Gdnscache Gdnslog Gtinydns
 	do
