@@ -87,3 +87,4 @@ conf-release
 doc/ChangeLog
 debian/changelog.in
 tinydnssec.spec
+debian/changelog
