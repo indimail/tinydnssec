@@ -338,6 +338,11 @@ else
   fi
 fi
 echo > /service/.svscan/variables/UNSHARE
+if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
+	if [ -f /service/.svscan/run ] ; then
+		/bin/chmod +x /service/.svscan/run
+	fi
+fi
 for i in tinydns dqcache curvedns
 do
   if [ " $i" = " dqcache" ] ; then
@@ -392,6 +397,11 @@ do
   fi
 done
 > /service/.svscan/variables/UNSHARE
+if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
+	if [ -f /service/.svscan/run ] ; then
+		/bin/chmod -x /service/.svscan/run
+	fi
+fi
 for i in Gtinydns Gdnscache
 do
   echo "Removing user $i"
