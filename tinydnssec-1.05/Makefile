@@ -688,7 +688,7 @@ compile ip6_scan.c scan.h ip6.h
 	./compile ip6_scan.c
 
 it: \
-prog setup instcheck
+prog setup instcheck tinydnssec.spec
 
 libtai.a: \
 makelib tai_add.o tai_now.o tai_pack.o tai_sub.o tai_uint.o \
@@ -1376,7 +1376,7 @@ dns-notify: \
 load dns-notify.o
 	./load dns-notify
 
-tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog
+tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog conf-version conf-release
 	(cat $@.in;./catChangeLog) | $(edit) > $@
 
 clean:
