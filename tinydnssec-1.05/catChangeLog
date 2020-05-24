@@ -3,7 +3,7 @@
 # Revision 1.1  2019-05-29 00:47:06+05:30  Cprogrammer
 # Initial revision
 #
-# utility to append changelog to indimail.spec
+# utility to append changelog to tinydnssec.spec
 #
 #
 # $Id: catChangeLog,v 1.1 2019-05-29 00:47:06+05:30 Cprogrammer Exp mbhangui $
@@ -25,7 +25,7 @@ do
 		continue
 	fi
 	if [ $flag -eq 0 ] ; then # first line
-		echo "* `date +"%a %b %d %Y %H:%S:%M %z"` mbhangui@gmail.com" @version@-@release@%{?dist}
+		echo "* `date +"%a %b %d %Y %H:%M:%S %z"` tinydnssec@indimail.org" @version@-@release@%{?dist}
 		flag=1
 		continue
 	elif [ $flag -eq 1 ] ; then
