@@ -39,21 +39,25 @@ tar \
 			| gzip -c > $rpmbuild/SOURCES/tinydnssec-"$version".tar.gz
 cd ..
 dist=`uname -r |cut -d . -f4`
-if [ -f /usr/bin/tinydns ] ; then
-	tdist=$(rpm -qf /usr/bin/tinydns|cut -d- -f3|cut -d. -f3)
-	if [ " $dist" = " $tdist" ] ; then
-		tversion=$(rpm -qf /usr/bin/tinydns|cut -d- -f2)
-		if [ "$tversion" = "$version" ] ; then
-			release=$(rpm -qf /usr/bin/tinydns | cut -d- -f3 | cut -d. -f2)
-			release=$(expr $release + 1)
+if [ $# -gt 0 ] ; then
+	release=$1
+else
+	if [ -f /usr/bin/tinydns ] ; then
+		tdist=$(rpm -qf /usr/bin/tinydns|cut -d- -f3|cut -d. -f3)
+		if [ " $dist" = " $tdist" ] ; then
+			tversion=$(rpm -qf /usr/bin/tinydns|cut -d- -f2)
+			if [ "$tversion" = "$version" ] ; then
+				release=$(rpm -qf /usr/bin/tinydns | cut -d- -f3 | cut -d. -f2)
+				release=$(expr $release + 1)
+			else
+				release=1
+			fi
 		else
 			release=1
 		fi
 	else
 		release=1
 	fi
-else
-	release=1
 fi
 echo -n "Build RPM for tinydnssec-"$version"-1."$release" (Y/N) - "
 read key
