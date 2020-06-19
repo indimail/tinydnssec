@@ -91,7 +91,7 @@ binary-indep: build install
 		doc/djbdnsFAQ.pdf doc/HOWTO doc/README-tinydnssec.md curvedns-$(curvedns_version)/INSTALL-curvedns.md \
 		curvedns-$(curvedns_version)/README-curvedns.md doc/LifeWithdjbdns.pdf \
 		doc/README.dnstransmit.bug doc/Thedjbway_djbdns.pdf dq-20161210/LICENCE-dq.md \
-		curvedns-$(curvedns_version)/LICENSE.curvedns doc/COPYING.tinydnssec
+		curvedns-$(curvedns_version)/LICENSE.curvedns doc/COPYING.tinydnssec README.md
 	dh_link
 	dh_strip
 	dh_compress

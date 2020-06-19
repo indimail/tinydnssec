@@ -98,5 +98,3 @@ read key
 if [ " $key" = " Y" -o " $key" = " y" ] ; then
 	/bin/rm -f $rpmbuild/SOURCES/tinydnssec-"$version".tar.gz
 fi
-
-
