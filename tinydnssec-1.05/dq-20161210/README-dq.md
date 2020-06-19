@@ -1,37 +1,74 @@
-dq https://mojzis.com/software/dq/
-Introduction
+## Introduction
+
+[dq](https://mojzis.com/software/dq/)
 
 Dq is a package with DNS/DNSCurve related software. It contains a recursive DNS server with DNSCurve support called dqcache and also a commandline tool to debug DNS/DNScurve called dq.
 
 dq tool (… see examples)
 
-based on dnsq and dnsqr from djbdns
-added IPv6 support
-added DNSCurve support (Streamlined/TXT)
-dqcache recursive server
+* based on dnsq and dnsqr from djbdns
+* added IPv6 support
+* added DNSCurve support (Streamlined/TXT)
+* dqcache recursive server
 
-based on dnscache from djbdns
-added support for streamlined DNSCurve
-added support for TXT DNSCurve
-added support for combined DNSCurve (streamlined and TXT)
-added support for DNS anchors with DNSCurve keys
-added full IPv6 support
-added support for IPv6 DNS anchors
-added support for cache dumping/loading
-used siphash24 instead of hash5381 in cache library
-added SOA record caching
-added authority record to DNS response
-improved logs - IPs not printed in hex format
-fixed CVE-2012-1191
-fixed CVE-2008-4392
-Acknowledgement
+* based on dnscache from djbdns
+* added support for streamlined DNSCurve
+* added support for TXT DNSCurve
+* added support for combined DNSCurve (streamlined and TXT)
+* added support for DNS anchors with DNSCurve keys
+* added full IPv6 support
+* added support for IPv6 DNS anchors
+* added support for cache dumping/loading
+* used siphash24 instead of hash5381 in cache library
+* added SOA record caching
+* added authority record to DNS response
+* improved logs - IPs not printed in hex format
+* fixed CVE-2012-1191
+* fixed CVE-2008-4392
+
+#### dq tool ####
+
+* based on dnsq and dnsqr from djbdns
+* added IPv6 support
+* added DNSCurve support (Streamlined/TXT)
+
+#### dqcache recursive server ####
+
+* based on dnscache from djbdns
+* added support for streamlined DNSCurve
+* added support for TXT DNSCurve
+* added support for combined DNSCurve (streamlined and TXT)
+* added support for DNS anchors with DNSCurve keys
+* added full IPv6 support
+* added support for IPv6 DNS anchors
+* added support for cache dumping/loading
+* used siphash24 instead of hash5381 in cache library
+* added SOA record caching
+* added authority record to DNS response
+* improved logs - IPs not printed in hex format
+* fixed CVE-2012-1191
+* fixed CVE-2008-4392
+
+#### url ####
+
+https://mojzis.com/software/dq/
+
+#### licence ####
+
+* Dq is placed into the public domain
+* Dq is derived from public-domain djbdns-1.05 - see: https://cr.yp.to/distributors.html
+* Dq also uses public-domain nacl-20110221 - https://nacl.cr.yp.to/features.html
+
+## Acknowledgement
 
 Dq is derived from djbdns - tnx Daniel J. Bernstein
 Dq is based on djbdns-dnscurve-20090602.patch - tnx Matthew Dempsky
 
-dq
+## dq
+
 Authoritative example - streamlined DNSCurve query (executed 23.11.2013):
 
+```
 $ dq -a a dnscurve.org uz5dz39x8xk8wyq3dzn7vpt670qmvzx0zd9zg4ldwldkv6kx9ft090.ns.dnscurve.org
 1 dnscurve.org - streamlined DNSCurve:
 320 bytes, 1+2+3+3 records, response, authoritative, noerror
@@ -180,3 +217,4 @@ answer: google.com 345600 NS ns4.google.com
 answer: google.com 600 MX 50 alt4.aspmx.l.google.com
 answer: google.com 600 MX 40 alt3.aspmx.l.google.com
 answer: google.com 3600 TXT v=spf1 include:_spf.google.com ip4:216.73.93.70/31 ip4:216.73.93.72/31 ~all
+```

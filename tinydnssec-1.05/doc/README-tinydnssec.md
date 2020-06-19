@@ -1,53 +1,24 @@
-DNSSEC for tinydns
-==================
+# DNSSEC for tinydns
 
-This project adds DNSSEC support to D. J. Bernstein's tinydns (see
-http://cr.yp.to/djbdns.html ).
+This project adds DNSSEC support to D. J. Bernstein's [tinydns](http://cr.yp.to/djbdns.html).
 
 It consists of two parts (mostly):
 
-- tinydns-sign, a perl script for augmenting a tinydns-data file with
-  DNSSEC-related RRs, and
+* tinydns-sign, a perl script for augmenting a tinydns-data file with DNSSEC-related RRs, and
+* a patch to tinydns / axfrdns to make them produce DNSSEC-authenticated answers.
 
-- a patch to tinydns / axfrdns to make them produce DNSSEC-authenticated
-  answers.
+The patch tries to preserve the behaviour of tinydns/axfrdns wrt non-DNSSEC queries, with these noteworthy exceptions:
 
-The patch tries to preserve the behaviour of tinydns/axfrdns wrt non-DNSSEC
-queries, with these noteworthy exceptions:
+* The interpretation of wildcard records now matches the description in RFC-1034 section 4.3.3. Specifically, if there's a wildcard *.x and a record for a.x, then a query for y.a.x will *not* be answered using the wildcard (for a label 'a' and series of labels 'x' and 'y'). This change is required for signed domains, because authentication of negative responses requires a common understanding between client and server about the meaning of wildcards.
+* EDNS0 in queries will be honoured also for non-DNSSEC queries, i.e.  tinydns may produce answers exceeding 512 bytes. (There is a hard limit of 4000 bytes, though.) This *can* lead to problems on IPv6 networks.
+* TXT records are split into character-strings of 255 bytes, not 127. This is not really a DNSSEC-related change, but this is kind of a FAQ [5] and tinydns-data and tinydns-sign must agree on how this is handled or the generated RRSIG won't match.
+* The patch includes a fix for the broken CNAME handling in tinydns. See [6] for a description of the problem. The patch referenced by that description conflicts with fefe's IPv6 patch and requires further modifications for DNSSEC, so I decided to roll my own solution.
 
-- The interpretation of wildcard records now matches the description in
-  RFC-1034 section 4.3.3. Specifically, if there's a wildcard *.x and a
-  record for a.x, then a query for y.a.x will *not* be answered using the
-  wildcard (for a label 'a' and series of labels 'x' and 'y').
-  This change is required for signed domains, because authentication of
-  negative responses requires a common understanding between client and
-  server about the meaning of wildcards.
+Be careful with publishing signed zones as a secondary nameserver: the modified tinydns/axfrdns require certain helper RRs in the database to simplify locating NSEC3 records. Without these helpers, tinydns cannot generate valid negative response nor valid wildcard responses.
 
-- EDNS0 in queries will be honoured also for non-DNSSEC queries, i. e.
-  tinydns may produce answers exceeding 512 bytes. (There is a hard
-  limit of 4000 bytes, though.)
-  This *can* lead to problems on IPv6 networks.
+Axfrdns *will* publish these helper RRs, other primaries will most likely *not*.
 
-- TXT records are split into character-strings of 255 bytes, not 127.
-  This is not really a DNSSEC-related change, but this is kind of a FAQ [5] and
-  tinydns-data and tinydns-sign must agree on how this is handled or the
-  generated RRSIG won't match.
-
-- The patch includes a fix for the broken CNAME handling in tinydns. See [6]
-  for a description of the problem. The patch referenced by that description
-  conflicts with fefe's IPv6 patch and requires further modifications for
-  DNSSEC, so I decided to roll my own solution.
-
-Be careful with publishing signed zones as a secondary nameserver: the
-modified tinydns/axfrdns require certain helper RRs in the database to
-simplify locating NSEC3 records. Without these helpers, tinydns cannot
-generate valid negative response nor valid wildcard responses.
-
-Axfrdns *will* publish these helper RRs, other primaries will most
-likely *not*.
-
-HOWTO
------
+## HOWTO
 
 0. Install tinydns-sign and patched tinydns/axfrdns.
 
@@ -70,14 +41,18 @@ HOWTO
 3. Adapt the Makefile to pipe your data file through tinydns-sign before
    before running tinydns-data, e. g.
 
+   ```
    data.cdb: data update
      tinydns-sign ../keys/* <data >data.tmp
      mv data.tmp data
      tinydns-data
      rm -f update
+   ```
 
+   ```
    update:
      touch update
+   ```
 
 4. Run make.
 
@@ -86,9 +61,7 @@ HOWTO
 
 6. TEST! For example:
 
-   * Use dig axfr <domain> @<server> and validate the result with a dnssec zone
-     validator, like yazvs [1].
-
+   * Use dig axfr <domain> @<server> and validate the result with a dnssec zone validator, like yazvs [1].
    * Use an online DNS or DNSSEC test tool. See [2] for a list.
 
 7. Read RFC-4641 [3] to get a feeling for what is explicitly not called
@@ -105,75 +78,47 @@ HOWTO
    Note that this is a really good way to cut yourself off from the rest of the
    internet. You've been warned, so don't blame me.
 
-What is djbdns and why does it need IPv6?
-----------------------------------------
+## What is djbdns and why does it need IPv6?
 
-Most people agree that IPv6 will come sooner or later, but obviously you
-need a DNS infrastructure that supports IPv6. djbdns is a full blown DNS
-server which outperforms BIND in nearly all respects. However, it does
-not support IPv6 out of the box.
+Most people agree that IPv6 will come sooner or later, but obviously you need a DNS infrastructure that supports IPv6. djbdns is a full blown DNS server which outperforms BIND in nearly all respects. However, it does not support IPv6 out of the box.
 
-Fortunately, Dan Bernstein (the author of djbdns) has defined a very
-clean API that made the conversion possible in a few days.
+Fortunately, Dan Bernstein (the author of djbdns) has defined a very clean API that made the conversion possible in a few days.
 
-What does your diff do?
------------------------
+## What does your diff do?
 
-The current version adds support for AAAA records (those are the DNS
-records that store IPv6 numbers). tinydns-conf will now create
-/etc/tinydns/add-host6 and /etc/tinydns/add-alias6, and data can now
-contain records of type "6" and "3". Also, dnsq now understand AAAA records
-and a new program called "dnsip6" is the IPv6 equivalent of the old dnsip.
-[new] Automatic internal lookup of some reserved IPv6 addresses (like "::1").
-There is also experimental IPv6 transport support.
+* The current version adds support for AAAA records (those are the DNS records that store IPv6 numbers). tinydns-conf will now create `/etc/tinydns/add-host6` and `/etc/tinydns/add-alias6`, and data can now contain records of type "6" and "3". Also, dnsq now understand AAAA records and a new program called "dnsip6" is the IPv6 equivalent of the old dnsip.
+* [new] Automatic internal lookup of some reserved IPv6 addresses (like "::1"). There is also experimental IPv6 transport support.
 
-This diff also integrates an ipv6 port of Russ Nelson's anti-Verisign patch.
-Boycott saboteurs!
+This diff also integrates an ipv6 port of Russ Nelson's anti-Verisign patch.  Boycott saboteurs!
 
-What does not work yet?
-----------------------
+## What does not work yet?
 
-tinydns-edit won't accept IPv6 addresses for NS or MX records yet. I haven't
-even started to look at axfr, but it should just work if you use my IPv6
-patches for ucspi-tcp.
+tinydns-edit won't accept IPv6 addresses for NS or MX records yet. I haven't even started to look at axfr, but it should just work if you use my IPv6 patches for ucspi-tcp.
 
-How do reverse lookups work?
-----------------------------
+## How do reverse lookups work?
 
 The reverse lookup for 2001:658:0:2:2e0:18ff:fe98:b03d looks like this:
 
+```
 d.3.0.b.8.9.e.f.f.f.8.1.0.e.2.0.2.0.0.0.0.0.0.0.8.5.6.0.1.0.0.2.ip6.int
-My patch will put a record like this in your data.cdb, but you still need to get
-a delegation for your range. For a /64, the delegation would mean leaving half
-the digits away, as in 2.0.0.0.0.0.0.0.8.5.6.0.1.0.0.2.ip6.int. Talk to your ISP
-about this!
+```
 
-There also is a supposedly new and better scheme for doing DNS for IPv6, and it
-employs bit strings, DNAME and A6 records, which are really broken by design.
-Dan has a good write-up about this issue. Rumour has it that the IETF has seen
-the light and killed this mindblowingly bad proposal. I have not implemented it
-and probably will not in the future. It involves the domain ip6.arpa, in case you
-see that somewhere. (News July 2002: The IEFT really has seen the light)
+My patch will put a record like this in your data.cdb, but you still need to get a delegation for your range. For a /64, the delegation would mean leaving half the digits away, as in 2.0.0.0.0.0.0.0.8.5.6.0.1.0.0.2.ip6.int. Talk to your ISP about this!
 
-Where can I get the patch?
--------------------------
+There also is a supposedly new and better scheme for doing DNS for IPv6, and it employs bit strings, DNAME and A6 records, which are really broken by design.  Dan has a good write-up about this issue. Rumour has it that the IETF has seen the light and killed this mindblowingly bad proposal. I have not implemented it and probably will not in the future. It involves the domain ip6.arpa, in case you see that somewhere. (News July 2002: The IEFT really has seen the light)
 
-Look at https://www.fefe.de/dns/
+## Where can I get the patch?
 
-Simply download djbdns-1.05-test28.diff.xz [sig]. Beware: unified diff format (you
-probably need GNU patch to apply it).
+Look at [here](https://www.fefe.de/dns/)
 
-[News!] By request I also host this IXFR patch which makes axfrdns work with BIND9 slaves
-using IXFR. This patch was originally posted by Luc Pardon, but it is probably easier to
-find here than in the list archives.
+Simply download djbdns-1.05-test28.diff.xz [sig]. Beware: unified diff format (you probably need GNU patch to apply it).
 
-[News!] If you want IPv6 and DNSSEC, you'll find there are patches for both but they
-conflict. Here is a merged patch, thanks to Henryk.
+[News!] By request I also host this IXFR patch which makes axfrdns work with BIND9 slaves using IXFR. This patch was originally posted by Luc Pardon, but it is probably easier to find here than in the list archives.
 
-What patches have been applied
-==============================
-This dist was created by Henryk Plötz
-The steps he took, in order:
+[News!] If you want IPv6 and DNSSEC, you'll find there are patches for both but they conflict. Here is a merged patch, thanks to Henryk.
+
+## What patches have been applied
+This dist was created by Henryk Plötz The steps he took, in order:
 
  1. Import djbdns-1.05.tar.gz. No signature check was made since no signed version
     is available, but I checked that I was using the same package as
@@ -195,8 +140,9 @@ The steps he took, in order:
 10. Small fixup for run-tests.sh: GNU tail does not understand the +n syntax.
 11. Small fixup for run-tests.sh: Need bash, say so (not all /bin/sh are bash).
 
-Other patches that have been applied
-------------------------------------
+## Other patches that have been applied
+
+```
 dnscache.c: Read longer buffer over TCP connections
 Original author: Frank Denis
 http://download.pureftpd.org/misc/dnscache-dos.c
@@ -233,14 +179,14 @@ from Matthew Dempsky.
 Original author: Matthew Dempsky
 http://marc.info/?l=djbdns&m=119983010611174&w=3 
 http://marc.info/?l=djbdns&m=122368590802063&w=2 
+```
 
 Luc Pardon has instructions to make axfrdns work with BIND9 slaves who use IXFR.
 http://www.fefe.de/dns/djbdns-1.05-ixfr.diff.gz
 
 dnsroots.global.patch
 
-LICENSE
--------
+# LICENSE
 
 (C) 2012 Peter Conrad <conrad@quisquis.de>
 
@@ -256,8 +202,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-References
-==========
+# References
+
 [1] http://yazvs.verisignlabs.com/ .
 [2] http://www.bortzmeyer.org/tests-dns.html
 [3] http://tools.ietf.org/html/rfc4641

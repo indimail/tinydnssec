@@ -1,34 +1,38 @@
-dq https://mojzis.com/software/dq/install.html
-Unix installation
-=================
+[dq](https://mojzis.com/software/dq/install.html)
 
-download
---------
+## Unix installation
 
+### download
+
+```
 $ wget https://mojzis.com/software/dq/dq-20161210.tar.gz
 $ wget https://mojzis.com/software/dq/dq-20161210.tar.gz.asc
 $ gpg --verify dq-20161210.tar.gz.asc dq-20161210.tar.gz
 $ gunzip < dq-20161210.tar.gz | tar -xf -
 $ cd dq-20161210
+```
 
-compile and install binaries
-----------------------------
+### compile and install binaries
 
+```
 $ make
 $ sudo make install
+```
 
-run dqcache
------------
+### run dqcache
 
-#under root - create dqcache root directory
+under root - create dqcache root directory
+
+```
 # mkdir -p /etc/indimail/dqcache/root/servers /etc/indimail/dqcache/env
 # echo 10000000 > /etc/indimail/dqcache/env/CACHESIZE
 # echo 127.0.0.1 > /etc/indimail/dqcache/env/IP
 # echo "/etc/indimail/dqcache/root" > /etc/dqcache/env/ROOT
+```
 
 under root - setup dqcache root servers
---------------------------------
 
+```
 # sh -c '(
 echo "198.41.0.4"
 echo "2001:503:ba3e::2:30"
@@ -55,13 +59,14 @@ echo "2001:500:9f::42"
 echo "202.12.27.33"
 echo "2001:dc3::35"
 ) > /etc/dqcache/root/servers/@'
+```
 
 under root - create dqcache user
---------------------------------
 
-# useradd dqcache
+`# useradd dqcache`
 
 under root - run dqcache server
---------------------------------
 
+```
 # envuidgid dqcache envdir /etc/indimail/dqcache/env dqcache
+```

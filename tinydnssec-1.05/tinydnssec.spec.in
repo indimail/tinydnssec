@@ -221,10 +221,12 @@ fi
 %config(noreplace)                     %{_sysconfdir}/dnsroots.global
 %config(noreplace)                     %{_sysconfdir}/curvedns.private.key
 
-%doc dq-20161210/README.dq dq-20161210/INSTALL.dq doc/COPYING.tinydnssec doc/README.tinydnssec
-%doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO
+%doc dq-20161210/README-dq.md dq-20161210/INSTALL-dq.md
+%doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO doc/README-tinydnssec.md
+%doc curvedns-%{curvedns_version}/INSTALL-curvedns.md
+%doc curvedns-%{curvedns_version}/README-curvedns.md
 %doc doc/LifeWithdjbdns.pdf doc/README.dnstransmit.bug doc/Thedjbway_djbdns.pdf
-%doc curvedns-%{curvedns_version}/LICENSE.curvedns
+%doc dq-20161210/LICENCE-dq.md curvedns-%{curvedns_version}/LICENSE.curvedns doc/COPYING.tinydnssec
 
 %doc %{_mandir}/man1/*
 %doc %{_mandir}/man5/*

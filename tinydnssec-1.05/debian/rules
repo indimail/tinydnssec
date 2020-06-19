@@ -87,9 +87,11 @@ binary-indep: build install
 	dh_testroot
 	dh_install --sourcedir=$(DESTDIR) -ptinydnssec
 	dh_installchangelogs
-	dh_installdocs dq-20161210/README.dq dq-20161210/INSTALL.dq doc/COPYING.tinydnssec doc/README.tinydnssec \
-		doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO doc/LifeWithdjbdns.pdf doc/README.dnstransmit.bug \
-		doc/Thedjbway_djbdns.pdf curvedns-$(curvedns_version)/LICENSE.curvedns
+	dn_installdocs doc dq-20161210/README-dq.md dq-20161210/INSTALL-dq.md doc doc/README-ipv6.tinydnssec \
+		doc/djbdnsFAQ.pdf doc/HOWTO doc/README-tinydnssec.md curvedns-$(curvedns_version)/INSTALL-curvedns.md \
+		curvedns-$(curvedns_version)/README-curvedns.md doc/LifeWithdjbdns.pdf \
+		doc/README.dnstransmit.bug doc/Thedjbway_djbdns.pdf dq-20161210/LICENCE-dq.md \
+		curvedns-$(curvedns_version)/LICENSE.curvedns doc/COPYING.tinydnssec
 	dh_link
 	dh_strip
 	dh_compress

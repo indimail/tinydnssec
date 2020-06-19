@@ -5,17 +5,23 @@
 ### What exactly is CurveDNS?
 
 CurveDNS is the first publicly released forwarding implementation that implements the [DNSCurve](http://www.dnscurve.org/) protocol.
+
 Brings us to a new question: what is DNSCurve?
+
 Parts of a master thesis have been written to answer this question, but of course there is a short answer.
+
 The protocol's official website gives a pretty good impression in only one sentence: 'DNSCurve uses high-speed high-security elliptic-curve cryptography to drastically improve every dimension of DNS security'.
 
 What is so special about this implementation is the fact that any authoritative DNS name server can act as a DNSCurve capable one, without changing anything on your current DNS environment.
+
 The only thing a DNS data manager (that is probably you) has to do is to install CurveDNS on a machine, generate a keypair, and update NS type records that were pointing towards your authoritative name server and let them point to this machine running CurveDNS.
+
 Indeed, it is that easy to become fully protected against almost any of the currently known DNS flaws, such as active and passive cache poisoning.
 
 ### Features of CurveDNS
 
 CurveDNS supports:
+
 * Forwarding of regular (non-protected) DNS packets;
 * Unboxing of DNSCurve queries and forwarding the regular DNS packets
 * Boxing of regular DNS responses to DNSCurve responses;
