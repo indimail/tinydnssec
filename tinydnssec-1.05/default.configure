@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ ! -f conf-release ] ; then
+	echo 1.1 > conf-release
+fi
+sed -i -e '1 s{^.*${/usr{'          conf-home
+sed -i -e '1 s{^.*${/etc/indimail{' conf-sysconfdir
