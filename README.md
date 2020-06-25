@@ -42,7 +42,7 @@ tinydnssec is supported at IndiMail
 
 ## IRC / Matrix
 
-* Join me https://matrix.to/#/#indimail:matrix.org
+* Join me [#indimail:matrix.org](https://matrix.to/#/#indimail:matrix.org)
 * IndiMail has an IRC channel #indimail-mta
 
 ## Mailing list
