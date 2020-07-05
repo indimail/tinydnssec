@@ -136,23 +136,23 @@ See http://curvedns.on2it.net/
 
 %build
 %{__sed} -i 's{/usr{%{_prefix}{' conf-home
-%{__make} -s
+%{__make} -s %{?_smp_mflags} CC="%{__cc}" CFLAGS="%{build_cflags}" LDFLAGS="%{build_ldflags}"
 pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
 if [ -d dq-20161210 ] ; then
   cd dq-20161210
-  %{__make} -s
+  %{__make} -s %{?_smp_mflags} CC="%{__cc}" CFLAGS="%{build_cflags}" LDFLAGS="%{build_ldflags}"
   cd ..
 fi
 if [ -d curvedns-%{curvedns_version} ] ; then
   cd curvedns-%{curvedns_version}
   ./configure.nacl
   ./configure.curvedns
-  %{__make} -s
+  %{__make} -s %{?_smp_mflgs}
   cd ..
 fi
 
 %install
-%{__make} -s DESTDIR=%{buildroot} install-strip
+%{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
 if [ -d dq-20161210 ] ; then
   cd dq-20161210
   sh make-install.sh %{buildroot}
