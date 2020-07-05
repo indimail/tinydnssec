@@ -75,7 +75,7 @@ static void name(const char *q)
     string(".");
     return;
   }
-  while (state = *q++) {
+  while ((state = *q++)) {
     while (state) {
       ch = *q++;
       --state;
