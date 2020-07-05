@@ -49,8 +49,8 @@ License: GPLv3
 %endif
 URL: http://cr.yp.to/djbdns.html
 Source0: http://downloads.sourceforge.net/indimail/%{name}-%{version}.tar.gz
-# http://www.fefe.de/dns/
-BuildRequires: perl
+# ipv6 from http://www.fefe.de/dns/
+BuildRequires: perl binutils
 BuildRequires: libev-devel
 %if 0%{?suse_version} < 1120
 BuildRequires: elfutils
