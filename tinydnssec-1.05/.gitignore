@@ -88,3 +88,6 @@ doc/ChangeLog
 debian/changelog.in
 tinydnssec.spec
 debian/changelog
+make-compile
+make-load
+auto-ccld.sh

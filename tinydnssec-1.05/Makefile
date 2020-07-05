@@ -242,11 +242,14 @@ compile clientloc.c open.h byte.h cdb.h ip6.h
 	./compile clientloc.c
 
 compile: \
-warn-auto.sh conf-cc
-	( cat warn-auto.sh; \
-	echo exec "`head -1 conf-cc`" '-c $${1+"$$@"}' \
-	) > compile
+warn-auto.sh conf-cc make-compile
+	( cat warn-auto.sh; ./make-compile) > compile
 	chmod 755 compile
+
+make-compile: \
+make-compile.sh
+	( cat warn-auto.sh make-compile.sh) > make-compile
+	chmod 755 make-compile
 
 dd.o: \
 compile dd.c dns.h stralloc.h gen_alloc.h iopause.h taia.h tai.h \
@@ -699,14 +702,19 @@ taia_now.o taia_pack.o taia_sub.o taia_tai.o taia_uint.o
 	taia_frac.o taia_less.o taia_now.o taia_pack.o taia_sub.o \
 	taia_tai.o taia_uint.o
 
-load: \
-warn-auto.sh conf-ld
-	( cat warn-auto.sh; \
-	echo 'main="$$1"; shift'; \
-	echo exec "`head -1 conf-ld`" \
-	'-o "$$main" "$$main".o $${1+"$$@"}' \
-	) > load
+load: warn-auto.sh conf-ld systype make-load
+	( cat warn-auto.sh; ./make-load "`cat systype`" ) > load
 	chmod 755 load
+
+make-load: \
+make-load.sh auto-ccld.sh
+	cat auto-ccld.sh make-load.sh > make-load
+	chmod 755 make-load
+
+auto-ccld.sh: conf-cc conf-ld warn-auto.sh
+	(cat warn-auto.sh; echo CC=\'`head -1 conf-cc`\'; \
+	echo LD=\'`head -1 conf-ld`\'; \
+	) > auto-ccld.sh
 
 log.o: \
 compile log.c buffer.h uint32.h uint16.h error.h byte.h log.h \

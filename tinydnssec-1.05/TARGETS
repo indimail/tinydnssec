@@ -260,3 +260,6 @@ dqcache-conf
 auto_sysconfdir.c
 auto_sysconfdir.o
 scan_u32.o
+make-compile
+make-load
+auto-ccld.sh
