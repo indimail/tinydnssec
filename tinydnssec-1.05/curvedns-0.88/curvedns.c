@@ -33,10 +33,11 @@
  * $Date$
  * $Revision$
  */
+
 #include <sys/types.h>
 #include <sys/socket.h>		/* for AF_UNSPEC */
 #include <unistd.h>
-
+#include <grp.h> /*- for setgroups */
 #include "curvedns.h"
 #include "misc.h"
 #include "ip.h"
