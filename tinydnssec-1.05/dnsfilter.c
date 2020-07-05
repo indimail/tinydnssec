@@ -192,7 +192,7 @@ int main(int argc,char **argv)
 	      dns_name4_domain(name,ip);
 	      if (dns_resolvconfip(servers) == -1)
 	        strerr_die2sys(111,FATAL,"unable to read /etc/resolv.conf: ");
-	      if (dns_transmit_start(&x[xnum].dt,servers,1,name,DNS_T_PTR,V6any) == -1)
+	      if (dns_transmit_start(&x[xnum].dt,servers,1,name,DNS_T_PTR, (const char *) V6any) == -1)
 	        errout(xnum);
 	      else {
 	        x[xnum].flagactive = 1;

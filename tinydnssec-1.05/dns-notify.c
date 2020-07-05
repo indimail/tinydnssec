@@ -38,8 +38,8 @@ int		s=0,				// Socket handle
 		try,				// Current number of attempts
 		timeout=2,			// Number of seconds to wait for response
 		verbose=0;			// Toggle verbose flag: default = no
-char		source[MAXHOST] = "0.0.0.0",	// Source host: default = primary IP
-		dest[MAXHOST] = "";		// Destination host: no default
+char		source[MAXHOST + 1] = "0.0.0.0",	// Source host: default = primary IP
+		dest[MAXHOST + 1] = "";		// Destination host: no default
 sigjmp_buf	env;				// Jump buffer
 
 
@@ -281,7 +281,7 @@ void SendPacket (const char *slave_name, unsigned char packet[MAXPACK], const in
 		// is the same as the query, but with the qr flag set.
 		//
 		slen = sizeof(slave_addr);
-		if ((resp_len=recvfrom(s,response,MAXPACK,0,(struct sockaddr *)&slave_addr,&slen)) < 0) {
+		if ((resp_len=recvfrom(s,response,MAXPACK,0,(struct sockaddr *)&slave_addr, (socklen_t *) &slen)) < 0) {
 			perror("recvfrom");
 			exit(1);
 		}

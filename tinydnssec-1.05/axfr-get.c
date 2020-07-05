@@ -266,16 +266,16 @@ unsigned int doit(char *buf,unsigned int len,unsigned int pos)
       pos = x_copy(buf,len,pos,data,1);
       ch = data[0];
       if (printable(ch)) {
-        if (!stralloc_catb(&line,&ch,1)) return 0;
+        if (!stralloc_catb(&line, (const char *) &ch,1)) return 0;
       }
       else {
         if (!stralloc_cats(&line,"\\")) return 0;
         ch2 = '0' + ((ch >> 6) & 7);
-        if (!stralloc_catb(&line,&ch2,1)) return 0;
+        if (!stralloc_catb(&line, (const char *) &ch2,1)) return 0;
         ch2 = '0' + ((ch >> 3) & 7);
-        if (!stralloc_catb(&line,&ch2,1)) return 0;
+        if (!stralloc_catb(&line, (const char *) &ch2,1)) return 0;
         ch2 = '0' + (ch & 7);
-        if (!stralloc_catb(&line,&ch2,1)) return 0;
+        if (!stralloc_catb(&line, (const char *) &ch2,1)) return 0;
       }
     }
   }

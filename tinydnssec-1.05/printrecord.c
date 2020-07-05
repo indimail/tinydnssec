@@ -20,7 +20,7 @@ static int hexout(stralloc *out,const char *buf,unsigned int len,unsigned int po
   int i;
 
   for (i = 0; i < n; i++) {
-    pos = dns_packet_copy(buf,len,pos,&c,1); if (!pos) return 0;
+    pos = dns_packet_copy(buf,len,pos, (char *) &c,1); if (!pos) return 0;
     if (!stralloc_catb(out,&HEX[(c>>4)&0xf],1)) return 0;
     if (!stralloc_catb(out,&HEX[c&0xf],1)) return 0;
   }
@@ -201,7 +201,7 @@ unsigned int printrecord_cat(stralloc *out,const char *buf,unsigned int len,unsi
     if (!stralloc_cats(out," ")) return 0;
     pos = dns_packet_copy(buf,len,pos,misc,1); if (!pos) return 0;
     pos = dns_packet_copy(buf,len,pos,nextHash,misc[0]); if (!pos) return 0;
-    i = base32hex(nextOwner, nextHash, misc[0]);
+    i = base32hex(nextOwner, (uint8_t *) nextHash, misc[0]);
     if (!stralloc_catb(out,nextOwner,i)) return 0;
     while (pos < newpos) {
       pos = dns_packet_copy(buf,len,pos,misc,2); if (!pos) return 0;

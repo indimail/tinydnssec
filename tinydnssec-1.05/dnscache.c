@@ -435,7 +435,7 @@ int main()
   static stralloc sa = {0};
 
   x = env_get("INTERFACE");
-  if (x) scan_ulong(x,&interface);
+  if (x) scan_ulong(x, (unsigned long *) &interface);
 
   x = env_get("IP");
   if (!x)
@@ -468,7 +468,7 @@ int main()
   socket_tryreservein(udp53,131072);
 
   byte_zero(seed,sizeof seed);
-  read(0,seed,sizeof seed);
+  if (read(0,seed,sizeof seed) == -1);
   dns_random_init(seed);
   close(0);
 

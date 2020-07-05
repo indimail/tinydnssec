@@ -25,8 +25,8 @@ int socket_connected(int s)
   char ch;
 
   dummy = sizeof sa;
-  if (getpeername(s,(struct sockaddr *) &sa,&dummy) == -1) {
-    read(s,&ch,1); /* sets errno */
+  if (getpeername(s,(struct sockaddr *) &sa, (socklen_t *) &dummy) == -1) {
+    if (read(s,&ch,1) == -1) ; /* sets errno */
     return 0;
   }
   return 1;

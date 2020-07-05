@@ -48,10 +48,11 @@ int main(int argc,char **argv)
 #ifdef DNSSEC
   max_response_len = 512;
   if ((*argv)[0] == '-') {
-    if ((*argv)[1] != 's' && (*argv)[1] != 'S' || (*argv)[2]) usage();
-    do_dnssec = 1;
+    if (((*argv)[1] != 's' && (*argv)[1] != 'S') || (*argv)[2]) usage();
+      do_dnssec = 1;
     max_response_len = (*argv)[1] == 's' ? 1220 : 4000;
-    if (!*++argv) usage();
+    if (!*++argv)
+      usage();
   }
 #endif
   if (!parsetype(*argv,type)) usage();

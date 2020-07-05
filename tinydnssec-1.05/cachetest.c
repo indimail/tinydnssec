@@ -15,7 +15,7 @@ int main(int argc,char **argv)
 
   if (*argv) ++argv;
 
-  while (x = *argv++) {
+  while ((x = *argv++)) {
     i = str_chr(x,':');
     if (x[i])
       cache_set(x,i,x + i + 1,str_len(x) - i - 1,86400);

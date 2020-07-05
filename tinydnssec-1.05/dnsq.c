@@ -33,7 +33,7 @@ int resolve(char *q,char qtype[2],char servers[256])
   iopause_fd x[1];
   int r;
 
-  if (dns_transmit_start(&tx,servers,0,q,qtype,V6any) == -1) return -1;
+  if (dns_transmit_start(&tx,servers,0,q,qtype, (const char *) V6any) == -1) return -1;
 
   for (;;) {
     taia_now(&stamp);
