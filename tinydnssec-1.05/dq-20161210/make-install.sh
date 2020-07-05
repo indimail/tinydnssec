@@ -33,6 +33,7 @@ do
   mkdir -p $DESTDIR$confbin || exit 111
   cp ${bin}/${x} $DESTDIR$confbin || exit 111
   chmod 755 $DESTDIR${confbin}/${x} || exit 111
+  strip $DESTDIR${confbin}/${x} || exit 111
   #chown 0:0 $DESTDIR${confbin}/${x} || exit 111
 done
 echo "=== `date` === finishing"
