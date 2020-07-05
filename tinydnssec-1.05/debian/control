@@ -3,9 +3,8 @@ Section: misc
 Priority: optional
 Maintainer: Manvendra Bhangui <manvendra@indimail.org>
 Standards-Version: 3.9.1
+Build-Depends: cdbs, debhelper (>= 10), m4, autotools-dev, libev-dev
 Homepage: http://indimail.sourceforge.net
-Vcs-Git:git://indimail.git.sourceforge.net/gitroot/indimail/indimail
-Vcs-Browser: http://indimail.git.sourceforge.net/git/gitweb.cgi?p=indimail/indimail;a=summary
 
 Package: tinydnssec
 Architecture: any
