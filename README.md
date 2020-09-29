@@ -7,7 +7,7 @@ The internet has evolved a lot since djbdns was written, and dnscache does not h
 If you still want to run dnscache follow the instructions on the djbdns
 hompage: http://cr.yp.to/djbdns/run-cache.html
 
-This package includes software for all the fundamental DNS operations - See https://blog.ploetzli.ch/2014/tinydns-dnssec/
+This package includes software for all the fundamental DNS operations - See [Henryk Plötz's tinydnssec](https://blog.ploetzli.ch/2014/tinydns-dnssec/).
 
 DNS cache: finding addresses of Internet hosts.  When a browser wants to contact www.yahoo.com, it first asks a DNS cache, such as djbdns's dnscache, to find the IP address of www.yahoo.com.  Internet service providers run dnscache to find IP addresses requested by their customers. If you're running a home computer or a workstation, you can run your own dnscache to speed up your web browsing.
 
