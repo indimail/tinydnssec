@@ -11,7 +11,7 @@ void initialize(void)
   ;
 }
 
-int respond(char *q,char qtype[2])
+int respond(char *q,char qtype[2], char *t)
 {
   int flaga;
   int flagptr;
