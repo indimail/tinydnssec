@@ -44,32 +44,47 @@ else
 	rpmbuild=$HOME/rpmbuild
 fi
 
-cd ..
-if [ -d stage ] ; then
-	/bin/rm -rf stage
+copy_src=0
+echo -n "Copy Source Files - "
+read key
+if [ " $key" = " y" -o " $key" = " Y" ] ; then
+	copy_src=1
 fi
-mkdir stage
-if [ $? -ne 0 ] ; then
-	exit 1
-fi
-cp -rp tinydnssec-$version stage
-if [ $? -ne 0 ] ; then
-	exit 1
-fi
-cd stage/tinydnssec-$version
-if [ $? -ne 0 ] ; then
-	exit 1
-fi
-make -s clean
-make -s distclean
-cd ..
-tar \
-	--exclude="tinydnssec-$version/.git" \
-	--exclude="tinydnssec-$version/debian" \
-	--exclude="tinydnssec-$version/RCS" \
-	-cf - tinydnssec-"$version" \
+
+if [ $copy_src -eq 1 ] ; then
+	cd ..
+	if [ -d stage ] ; then
+		/bin/rm -rf stage
+	fi
+	mkdir stage
+	if [ $? -ne 0 ] ; then
+		exit 1
+	fi
+	cp -rp tinydnssec-$version stage
+	if [ $? -ne 0 ] ; then
+		exit 1
+	fi
+	cd stage/tinydnssec-$version
+	if [ $? -ne 0 ] ; then
+		exit 1
+	fi
+	make -s clean
+	make -s distclean
+	cd ..
+	tar \
+		--exclude="tinydnssec-$version/.git" \
+		--exclude="tinydnssec-$version/debian" \
+		--exclude="tinydnssec-$version/RCS" \
+		-cf - tinydnssec-"$version" \
 			| gzip -c > $rpmbuild/SOURCES/tinydnssec-"$version".tar.gz
+fi
 cd ..
+/bin/rm -rf stage
+if [ ! -f $rpmbuild/SOURCES/tinydnssec-"$version".tar.gz ] ; then
+	echo "Source not present" 1>&2
+	exit 1
+fi
+ /bin/ls -l $rpmbuild/SOURCES/tinydnssec-"$version".tar.gz
 dist=`uname -r |cut -d . -f4`
 if [ -z "$release" ] ; then
 	if [ -f /usr/bin/tinydns ] ; then
@@ -92,8 +107,6 @@ fi
 echo -n "Build RPM for tinydnssec-"$version"-1."$release" (Y/N) - "
 read key
 if [ " $key" = " Y" -o " $key" = " y" ] ; then
-	cp stage/tinydnssec-$version/tinydnssec.spec /tmp
-	/bin/rm -rf stage
 	tmprel=`cat tinydnssec-$version/conf-release 2>/dev/null`
 	if [ ! " $tmprel" = " 1.$release" ] ; then
 		echo 1.$release > tinydnssec-$version/conf-release
@@ -102,6 +115,8 @@ if [ " $key" = " Y" -o " $key" = " y" ] ; then
 		cp tinydnssec.spec /tmp
 		cd debian
 		make
+	else
+		cp tinydnssec-$version/tinydnssec.spec /tmp
 	fi
 	if [ $verbose -eq 0 ] ; then
 		echo "rpmbuild -ba --clean --quiet /tmp/tinydnssec.spec"
