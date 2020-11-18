@@ -19,6 +19,9 @@ while test $# -gt 0; do
     --verbose)
 	verbose=1
     ;;
+    --release=*)
+	release=$optarg
+    ;;
     *)
     echo "invalid option [$1]"
     read key
@@ -68,9 +71,7 @@ tar \
 			| gzip -c > $rpmbuild/SOURCES/tinydnssec-"$version".tar.gz
 cd ..
 dist=`uname -r |cut -d . -f4`
-if [ $# -gt 0 ] ; then
-	release=$1
-else
+if [ -z "$release" ] ; then
 	if [ -f /usr/bin/tinydns ] ; then
 		tdist=$(rpm -qf /usr/bin/tinydns|cut -d- -f3|cut -d. -f3)
 		if [ " $dist" = " $tdist" ] ; then
