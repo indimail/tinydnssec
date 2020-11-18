@@ -17,12 +17,14 @@ fi
 
 # we are doing upgrade or removal
 
+upgrade=0
 case "$1" in
     configure)
 		if [ " $2" = " " ] ; then
-		echo "installing tinydnssec"
+			echo "installing tinydnssec"
 		else
-		echo "upgrading tinydnssec $2"
+			echo "upgrading tinydnssec $2"
+			upgrade=1
 		fi
     ;;
 
@@ -35,6 +37,20 @@ case "$1" in
         exit 1
     ;;
 esac
+
+if [ $upgrade -eq 1 ] ; then
+	if [ -f ${prefix}/bin/svok ] ; then
+		for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
+		do
+			${prefix}/bin/svok ${sysconfdir}/$i >/dev/null 2>&1
+			if [ $? -ne 0 -a  -f ${sysconfdir}/$i/.down ] ; then
+				/bin/rm -f ${sysconfdir}/$i/.down
+				${prefix}/bin/svc -u ${sysconfdir}/$i >/dev/null 2>&1
+			fi
+		done
+	fi
+	exit 0
+fi
 
 /bin/rmdir --ignore-fail-on-non-empty ${sysconfdir}/dnscache 2>/dev/null
 /bin/rmdir --ignore-fail-on-non-empty ${sysconfdir}/tinydns 2>/dev/null

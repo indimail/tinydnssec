@@ -252,22 +252,14 @@ if [ $ID -ne 0 ] ; then
   exit 1
 fi
 if [ -f %{_prefix}/bin/svok ] ; then
-  status=0
   for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
   do
     %{_prefix}/bin/svok %{_sysconfdir}/$i >/dev/null 2>&1
     if [ $? -eq 0 ] ; then
-      status=1
+      %{_prefix}/bin/svc -d %{_sysconfdir}/$i >/dev/null 2>&1
+	  touch %{_sysconfdir}/$i/.down
     fi
   done
-  if [ $status -eq 1 ] ; then
-    echo "Giving dns services exactly 5 seconds to exit nicely" 1>&2
-    for i in tinydns dnscache curvedns dqcache
-    do
-      %{_prefix}/bin/svc -dx %{_sysconfdir}/$i %{_sysconfdir}/$i/log >/dev/null 2>&1
-    done
-    sleep 5
-  fi
 fi
 
 %pre
@@ -298,24 +290,6 @@ fi
 # we are doing upgrade
 if [ $argv1 -eq 1 ] ; then
   exit 0
-fi
-if [ -f %{_prefix}/bin/svok ] ; then
-  status=0
-  for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
-  do
-    %{_prefix}/bin/svok %{_sysconfdir}/$i >/dev/null 2>&1
-    if [ $? -eq 0 ] ; then
-      status=1
-    fi
-  done
-  if [ $status -eq 1 ] ; then
-    echo "Giving dns services exactly 5 seconds to exit nicely" 1>&2
-    for i in tinydns dnscache curvedns dqcache
-    do
-      %{_prefix}/bin/svc -dx %{_sysconfdir}/$i %{_sysconfdir}/$i/log >/dev/null 2>&1
-    done
-    sleep 5
-  fi
 fi
 
 %post
@@ -380,6 +354,16 @@ do
     fi
   fi
 done
+if [ -f %{_prefix}/bin/svok ] ; then
+  for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
+  do
+    %{_prefix}/bin/svok %{_sysconfdir}/$i >/dev/null 2>&1
+    if [ $? -ne 0 -a -f %{_sysconfdir}/$i/.down ] ; then
+      %{__rm} -f %{_sysconfdir}/$i/.down
+      %{_prefix}/bin/svc -u %{_sysconfdir}/$i >/dev/null 2>&1
+    fi
+  done
+fi
 
 %postun
 argv1=$1
