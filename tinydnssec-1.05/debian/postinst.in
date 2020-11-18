@@ -39,16 +39,18 @@ case "$1" in
 esac
 
 if [ $upgrade -eq 1 ] ; then
+	set +e
 	if [ -f ${prefix}/bin/svok ] ; then
 		for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
 		do
 			${prefix}/bin/svok ${sysconfdir}/$i >/dev/null 2>&1
-			if [ $? -ne 0 -a  -f ${sysconfdir}/$i/.down ] ; then
+			if [ $? -eq 0 -a -f ${sysconfdir}/$i/.down ] ; then
 				/bin/rm -f ${sysconfdir}/$i/.down
 				${prefix}/bin/svc -u ${sysconfdir}/$i >/dev/null 2>&1
 			fi
 		done
 	fi
+	set -e
 	exit 0
 fi
 

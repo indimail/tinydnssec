@@ -24,16 +24,18 @@ fi
 
 case "$1" in
     upgrade)
-	if [ -f ${prefix}/bin/svok ] ; then
+	set +e
+	if [ -f ${prefix}/bin/svstat ] ; then
 		for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
 		do
-			${prefix}/bin/svok ${sysconfdir}/$i >/dev/null 2>&1
+			${prefix}/bin/svstat ${sysconfdir}/$i >/dev/null 2>&1
 			if [ $? -eq 0 ] ; then
-				touch ${sysconfdir}/$i/.down
+				touch ${ssysconfdir}/$i/.down
 				${prefix}/bin/svc -d ${sysconfdir}/$i >/dev/null 2>&1
 			fi
 		done
 	fi
+	set -e
 	;;
     install)
 	#
