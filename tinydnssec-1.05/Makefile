@@ -177,7 +177,7 @@ compile byte_zero.c byte.h
 
 cache.o: \
 compile cache.c alloc.h byte.h exit.h tai.h cache.h \
-uint32.h uint64.h dns.h siphash.h
+uint32.h uint64.h dns.h iopause.h siphash.h
 	./compile cache.c
 
 siphash.o: \
