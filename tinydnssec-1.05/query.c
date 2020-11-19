@@ -238,8 +238,8 @@ doit(struct query *z, int state)
 	}
 
 
-  NEWNAME:
-	if (++z->loop == 100)
+NEWNAME:
+	if (++z->loop == QUERY_MAXLOOP)
 		goto DIE;
 	d = z->name[z->level];
 	dtype = z->level ? (z->ipv6[z->level] ? DNS_T_AAAA : DNS_T_A) : z->type;
@@ -805,8 +805,8 @@ doit(struct query *z, int state)
 	goto HAVENS;
 
 
-  HAVEPACKET:
-	if (++z->loop == 100)
+HAVEPACKET:
+	if (++z->loop == QUERY_MAXLOOP)
 		goto DIE;
 	buf = z->dt.packet;
 	len = z->dt.packetlen;

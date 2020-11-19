@@ -4,9 +4,10 @@
 #include "dns.h"
 #include "uint32.h"
 
-#define QUERY_MAXLEVEL 5
+#define QUERY_MAXLEVEL 10
 #define QUERY_MAXALIAS 16
 #define QUERY_MAXNS 16
+#define QUERY_MAXLOOP 160
 
 struct query {
   unsigned int loop;
