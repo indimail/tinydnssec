@@ -84,8 +84,6 @@ curvedns-*/curvedns-keygen
 auto_sysconfdir.c
 curvedns-*/nacl/build/work
 conf-release
-doc/ChangeLog
-debian/changelog.in
 tinydnssec.spec
 debian/changelog
 make-compile

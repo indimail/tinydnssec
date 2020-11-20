@@ -116,6 +116,25 @@ for other caches, not root servers.
 It forwards queries to those caches the same way that a client does,
 rather than contacting a chain of servers according to NS records.
 
+\fBdnscache\fR uses the environment variables \fBQUERY_MAXLEVEL\fR
+to set the maxlevel. If not set, the default is 5
+
+\fBdnscache\fR uses the environment variables \fBQUERY_MAXALIAS\fR
+to set the maxaliass. If not set, the default is 16
+
+\fBdnscache\fR uses the environment variables \fBQUERY_NS\fR
+to set the max name servers. If not set, the default is 10
+
+\fBdnscache\fR uses the environment variables \fBQUERY_MAXLOOP\fR
+to set the max query iterations. If not set, the default is 100.
+If this limit is reache, dnscache will log this as qcount \fInum\fR,
+where \fInum\fR is the count at which dnscache gave up with a line
+like this
+
+.EX
+drop 1 input/output error
+.EE
+
 .SH Memory use
 
 .B dnscache

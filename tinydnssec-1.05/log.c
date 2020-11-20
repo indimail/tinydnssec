@@ -291,3 +291,10 @@ void log_stats(void)
   number(tactive);
   line();
 }
+
+void log_qcount(int count)
+{
+  string("qcount ");
+  number(count);
+  line();
+}

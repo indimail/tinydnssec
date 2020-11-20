@@ -304,6 +304,16 @@ if [ -z "$argv1" ] ; then
 fi
 if [ $argv1 -eq 2 ] ; then # upgrade
   echo "doing post upgrade activities"
+  if [ -f %{_prefix}/bin/svok ] ; then
+    for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
+    do
+      %{_prefix}/bin/svok %{_sysconfdir}/$i >/dev/null 2>&1
+      if [ $? -eq 0 -a -f %{_sysconfdir}/$i/.down ] ; then
+        %{__rm} -f %{_sysconfdir}/$i/.down
+        %{_prefix}/bin/svc -u %{_sysconfdir}/$i >/dev/null 2>&1
+      fi
+    done
+  fi
   exit 0
 fi
 # created due to ghost definition in files section
@@ -354,16 +364,6 @@ do
     fi
   fi
 done
-if [ -f %{_prefix}/bin/svok ] ; then
-  for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
-  do
-    %{_prefix}/bin/svok %{_sysconfdir}/$i >/dev/null 2>&1
-    if [ $? -eq 0 -a -f %{_sysconfdir}/$i/.down ] ; then
-      %{__rm} -f %{_sysconfdir}/$i/.down
-      %{_prefix}/bin/svc -u %{_sysconfdir}/$i >/dev/null 2>&1
-    fi
-  done
-fi
 
 %postun
 argv1=$1

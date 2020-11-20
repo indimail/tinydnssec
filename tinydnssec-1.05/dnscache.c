@@ -27,6 +27,7 @@
 #include "openreadclose.h"
 
 long interface;
+int maxloop, maxlevel, maxalias, maxns;
 
 stralloc ignoreip = {0};
 
@@ -436,6 +437,32 @@ int main()
 
   x = env_get("INTERFACE");
   if (x) scan_ulong(x, (unsigned long *) &interface);
+
+  /*
+   * djb doesn't recommend this. He says the limits are generous enough
+   * See the discussion https://marc.info/?l=djbdns&m=109422159909615&w=2
+   *
+   * I have made these to increase the limits, espeicially QUERY_MAXLOOP
+   * I set this as 250 as I have seen this reaching 247 when
+   * querying akamai causing the records to never get cached.
+   *
+   * The relevant lines in query.c are
+   * line 242 if (++z->loop == 100) {
+   * line 811 if (++z->loop == 100) {
+   * These have been changed to
+   * if (++z->loop == (maxloop > 0 ? maxloop : (maxloop = QUERY_MAXLOOP))) {
+   */
+  x = env_get("QUERY_MAXLOOP");
+  if (x) scan_ulong(x, (unsigned long *) &maxloop);
+
+  x = env_get("QUERY_MAXLEVEL");
+  if (x) scan_ulong(x, (unsigned long *) &maxlevel);
+
+  x = env_get("QUERY_MAXALIAS");
+  if (x) scan_ulong(x, (unsigned long *) &maxalias);
+
+  x = env_get("QUERY_MAXNS");
+  if (x) scan_ulong(x, (unsigned long *) &maxns);
 
   x = env_get("IP");
   if (!x)

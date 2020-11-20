@@ -4,10 +4,10 @@
 #include "dns.h"
 #include "uint32.h"
 
-#define QUERY_MAXLEVEL 10
+#define QUERY_MAXLEVEL 5
 #define QUERY_MAXALIAS 16
 #define QUERY_MAXNS 16
-#define QUERY_MAXLOOP 160
+#define QUERY_MAXLOOP 100
 
 struct query {
   unsigned int loop;
@@ -25,6 +25,8 @@ struct query {
   char class[2];
   struct dns_transmit dt;
 } ;
+
+extern int maxloop, maxlevel, maxalias, maxns;
 
 extern int query_start(struct query *,char *,char *,char *,char *,unsigned int);
 extern void query_io(struct query *,iopause_fd *,struct taia *);

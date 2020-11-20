@@ -33,5 +33,6 @@ extern void log_rrmx(const char *,const char *,const char *,const char *,unsigne
 extern void log_rrsoa(const char *,const char *,const char *,const char *,const char *,unsigned int);
 
 extern void log_stats(void);
+extern void log_qcount(int);
 
 #endif

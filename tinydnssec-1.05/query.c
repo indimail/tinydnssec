@@ -101,11 +101,11 @@ cleanup(struct query *z)
 	int             k;
 
 	dns_transmit_free(&z->dt);
-	for (j = 0; j < QUERY_MAXALIAS; ++j)
+	for (j = 0; j < (maxalias > 0 ? maxalias : (maxalias = QUERY_MAXALIAS)); ++j)
 		dns_domain_free(&z->alias[j]);
-	for (j = 0; j < QUERY_MAXLEVEL; ++j) {
+	for (j = 0; j < (maxlevel > 0 ? maxlevel : (maxlevel = QUERY_MAXLEVEL)); ++j) {
 		dns_domain_free(&z->name[j]);
-		for (k = 0; k < QUERY_MAXNS; ++k)
+		for (k = 0; k < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)); ++k)
 			dns_domain_free(&z->ns[j][k]);
 	}
 }
@@ -115,7 +115,7 @@ rqa(struct query *z)
 {
 	int             i;
 
-	for (i = QUERY_MAXALIAS - 1; i >= 0; --i)
+	for (i = (maxalias > 0 ? maxalias : (maxalias = QUERY_MAXALIAS)) - 1; i >= 0; --i)
 		if (z->alias[i]) {
 			if (!response_query(z->alias[i], z->type, z->class))
 				return 0;
@@ -239,8 +239,10 @@ doit(struct query *z, int state)
 
 
 NEWNAME:
-	if (++z->loop == QUERY_MAXLOOP)
+	if (++z->loop == (maxloop > 0 ? maxloop : (maxloop = QUERY_MAXLOOP))) {
+		log_qcount(maxloop);
 		goto DIE;
+	}
 	d = z->name[z->level];
 	dtype = z->level ? (z->ipv6[z->level] ? DNS_T_AAAA : DNS_T_A) : z->type;
 	dlen = dns_domain_length(d);
@@ -726,7 +728,7 @@ NEWNAME:
 
 	for (;;) {
 		if (roots(z->servers[z->level], d)) {	/* XXX: allow roots() to provide keys */
-			for (j = 0; j < QUERY_MAXNS; ++j)
+			for (j = 0; j < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)); ++j)
 				dns_domain_free(&z->ns[z->level][j]);
 			z->control[z->level] = d;
 			break;
@@ -741,13 +743,13 @@ NEWNAME:
 				if (cached && cachedlen) {
 					z->control[z->level] = d;
 					byte_zero(z->servers[z->level], 256);
-					for (j = 0; j < QUERY_MAXNS; ++j)
+					for (j = 0; j < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)); ++j)
 						dns_domain_free(&z->ns[z->level][j]);
 					pos = 0;
 					j = 0;
 					while ((pos = dns_packet_getname(cached, cachedlen, pos, &t1))) {
 						log_cachedns(d, t1);
-						if (j < QUERY_MAXNS)
+						if (j < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)))
 							if (!dns_domain_copy(&z->ns[z->level][j++], t1))
 								goto DIE;
 					}
@@ -763,10 +765,10 @@ NEWNAME:
 	}
 
 
-  HAVENS:
-	for (j = 0; j < QUERY_MAXNS; ++j)
+HAVENS:
+	for (j = 0; j < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)); ++j)
 		if (z->ns[z->level][j]) {
-			if (z->level + 1 < QUERY_MAXLEVEL) {
+			if (z->level + 1 < (maxlevel > 0 ? maxlevel : (maxlevel = QUERY_MAXLEVEL))) {
 				if (!dns_domain_copy(&z->name[z->level + 1], z->ns[z->level][j]))
 					goto DIE;
 				dns_domain_free(&z->ns[z->level][j]);
@@ -797,26 +799,28 @@ NEWNAME:
 	return 0;
 
 
-  LOWERLEVEL:
+LOWERLEVEL:
 	dns_domain_free(&z->name[z->level]);
-	for (j = 0; j < QUERY_MAXNS; ++j)
+	for (j = 0; j < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)); ++j)
 		dns_domain_free(&z->ns[z->level][j]);
 	--z->level;
 	goto HAVENS;
 
 
 HAVEPACKET:
-	if (++z->loop == QUERY_MAXLOOP)
+	if (++z->loop == (maxloop > 0 ? maxloop : (maxloop = QUERY_MAXLOOP))) {
+		log_qcount(maxloop);
 		goto DIE;
+	}
 	buf = z->dt.packet;
 	len = z->dt.packetlen;
 
 	whichserver = z->dt.servers + 16 * z->dt.curserver;
 	control = z->control[z->level];
 	d = z->name[z->level];
-/*
- * dtype = z->level ? DNS_T_A : z->type; 
- */
+	/*
+	 * dtype = z->level ? DNS_T_A : z->type; 
+	 */
 	dtype = z->level ? (z->ipv6[z->level] ? DNS_T_AAAA : DNS_T_A) : z->type;
 
 	pos = dns_packet_copy(buf, len, 0, header, 12);
@@ -1162,11 +1166,11 @@ HAVEPACKET:
 		ttl = cnamettl;
 	  CNAME:
 		if (!z->level) {
-			if (z->alias[QUERY_MAXALIAS - 1])
+			if (z->alias[(maxalias > 0 ? maxalias : (maxalias = QUERY_MAXALIAS)) - 1])
 				goto DIE;
-			for (j = QUERY_MAXALIAS - 1; j > 0; --j)
+			for (j = (maxalias > 0 ? maxalias : (maxalias = QUERY_MAXALIAS)) - 1; j > 0; --j)
 				z->alias[j] = z->alias[j - 1];
-			for (j = QUERY_MAXALIAS - 1; j > 0; --j)
+			for (j = (maxalias > 0 ? maxalias : (maxalias = QUERY_MAXALIAS)) - 1; j > 0; --j)
 				z->aliasttl[j] = z->aliasttl[j - 1];
 			z->alias[0] = z->name[0];
 			z->aliasttl[0] = ttl;
@@ -1317,7 +1321,7 @@ HAVEPACKET:
 	control = d + dns_domain_suffixpos(d, referral);
 	z->control[z->level] = control;
 	byte_zero(z->servers[z->level], 256);
-	for (j = 0; j < QUERY_MAXNS; ++j)
+	for (j = 0; j < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)); ++j)
 		dns_domain_free(&z->ns[z->level][j]);
 	k = 0;
 
@@ -1333,7 +1337,7 @@ HAVEPACKET:
 		if (dns_domain_equal(referral, t1))	/* should always be true */
 			if (typematch(header, DNS_T_NS))	/* should always be true */
 				if (byte_equal(header + 2, 2, DNS_C_IN))	/* should always be true */
-					if (k < QUERY_MAXNS)
+					if (k < (maxns > 0 ? maxns : (maxns = QUERY_MAXNS)))
 						if (!dns_packet_getname(buf, len, pos, &z->ns[z->level][k++]))
 							goto DIE;
 		pos += datalen;
@@ -1342,7 +1346,7 @@ HAVEPACKET:
 	goto HAVENS;
 
 
-  SERVFAIL:
+SERVFAIL:
 	if (z->level)
 		goto LOWERLEVEL;
 	if (!rqa(z))
@@ -1352,7 +1356,7 @@ HAVEPACKET:
 	return 1;
 
 
-  DIE:
+DIE:
 	cleanup(z);
 	if (records) {
 		alloc_free(records);

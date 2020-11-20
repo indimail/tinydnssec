@@ -111,6 +111,8 @@ int main(int argc,char **argv)
   seed_addtime(); perm(0644);
   seed_addtime(); start("env/DATALIMIT"); outs("3000000\n"); finish();
   seed_addtime(); perm(0644);
+  seed_addtime(); start("env/QUERY_MAXLOOP"); outs("250\n"); finish();
+  seed_addtime(); perm(0644);
   seed_addtime(); start("run");
   outs("#!/bin/sh\nexec 2>&1\nexec <seed\nexec envdir ./env sh -c '\n  exec envuidgid "); outs(user);
   outs(" softlimit -o250 -d \"$DATALIMIT\" ");
