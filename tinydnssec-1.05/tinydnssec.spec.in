@@ -303,7 +303,6 @@ if [ -z "$argv1" ] ; then
   argv1=0
 fi
 if [ $argv1 -eq 2 ] ; then # upgrade
-  echo "doing post upgrade activities"
   if [ -f %{_prefix}/bin/svok ] ; then
     for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
     do
