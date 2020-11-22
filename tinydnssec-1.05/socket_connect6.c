@@ -20,11 +20,11 @@ int socket_connect6(int s,const char ip[16],uint16 port,uint32 scope_id)
 #endif
     if (ip6_isv4mapped(ip))
       return socket_connect4(s,ip+12,port);
-    if (byte_equal(ip,16,V6loopback))
+    if (byte_equal(ip,16,(const char *) V6loopback))
       return socket_connect4(s,ip4loopback,port);
 #ifdef LIBC_HAS_IP6
   }
-  byte_zero(&sa,sizeof sa);
+  byte_zero((char *) &sa,sizeof sa);
   sa.sin6_family = PF_INET6;
   uint16_pack_big((char *) &sa.sin6_port,port);
   sa.sin6_flowinfo = 0;

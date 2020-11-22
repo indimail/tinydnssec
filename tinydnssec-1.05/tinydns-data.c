@@ -9,10 +9,9 @@
 #include "fmt.h"
 #include "ip4.h"
 #include "ip6.h"
-#include "exit.h"
 #include "case.h"
 #include "scan.h"
-#include "buffer.h"
+#include "substdio.h"
 #include "strerr.h"
 #include "getln.h"
 #include "cdb_make.h"
@@ -167,7 +166,7 @@ void rr_finish(const char *owner)
     die_datatmp();
 }
 
-buffer b;
+substdio b;
 char bspace[1024];
 
 static stralloc line;
@@ -215,7 +214,7 @@ int main()
     strerr_die2sys(111,FATAL,"unable to open data: ");
   defaultsoa_init(fddata);
 
-  buffer_init(&b,buffer_unixread,fddata,bspace,sizeof bspace);
+  substdio_fdbuf(&b,read,fddata,bspace,sizeof bspace);
 
   fdcdb = open_trunc("data.tmp");
   if (fdcdb == -1) die_datatmp();

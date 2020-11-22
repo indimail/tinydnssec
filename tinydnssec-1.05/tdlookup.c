@@ -263,7 +263,7 @@ addNSEC3Cover(char *name, char *control, int wild)
 			return 0;
 		if (byte_equal(type, 2, DNS_T_HASHLIST) && dlen - dpos >= SHA1_DIGEST_SIZE) {
 			int             hpos = dpos + SHA1_DIGEST_SIZE;
-			while (byte_diff(digest, SHA1_DIGEST_SIZE, data + hpos) > 0 && hpos < dlen)
+			while (byte_diff((char *) digest, SHA1_DIGEST_SIZE, data + hpos) > 0 && hpos < dlen)
 				hpos += SHA1_DIGEST_SIZE;
 			hpos -= SHA1_DIGEST_SIZE;
 			*salt = base32hex(salt + 1, (uint8_t *) data + hpos, SHA1_DIGEST_SIZE);

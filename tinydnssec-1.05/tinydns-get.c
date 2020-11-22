@@ -1,9 +1,10 @@
 #include "str.h"
 #include "byte.h"
 #include "scan.h"
-#include "exit.h"
+#include <unistd.h>
 #include "stralloc.h"
-#include "buffer.h"
+#include "substdio.h"
+#include "subfd.h"
 #include "strerr.h"
 #include "uint16.h"
 #include "response.h"
@@ -87,6 +88,6 @@ int main(int argc,char **argv)
   if (!printpacket_cat(&out,response,response_len)) oops();
 
   DONE:
-  buffer_putflush(buffer_1,out.s,out.len);
+  substdio_putflush(subfdout,out.s,out.len);
   _exit(0);
 }

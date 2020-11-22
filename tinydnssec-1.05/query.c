@@ -250,8 +250,8 @@ NEWNAME:
 	if (globalip(d, misc)) {
 		if (z->level) {
 			for (k = 0; k < 256; k += 16)
-				if (byte_equal(z->servers[z->level - 1] + k, 16, V6any)) {
-					byte_copy(z->servers[z->level - 1] + k, 12, V4mappedprefix);
+				if (byte_equal(z->servers[z->level - 1] + k, 16, (const char *) V6any)) {
+					byte_copy(z->servers[z->level - 1] + k, 12, (const char *) V4mappedprefix);
 					byte_copy(z->servers[z->level - 1] + k + 12, 4, misc);
 					break;
 				}
@@ -634,8 +634,8 @@ NEWNAME:
 					log_cachedanswer(d, DNS_T_A);
 					while (cachedlen >= 4) {
 						for (k = 0; k < 256; k += 16)
-							if (byte_equal(z->servers[z->level - 1] + k, 16, V6any)) {
-								byte_copy(z->servers[z->level - 1] + k, 12, V4mappedprefix);
+							if (byte_equal(z->servers[z->level - 1] + k, 16, (const char *) V6any)) {
+								byte_copy(z->servers[z->level - 1] + k, 12, (const char *) V4mappedprefix);
 								byte_copy(z->servers[z->level - 1] + k + 12, 4, cached);
 								break;
 							}
@@ -670,7 +670,7 @@ NEWNAME:
 					log_cachedanswer(d, DNS_T_AAAA);
 					while (cachedlen >= 16) {
 						for (k = 0; k < 256; k += 16)
-							if (byte_equal(z->servers[z->level - 1] + k, 16, V6any)) {
+							if (byte_equal(z->servers[z->level - 1] + k, 16, (const char *) V6any)) {
 								byte_copy(z->servers[z->level - 1] + k, 16, cached);
 								break;
 							}
@@ -780,7 +780,7 @@ HAVENS:
 		}
 
 	for (j = 0; j < 256; j += 16)
-		if (byte_diff(z->servers[z->level] + j, 16, V6any))
+		if (byte_diff(z->servers[z->level] + j, 16, (const char *) V6any))
 			break;
 	if (j == 256)
 		goto SERVFAIL;
@@ -897,13 +897,13 @@ HAVEPACKET:
 	if (!flagcname && !rcode && !flagout && flagreferral && !flagsoa)
 		if (dns_domain_equal(referral, control) || !dns_domain_suffix(referral, control)) {
 			log_lame(whichserver, control, referral);
-			byte_zero(whichserver, 16);
+			byte_zero((char *) whichserver, 16);
 			goto HAVENS;
 		}
 
 
 	if (records) {
-		alloc_free(records);
+		alloc_free((char *) records);
 		records = 0;
 	}
 
@@ -1103,7 +1103,8 @@ HAVEPACKET:
 						goto DIE;
 					if (ignoreip.len)
 						for (ii = 0; ii < ignoreip.len; ii += 16) {
-							if (byte_equal(ignoreip.s + ii, 12, V4mappedprefix) && byte_equal(header, 4, ignoreip.s + ii + 12))
+							if (byte_equal(ignoreip.s + ii, 12, (const char *) V4mappedprefix) &&
+									byte_equal(header, 4, ignoreip.s + ii + 12))
 								goto NXDOMAIN;
 						}
 					save_data(header, 4);
@@ -1158,7 +1159,7 @@ HAVEPACKET:
 		i = j;
 	}
 
-	alloc_free(records);
+	alloc_free((char *) records);
 	records = 0;
 
 
@@ -1228,8 +1229,8 @@ HAVEPACKET:
 						if (byte_equal(header + 2, 2, DNS_C_IN))	/* should always be true */
 							if (datalen == 4)
 								for (k = 0; k < 256; k += 16)
-									if (byte_equal(z->servers[z->level - 1] + k, 16, V6any)) {
-										byte_copy(z->servers[z->level - 1] + k, 12, V4mappedprefix);
+									if (byte_equal(z->servers[z->level - 1] + k, 16, (const char *) V6any)) {
+										byte_copy(z->servers[z->level - 1] + k, 12, (const char *) V4mappedprefix);
 										if (!dns_packet_copy(buf, len, pos, z->servers[z->level - 1] + k + 12, 4))
 											goto DIE;
 										break;
@@ -1238,7 +1239,7 @@ HAVEPACKET:
 					if (byte_equal(header + 2, 2, DNS_C_IN))	/* should always be true */
 						if (datalen == 16)
 							for (k = 0; k < 256; k += 16)
-								if (byte_equal(z->servers[z->level - 1] + k, 16, V6any)) {
+								if (byte_equal(z->servers[z->level - 1] + k, 16, (const char *) V6any)) {
 									if (!dns_packet_copy(buf, len, pos, z->servers[z->level - 1] + k, 16))
 										goto DIE;
 									break;
@@ -1359,7 +1360,7 @@ SERVFAIL:
 DIE:
 	cleanup(z);
 	if (records) {
-		alloc_free(records);
+		alloc_free((char *) records);
 		records = 0;
 	}
 	return -1;

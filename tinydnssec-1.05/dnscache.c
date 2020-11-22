@@ -1,7 +1,6 @@
 #include <unistd.h>
 #include <signal.h>
 #include "env.h"
-#include "exit.h"
 #include "scan.h"
 #include "strerr.h"
 #include "error.h"

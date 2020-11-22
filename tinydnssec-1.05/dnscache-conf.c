@@ -6,13 +6,12 @@
 #include <sys/mkdev.h>
 #endif
 #include <pwd.h>
-#include "strerr.h"
-#include "buffer.h"
-#include "uint32.h"
-#include "taia.h"
-#include "open.h"
-#include "error.h"
-#include "exit.h"
+#include <strerr.h>
+#include <substdio.h>
+#include <uint32.h>
+#include <taia.h>
+#include <open.h>
+#include <error.h>
 #include "auto_home.h"
 #include "auto_sysconfdir.h"
 #include "generic-conf.h"
@@ -21,12 +20,12 @@
 
 void usage(void)
 {
-  strerr_die1x(100,"dnscache-conf: usage: dnscache-conf acct logacct /dnscache [ myip ]");
+  strerr_die1x(100, "dnscache-conf: usage: dnscache-conf acct logacct /dnscache [ myip ]");
 }
 
 int fdrootservers;
 char rootserversbuf[64];
-buffer ssrootservers;
+substdio ssrootservers;
 
 char *dir;
 char *user;
@@ -128,7 +127,7 @@ int main(int argc,char **argv)
   seed_addtime(); makedir("root/servers");
   seed_addtime(); perm(02755);
   seed_addtime(); start("root/servers/@");
-  buffer_init(&ssrootservers,buffer_unixread,fdrootservers,rootserversbuf,sizeof rootserversbuf);
+  substdio_fdbuf(&ssrootservers,read,fdrootservers,rootserversbuf,sizeof rootserversbuf);
   copyfrom(&ssrootservers);
   finish();
   seed_addtime(); perm(0644);
