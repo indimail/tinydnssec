@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include "strerr.h"
-#include "buffer.h"
+#include "substdio.h"
+#include "subfd.h"
 #include "stralloc.h"
 #include "alloc.h"
 #include "dns.h"
@@ -11,7 +12,6 @@
 #include "sgetopt.h"
 #include "iopause.h"
 #include "error.h"
-#include "exit.h"
 #include "ip6.h"
 
 #define FATAL "dnsfilter: fatal: "
@@ -60,7 +60,7 @@ void errout(int i)
       x[i].middle.s[j] = '-';
 }
 
-int main(int argc,char **argv)
+int main(int argc,const char **argv)
 {
   struct taia stamp;
   struct taia deadline;
@@ -90,7 +90,7 @@ int main(int argc,char **argv)
 
   x = (struct line *) alloc(xmax * sizeof(struct line));
   if (!x) nomem();
-  byte_zero(x,xmax * sizeof(struct line));
+  byte_zero((char *) x,xmax * sizeof(struct line));
 
   io = (iopause_fd *) alloc((xmax + 1) * sizeof(iopause_fd)); 
   if (!io) nomem();
@@ -151,10 +151,10 @@ int main(int argc,char **argv)
     for (;;) {
 
       if (xnum && !x[0].flagactive) {
-        buffer_put(buffer_1,x[0].left.s,x[0].left.len);
-        buffer_put(buffer_1,x[0].middle.s,x[0].middle.len);
-        buffer_put(buffer_1,x[0].right.s,x[0].right.len);
-        buffer_flush(buffer_1);
+        substdio_put(subfdout,x[0].left.s,x[0].left.len);
+        substdio_put(subfdout,x[0].middle.s,x[0].middle.len);
+        substdio_put(subfdout,x[0].right.s,x[0].right.len);
+        substdio_flush(subfdout);
         --xnum;
         tmp = x[0];
         for (i = 0;i < xnum;++i) x[i] = x[i + 1];

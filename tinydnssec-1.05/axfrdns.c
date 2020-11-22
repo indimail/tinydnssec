@@ -1,12 +1,12 @@
 #include <unistd.h>
+#include <sys/types.h>
 #include "droproot.h"
-#include "exit.h"
 #include "env.h"
 #include "uint32.h"
 #include "uint16.h"
 #include "ip4.h"
 #include "tai.h"
-#include "buffer.h"
+#include "substdio.h"
 #include "timeoutread.h"
 #include "timeoutwrite.h"
 #include "open.h"
@@ -60,7 +60,7 @@ void die_cdbformat()
   strerr_die3x(111,FATAL,"unable to read data.cdb: ","format error");
 }
 
-int safewrite(int fd,char *buf,unsigned int len)
+ssize_t safewrite(int fd,char *buf,unsigned int len)
 {
   int w;
 
@@ -70,15 +70,15 @@ int safewrite(int fd,char *buf,unsigned int len)
 }
 
 char netwritespace[1024];
-buffer netwrite = BUFFER_INIT(safewrite,1,netwritespace,sizeof netwritespace);
+substdio netwrite = SUBSTDIO_FDBUF(safewrite,1,netwritespace,sizeof netwritespace);
 
 void print(char *buf,unsigned int len)
 {
   char tcpheader[2];
   uint16_pack_big(tcpheader,len);
-  buffer_put(&netwrite,tcpheader,2);
-  buffer_put(&netwrite,buf,len);
-  buffer_flush(&netwrite);
+  substdio_put(&netwrite,tcpheader,2);
+  substdio_put(&netwrite,buf,len);
+  substdio_flush(&netwrite);
 }
 
 char *axfr;
@@ -112,7 +112,7 @@ unsigned int zonelen;
 char typeclass[4];
 
 int fdcdb;
-buffer bcdb;
+substdio bcdb;
 char bcdbspace[1024];
 
 void get(char *buf,unsigned int len)
@@ -120,7 +120,7 @@ void get(char *buf,unsigned int len)
   int r;
 
   while (len > 0) {
-    r = buffer_get(&bcdb,buf,len);
+    r = substdio_get(&bcdb,buf,len);
     if (r < 0) die_cdbread();
     if (!r) die_cdbformat();
     buf += r;
@@ -256,7 +256,7 @@ void doaxfr(char id[2])
   print(soa.s,soa.len);
 
   seek_begin(fdcdb);
-  buffer_init(&bcdb,buffer_unixread,fdcdb,bcdbspace,sizeof bcdbspace);
+  substdio_fdbuf(&bcdb,read,fdcdb,bcdbspace,sizeof bcdbspace);
 
   pos = 0;
   get(num,4); pos += 4;

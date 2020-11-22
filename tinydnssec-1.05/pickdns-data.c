@@ -1,9 +1,7 @@
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
 #include "cdb_make.h"
 #include "open.h"
 #include "alloc.h"
@@ -20,6 +18,8 @@
 #include "dns.h"
 
 #define FATAL "pickdns-data: fatal: "
+
+int rename(const char *, const char *);
 
 void nomem(void)
 {
@@ -49,7 +49,7 @@ struct address {
   unsigned int namelen;
   char ip[4];
   char location[2];
-} ;
+};
 
 int address_diff(struct address *p,struct address *q)
 {
@@ -93,13 +93,13 @@ void address_sort(struct address *z,unsigned int n)
 }
 
 GEN_ALLOC_typedef(address_alloc,struct address,s,len,a)
-GEN_ALLOC_readyplus(address_alloc,struct address,s,len,a,i,n,x,30,address_alloc_readyplus)
-GEN_ALLOC_append(address_alloc,struct address,s,len,a,i,n,x,30,address_alloc_readyplus,address_alloc_append)
+GEN_ALLOC_readyplus(address_alloc,struct address,s,len,a,30,address_alloc_readyplus)
+GEN_ALLOC_append(address_alloc, struct address,s,len,a,30,address_alloc_readyplus, address_alloc_append)
 
 static address_alloc x;
 
 int fd;
-buffer b;
+substdio b;
 char bspace[1024];
 
 int fdcdb;
@@ -140,7 +140,7 @@ int main()
 
   fd = open_read("data");
   if (fd == -1) strerr_die2sys(111,FATAL,"unable to open data: ");
-  buffer_init(&b,buffer_unixread,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
 
   fdcdb = open_trunc("data.tmp");
   if (fdcdb == -1) die_datatmp();
@@ -178,7 +178,7 @@ int main()
       case '-':
         break;
       case '+':
-	byte_zero(&t,sizeof t);
+	byte_zero((char *) &t,sizeof t);
 	if (!dns_domain_fromdot(&t.name,f[0].s,f[0].len)) nomem();
 	t.namelen = dns_domain_length(t.name);
 	case_lowerb(t.name,t.namelen);

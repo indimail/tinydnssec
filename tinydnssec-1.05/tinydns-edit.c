@@ -3,8 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "stralloc.h"
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
 #include "open.h"
 #include "getln.h"
 #include "strerr.h"
@@ -48,11 +47,11 @@ char targetip[4];
 char targetip6[16];
 
 int fd;
-buffer b;
+substdio b;
 char bspace[1024];
 
 int fdnew;
-buffer bnew;
+substdio bnew;
 char bnewspace[1024];
 
 static stralloc line;
@@ -74,7 +73,7 @@ static int used[26];
 
 void put(const char *buf,unsigned int len)
 {
-  if (buffer_putalign(&bnew,buf,len) == -1) die_write();
+  if (substdio_putalign(&bnew,buf,len) == -1) die_write();
 }
 
 int main(int argc,char **argv)
@@ -122,12 +121,12 @@ int main(int argc,char **argv)
   fd = open_read(fn);
   if (fd == -1) die_read();
   if (fstat(fd,&st) == -1) die_read();
-  buffer_init(&b,buffer_unixread,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
 
   fdnew = open_trunc(fnnew);
   if (fdnew == -1) die_write();
   if (fchmod(fdnew,st.st_mode & 0644) == -1) die_write();
-  buffer_init(&bnew,buffer_unixwrite,fdnew,bnewspace,sizeof bnewspace);
+  substdio_fdbuf(&bnew,write,fdnew,bnewspace,sizeof bnewspace);
 
   switch(mode) {
     case '.': case '&':
@@ -275,7 +274,7 @@ int main(int argc,char **argv)
   if (!stralloc_cats(&f[0],"\n")) nomem();
   put(f[0].s,f[0].len);
 
-  if (buffer_flush(&bnew) == -1) die_write();
+  if (substdio_flush(&bnew) == -1) die_write();
   if (fsync(fdnew) == -1) die_write();
   if (close(fdnew) == -1) die_write(); /* NFS dorks */
   if (rename(fnnew,fn) == -1)

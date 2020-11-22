@@ -2,8 +2,7 @@
 #include <pwd.h>
 #include "strerr.h"
 #include "error.h"
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
 #include "open.h"
 #include "auto_home.h"
 #include "auto_sysconfdir.h"
@@ -18,7 +17,7 @@ void usage(void)
 
 int fdrootservers;
 char rootserversbuf[64];
-buffer ssrootservers;
+substdio ssrootservers;
 
 char *dir;
 char *user;
@@ -80,7 +79,7 @@ int main(int argc,char **argv)
   makedir("root/servers");
   perm(02755);
   start("root/servers/@");
-  buffer_init(&ssrootservers,buffer_unixread,fdrootservers,rootserversbuf,sizeof rootserversbuf);
+  substdio_fdbuf(&ssrootservers,read,fdrootservers,rootserversbuf,sizeof rootserversbuf);
   copyfrom(&ssrootservers);
   finish();
   perm(0644);

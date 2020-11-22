@@ -2,7 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "strerr.h"
-#include "buffer.h"
+#include "substdio.h"
 #include "stralloc.h"
 #include "open.h"
 #include "str.h"
@@ -15,7 +15,7 @@ static stralloc target;
 
 static int fd;
 static char buf[1024];
-static buffer ss;
+static substdio ss;
 
 void init(const char *d,const char *f)
 {
@@ -67,27 +67,27 @@ void start(const char *s)
   fn = s;
   fd = open_trunc(fn);
   if (fd == -1) fail();
-  buffer_init(&ss,buffer_unixwrite,fd,buf,sizeof buf);
+  substdio_fdbuf(&ss,write,fd,buf,sizeof buf);
 }
 
 void outs(const char *s)
 {
-  if (buffer_puts(&ss,s) == -1) fail();
+  if (substdio_puts(&ss,s) == -1) fail();
 }
 
 void out(const char *s,unsigned int len)
 {
-  if (buffer_put(&ss,s,len) == -1) fail();
+  if (substdio_put(&ss,s,len) == -1) fail();
 }
 
-void copyfrom(buffer *b)
+void copyfrom(substdio *b)
 {
-  if (buffer_copy(&ss,b) < 0) fail();
+  if (substdio_copy(&ss,b) < 0) fail();
 }
 
 void finish(void)
 {
-  if (buffer_flush(&ss) == -1) fail();
+  if (substdio_flush(&ss) == -1) fail();
   if (fsync(fd) == -1) fail();
   close(fd);
 }

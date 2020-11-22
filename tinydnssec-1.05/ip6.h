@@ -21,7 +21,7 @@ const static unsigned char V4mappedprefix[12]={0,0,0,0,0,0,0,0,0,0,0xff,0xff};
 const static unsigned char V6loopback[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 const static unsigned char V6any[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-#define ip6_isv4mapped(ip) (byte_equal(ip,12,V4mappedprefix))
+#define ip6_isv4mapped(ip) (byte_equal(ip,12,(const char *) V4mappedprefix))
 
 const static char ip4loopback[4] = {127,0,0,1};
 

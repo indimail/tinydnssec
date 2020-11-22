@@ -1,13 +1,12 @@
-#include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include "uint32.h"
 #include "uint16.h"
 #include "stralloc.h"
 #include "error.h"
 #include "strerr.h"
 #include "getln.h"
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
 #include "open.h"
 #include "scan.h"
 #include "byte.h"
@@ -19,6 +18,8 @@
 #include "dns.h"
 
 #define FATAL "axfr-get: fatal: "
+
+int rename(const char *, const char *);
 
 void die_usage(void)
 {
@@ -73,7 +74,7 @@ void die_write(void)
   strerr_die4sys(111,FATAL,"unable to write ",fntmp,": ");
 }
 
-int saferead(int fd,char *buf,unsigned int len)
+ssize_t saferead(int fd,char *buf,unsigned int len)
 {
   int r;
   r = timeoutread(60,fd,buf,len);
@@ -81,7 +82,7 @@ int saferead(int fd,char *buf,unsigned int len)
   if (r <= 0) die_netread();
   return r;
 }
-int safewrite(int fd,char *buf,unsigned int len)
+ssize_t safewrite(int fd,char *buf,unsigned int len)
 {
   int r;
   r = timeoutwrite(60,fd,buf,len);
@@ -89,27 +90,27 @@ int safewrite(int fd,char *buf,unsigned int len)
   return r;
 }
 char netreadspace[1024];
-buffer netread = BUFFER_INIT(saferead,6,netreadspace,sizeof netreadspace);
+substdio netread = SUBSTDIO_FDBUF(saferead,6,netreadspace,sizeof netreadspace);
 char netwritespace[1024];
-buffer netwrite = BUFFER_INIT(safewrite,7,netwritespace,sizeof netwritespace);
+substdio netwrite = SUBSTDIO_FDBUF(safewrite,7,netwritespace,sizeof netwritespace);
 
 void netget(char *buf,unsigned int len)
 {
   int r;
 
   while (len > 0) {
-    r = buffer_get(&netread,buf,len);
+    r = substdio_get(&netread,buf,len);
     buf += r; len -= r;
   }
 }
 
 int fd;
-buffer b;
+substdio b;
 char bspace[1024];
 
 void put(char *buf,unsigned int len)
 {
-  if (buffer_put(&b,buf,len) == -1) die_write();
+  if (substdio_put(&b,buf,len) == -1) die_write();
 }
 
 int printable(char ch)
@@ -316,7 +317,7 @@ int main(int argc,char **argv)
     if (errno != error_noent) die_read();
   }
   else {
-    buffer_init(&b,buffer_unixread,fd,bspace,sizeof bspace);
+    substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
     if (getln(&b,&line,&match,'\n') == -1) die_read();
     if (!stralloc_0(&line)) die_read();
     if (line.s[0] == '#') {
@@ -330,9 +331,9 @@ int main(int argc,char **argv)
   if (!stralloc_catb(&packet,zone,zonelen)) die_generate();
   if (!stralloc_catb(&packet,DNS_T_SOA DNS_C_IN,4)) die_generate();
   uint16_pack_big(out,packet.len);
-  buffer_put(&netwrite,out,2);
-  buffer_put(&netwrite,packet.s,packet.len);
-  buffer_flush(&netwrite);
+  substdio_put(&netwrite,out,2);
+  substdio_put(&netwrite,packet.s,packet.len);
+  substdio_flush(&netwrite);
 
   netget(out,2);
   uint16_unpack_big(out,&dlen);
@@ -369,15 +370,15 @@ int main(int argc,char **argv)
 
   fd = open_trunc(fntmp);
   if (fd == -1) die_write();
-  buffer_init(&b,buffer_unixwrite,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,write,fd,bspace,sizeof bspace);
 
   if (!stralloc_copyb(&packet,"\0\0\0\0\0\1\0\0\0\0\0\0",12)) die_generate();
   if (!stralloc_catb(&packet,zone,zonelen)) die_generate();
   if (!stralloc_catb(&packet,DNS_T_AXFR DNS_C_IN,4)) die_generate();
   uint16_pack_big(out,packet.len);
-  buffer_put(&netwrite,out,2);
-  buffer_put(&netwrite,packet.s,packet.len);
-  buffer_flush(&netwrite);
+  substdio_put(&netwrite,out,2);
+  substdio_put(&netwrite,packet.s,packet.len);
+  substdio_flush(&netwrite);
 
   numsoa = 0;
   while (numsoa < 2) {
@@ -401,7 +402,7 @@ int main(int argc,char **argv)
     }
   }
 
-  if (buffer_flush(&b) == -1) die_write();
+  if (substdio_flush(&b) == -1) die_write();
   if (fsync(fd) == -1) die_write();
   if (close(fd) == -1) die_write(); /* NFS dorks */
   if (rename(fntmp,fn) == -1)

@@ -1,5 +1,6 @@
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include "subfd.h"
+#include <unistd.h>
 #include "cache.h"
 #include "str.h"
 
@@ -22,11 +23,11 @@ int main(int argc,char **argv)
     else {
       y = cache_get(x,i,&u,&ttl);
       if (y)
-        buffer_put(buffer_1,y,u);
-      buffer_puts(buffer_1,"\n");
+        substdio_put(subfdout,y,u);
+      substdio_puts(subfdout,"\n");
     }
   }
 
-  buffer_flush(buffer_1);
+  substdio_flush(subfdout);
   _exit(0);
 }

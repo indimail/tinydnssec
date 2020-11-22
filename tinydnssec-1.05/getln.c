@@ -1,7 +1,7 @@
 #include "byte.h"
 #include "getln.h"
 
-int getln(buffer *ss,stralloc *sa,int *match,int sep)
+int getln(substdio *ss,stralloc *sa,int *match,int sep)
 {
   char *cont;
   unsigned int clen;

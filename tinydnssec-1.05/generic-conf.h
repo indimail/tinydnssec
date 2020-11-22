@@ -2,7 +2,7 @@
 #define GENERIC_CONF_H
 
 #include <sys/types.h>
-#include "buffer.h"
+#include "substdio.h"
 
 extern void init(const char *,const char *);
 
@@ -12,7 +12,7 @@ extern void makelink(const char *, const char *, const char *);
 extern void start(const char *);
 extern void outs(const char *);
 extern void out(const char *,unsigned int);
-extern void copyfrom(buffer *);
+extern void copyfrom(substdio *);
 extern void finish(void);
 
 extern void perm(mode_t);

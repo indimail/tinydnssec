@@ -1,12 +1,12 @@
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include <unistd.h>
 
 char bspace[256];
-buffer b = BUFFER_INIT(buffer_unixwrite,1,bspace,sizeof bspace);
+substdio b = SUBSTDIO_FDBUF(write,1,bspace,sizeof bspace);
 
 void myputs(const char *s)
 {
-  if (buffer_puts(&b,s) == -1) _exit(111);
+  if (substdio_puts(&b,s) == -1) _exit(111);
 }
 
 int main(int argc,char **argv)
@@ -35,6 +35,6 @@ int main(int argc,char **argv)
   }
 
   myputs("\\\n\";\n");
-  if (buffer_flush(&b) == -1) _exit(111);
+  if (substdio_flush(&b) == -1) _exit(111);
   _exit(0);
 }

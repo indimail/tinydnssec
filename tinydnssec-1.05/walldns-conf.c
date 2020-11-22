@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include "strerr.h"
-#include "exit.h"
+#include <unistd.h>
 #include "auto_home.h"
 #include "generic-conf.h"
 

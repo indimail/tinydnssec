@@ -857,7 +857,11 @@ tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog conf-version conf
 
 clean:
 	rm -f `cat TARGETS` data data.cdb test/[ot]*
-	cd dq-20161210 && make clean && cd ../curvedns-$(curvedns_version) && make clean
+	cd dq-20161210 && make clean && cd ..
+	if test -f curvedns-$(curvedns_version)/Makefile ; then \
+		cd curvedns-$(curvedns_version) && make clean; \
+		make clean; \
+	fi
 
 distclean: clean
 	rm -f `cat TARGETS` data data.cdb test/[ot]*

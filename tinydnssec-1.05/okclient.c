@@ -17,7 +17,7 @@ int okclient(char ip[16])
   fn[0] = 'i';
   fn[1] = 'p';
   fn[2] = '/';
-  if (byte_equal(ip,12,V4mappedprefix)) {
+  if (byte_equal(ip,12, (const char *) V4mappedprefix)) {
     fn[3 + ip4_fmt(fn + 3,ip+12)] = 0;
     sep='.';
   } else {
