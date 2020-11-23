@@ -39,3 +39,5 @@ Release 1.1 Start 11/04/2017
 29. query.c, dnscache.c: use env variable QUERY_MAXNS, QUERY_MAXALIAS,
     QUERY_MAXLOOP, QUERY_MAXLEVEL to set maxns, max alias, max iteration and max level
 30. dnscaache-conf: create env/QUERY_MAXLOOP
+23/11/2020
+31. use libqmail for common functions

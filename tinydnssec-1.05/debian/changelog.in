@@ -28,3 +28,4 @@ tinydnssec (@version@-@release@) stable; urgency=low
   * query.[c,h]: Increase QUERY_MAXLEVEL to 10 from 5 to fix dnscache CNAME chain lookup problem with gluelessness & improve short ttl cname resolution and glueless answer from akadnsk
   * query.c, dnscache.c: use env variable QUERY_MAXNS, QUERY_MAXALIAS, QUERY_MAXLOOP, QUERY_MAXLEVEL to set maxns, max alias, max iteration and max level
   * dnscaache-conf: create env/QUERY_MAXLOOP
+  * use libqmail for common functions

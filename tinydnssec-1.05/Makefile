@@ -369,8 +369,7 @@ warn-auto.sh dnsgetroot.in conf-home
 	> dnsgetroot
 	chmod 755 dnsgetroot
 
-dnstxt: \
-load dnstxt.o iopause.o dns.a socket.a socket.lib
+dnstxt: load dnstxt.o iopause.o dns.a socket.a socket.lib
 	./load dnstxt iopause.o dns.a socket.a \
 	`cat socket.lib` -lqmail
 
@@ -510,7 +509,7 @@ pickdns-conf.o: \
 compile pickdns-conf.c auto_home.h generic-conf.h
 	./compile pickdns-conf.c
 
-pickdns-data: load pickdns-data.o ip4_scan.o ip6_scan.o
+pickdns-data: load pickdns-data.o ip4_scan.o ip6_scan.o dns.a
 	./load pickdns-data dns.a ip4_scan.o ip6_scan.o -lqmail
 
 pickdns-data.o: \
@@ -740,7 +739,7 @@ compile tinydns-conf.c auto_home.h generic-conf.h
 	./compile tinydns-conf.c
 
 tinydns-data: \
-load tinydns-data.o ip4_scan.o ip6_scan.o
+load tinydns-data.o ip4_scan.o ip6_scan.o dns.a
 	./load tinydns-data dns.a ip4_scan.o ip6_scan.o -lqmail
 
 tinydns-data.o: \

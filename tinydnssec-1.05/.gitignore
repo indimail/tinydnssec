@@ -181,3 +181,11 @@ walldns
 walldns-conf
 walldns-conf.o
 walldns.o
+debian/changelog
+debian/debian.tar.gz
+debian/dummy.tar.gz
+debian/postinst
+debian/postrm
+debian/preinst
+debian/prerm
+debian/tinydnssec.dsc
