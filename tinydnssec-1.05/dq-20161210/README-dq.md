@@ -2,7 +2,7 @@
 
 [dq](https://mojzis.com/software/dq/)
 
-Dq is a package with DNS/DNSCurve related software. It contains a recursive DNS server with DNSCurve support called dqcache and also a commandline tool to debug DNS/DNScurve called dq.
+dq is a package with DNS/DNSCurve related software. It contains a recursive DNS server with DNSCurve support called dqcache and also a commandline tool to debug DNS/DNScurve called dq.
 
 dq tool (… see examples)
 

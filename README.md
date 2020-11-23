@@ -142,7 +142,9 @@ under root - run dqcache server
 ```
 # envuidgid dqcache envdir /etc/indimail/dqcache/env dqcache
 ```
+
 ---------------------------------------------------------
+
 ## Compile and install curvedns
 
 ```
@@ -152,6 +154,10 @@ $ ./configure.curvedns
 $ make
 $ sudo make install
 ```
+
+### Setting up curvedns
+
+For help in installing and setting up curvedns look at this [Document](https://github.com/mbhangui/tinydnssec/blob/master/tinydnssec-1.05/curvedns-0.88/INSTALL-curvedns.md)
 
 # SUPPORT INFORMATION
 

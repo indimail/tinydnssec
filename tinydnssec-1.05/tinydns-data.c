@@ -154,14 +154,15 @@ void rr_start(const char type[2],unsigned long ttl,const char ttd[8],const char 
   rr_add(buf,4);
   rr_add(ttd,8);
 }
-void rr_finish(const char *owner)
+void rr_finish(const char *owner, int to_lower)
 {
   if (byte_equal(owner,2,"\1*")) {
     owner += 2;
     result.s[2] -= 19;
   }
   if (!stralloc_copyb(&key,owner,dns_domain_length(owner))) nomem();
-  case_lowerb(key.s,key.len);
+  if (to_lower)
+    case_lowerb(key.s,key.len);
   if (cdb_make_add(&cdb,key.s,key.len,result.s,result.len) == -1)
     die_datatmp();
 }
@@ -287,7 +288,7 @@ int main()
 	if (!dns_domain_fromdot(&d2,f[2].s,f[2].len)) nomem();
 	rr_addname(d2);
 	rr_add(soa,20);
-	rr_finish(d1);
+	rr_finish(d1, 1);
 	break;
 
       case '.': case '&':
@@ -311,17 +312,17 @@ int main()
 	  rr_add("\12hostmaster",11);
 	  rr_addname(d1);
 	  rr_add(defaultsoa,20);
-	  rr_finish(d1);
+	  rr_finish(d1, 1);
 	}
 
 	rr_start(DNS_T_NS,ttl,ttd,loc);
 	rr_addname(d2);
-	rr_finish(d1);
+	rr_finish(d1, 1);
 
 	if (ip4_scan(f[1].s,ip)) {
 	  rr_start(DNS_T_A,ttl,ttd,loc);
 	  rr_add(ip,4);
-	  rr_finish(d2);
+	  rr_finish(d2, 1);
 	}
 
 	break;
@@ -338,13 +339,13 @@ int main()
 	if (ip4_scan(f[1].s,ip)) {
 	  rr_start(DNS_T_A,ttl,ttd,loc);
 	  rr_add(ip,4);
-	  rr_finish(d1);
+	  rr_finish(d1, 1);
 
 	  if (line.s[0] == '=') {
 	    dns_name4_domain(dptr,ip);
 	    rr_start(DNS_T_PTR,ttl,ttd,loc);
 	    rr_addname(d1);
-	    rr_finish(dptr);
+	    rr_finish(dptr, 1);
 	  }
 	}
 	break;
@@ -360,18 +361,18 @@ int main()
 	if (ip6_scan_flat(f[1].s,ip6)) {
 	  rr_start(DNS_T_AAAA,ttl,ttd,loc);
 	  rr_add(ip6,16);
-	  rr_finish(d1);
+	  rr_finish(d1, 1);
 
 	  if (line.s[0] == '6') {	/* emit both .ip6.arpa and .ip6.int */
 	    dns_name6_domain(d6ptr,ip6,DNS_IP6_ARPA);
 	    rr_start(DNS_T_PTR,ttl,ttd,loc);
 	    rr_addname(d1);
-	    rr_finish(d6ptr);
+	    rr_finish(d6ptr, 1);
 
 	    dns_name6_domain(d6ptr,ip6,DNS_IP6_INT);
 	    rr_start(DNS_T_PTR,ttl,ttd,loc);
 	    rr_addname(d1);
-	    rr_finish(d6ptr);
+	    rr_finish(d6ptr, 1);
 	  }
 	}
 	break;
@@ -398,12 +399,12 @@ int main()
 	uint16_pack_big(buf,u);
 	rr_add(buf,2);
 	rr_addname(d2);
-	rr_finish(d1);
+	rr_finish(d1, 1);
 
 	if (ip4_scan(f[1].s,ip)) {
 	  rr_start(DNS_T_A,ttl,ttd,loc);
 	  rr_add(ip,4);
-	  rr_finish(d2);
+	  rr_finish(d2, 1);
 	}
 	break;
 	
@@ -435,12 +436,12 @@ int main()
 	rr_start(DNS_T_SRV,ttl,ttd,loc);
 	rr_add(srv,6);
 	rr_addname(d2);
-	rr_finish(d1);
+	rr_finish(d1, 1);
 
 	if (ip4_scan(f[1].s,ip)) {
 	  rr_start(DNS_T_A,ttl,ttd,loc);
 	  rr_add(ip,4);
-	  rr_finish(d2);
+	  rr_finish(d2, 1);
 	}
 	break;
 
@@ -457,7 +458,7 @@ int main()
 	else
 	  rr_start(DNS_T_PTR,ttl,ttd,loc);
 	rr_addname(d2);
-	rr_finish(d1);
+	rr_finish(d1, 1);
 	break;
 
       case '\'':
@@ -484,7 +485,7 @@ int main()
 	  i += k;
 	}
 
-	rr_finish(d1);
+	rr_finish(d1, 1);
 	break;
 
       case ':':
@@ -516,7 +517,7 @@ int main()
 
 	rr_start(type,ttl,ttd,loc);
 	rr_add(f[2].s,f[2].len);
-	rr_finish(d1);
+	rr_finish(d1, u != 65282);
 	break;
 
       default:
