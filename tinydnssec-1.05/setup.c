@@ -249,7 +249,7 @@ int mode;
     strerr_die6sys(111,FATAL,"unable to chmod .../",subdir,"/",file,": ");
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char **argv)
 {
   int             opt;
 

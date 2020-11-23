@@ -60,7 +60,7 @@ void errout(int i)
       x[i].middle.s[j] = '-';
 }
 
-int main(int argc,const char **argv)
+int main(int argc,char **argv)
 {
   struct taia stamp;
   struct taia deadline;
