@@ -4,7 +4,8 @@
 #include "byte.h"
 #include "case.h"
 #include "env.h"
-#include "buffer.h"
+#include "substdio.h"
+#include "subfd.h"
 #include "strerr.h"
 #include "ip4.h"
 #include "ip6.h"
@@ -159,7 +160,7 @@ int main()
 
   initialize();
 
-  buffer_putsflush(buffer_2,starting);
+  substdio_putsflush(subfderr,starting);
 
   for (;;) {
     struct taia stamp;

@@ -1,5 +1,6 @@
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include "subfd.h"
+#include <unistd.h>
 #include "fmt.h"
 #include "scan.h"
 #include "dns.h"
@@ -62,19 +63,19 @@ int main(int argc,char **argv)
     }
 
     u = (unsigned char) ip[0];
-    buffer_put(buffer_1,strnum,fmt_ulong(strnum,u));
-    buffer_puts(buffer_1,".");
+    substdio_put(subfdout,strnum,fmt_ulong(strnum,u));
+    substdio_puts(subfdout,".");
     u = (unsigned char) ip[1];
-    buffer_put(buffer_1,strnum,fmt_ulong(strnum,u));
-    buffer_puts(buffer_1,".");
+    substdio_put(subfdout,strnum,fmt_ulong(strnum,u));
+    substdio_puts(subfdout,".");
     u = (unsigned char) ip[2];
-    buffer_put(buffer_1,strnum,fmt_ulong(strnum,u));
-    buffer_puts(buffer_1,".");
+    substdio_put(subfdout,strnum,fmt_ulong(strnum,u));
+    substdio_puts(subfdout,".");
     u = (unsigned char) ip[3];
-    buffer_put(buffer_1,strnum,fmt_ulong(strnum,u));
-    buffer_puts(buffer_1,"\n");
+    substdio_put(subfdout,strnum,fmt_ulong(strnum,u));
+    substdio_puts(subfdout,"\n");
   }
 
-  buffer_flush(buffer_1);
+  substdio_flush(subfdout);
   _exit(0);
 }

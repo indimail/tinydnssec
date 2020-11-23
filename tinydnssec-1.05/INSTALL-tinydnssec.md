@@ -38,7 +38,7 @@ to install before the tinydnssec patch applies:
 
 ### Test
 
-run-tests.sh will sign test/data using keys from test/example*, then issue some queries using tinydns-get, i. e. without any networking involved.
+run-tests.sh will sign test/data using keys from test/example\*, then issue some queries using tinydns-get, i.e. without any networking involved.
 
 As root, start tinydns / axfrdns on a local address (127.0.0.3), then execute
 

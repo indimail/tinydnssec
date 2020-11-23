@@ -1,5 +1,6 @@
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include "subfd.h"
+#include <unistd.h>
 #include "strerr.h"
 #include "ip4.h"
 #include "ip6.h"
@@ -30,12 +31,12 @@ int main(int argc,char **argv)
 	strerr_die4sys(111,FATAL,"unable to find host name for ",*argv,": ");
     }
 
-    buffer_put(buffer_1,out.s,out.len);
-    buffer_puts(buffer_1,"\n");
+    substdio_put(subfdout,out.s,out.len);
+    substdio_puts(subfdout,"\n");
 
     ++argv;
   }
 
-  buffer_flush(buffer_1);
+  substdio_flush(subfdout);
   _exit(0);
 }

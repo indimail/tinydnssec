@@ -1,5 +1,6 @@
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include "subfd.h"
+#include <unistd.h>
 #include "strerr.h"
 #include "uint16.h"
 #include "byte.h"
@@ -41,17 +42,17 @@ int main(int argc,char **argv)
       if (!stralloc_copys(&out,"0 ")) nomem();
       if (!dns_domain_todot_cat(&out,q)) nomem();
       if (!stralloc_cats(&out,"\n")) nomem();
-      buffer_put(buffer_1,out.s,out.len);
+      substdio_put(subfdout,out.s,out.len);
     }
     else {
       i = 0;
       while (i + 2 < out.len) {
 	j = byte_chr(out.s + i + 2,out.len - i - 2,0);
 	uint16_unpack_big(out.s + i,&pref);
-	buffer_put(buffer_1,strnum,fmt_ulong(strnum,pref));
-	buffer_puts(buffer_1," ");
-	buffer_put(buffer_1,out.s + i + 2,j);
-	buffer_puts(buffer_1,"\n");
+	substdio_put(subfdout,strnum,fmt_ulong(strnum,pref));
+	substdio_puts(subfdout," ");
+	substdio_put(subfdout,out.s + i + 2,j);
+	substdio_puts(subfdout,"\n");
 	i += j + 3;
       }
     }
@@ -59,6 +60,6 @@ int main(int argc,char **argv)
     ++argv;
   }
 
-  buffer_flush(buffer_1);
+  substdio_flush(subfdout);
   _exit(0);
 }

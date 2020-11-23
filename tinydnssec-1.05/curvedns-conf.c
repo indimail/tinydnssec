@@ -1,8 +1,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include "strerr.h"
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
 #include "open.h"
 #include "auto_home.h"
 #include "auto_sysconfdir.h"
@@ -22,7 +21,7 @@ struct passwd *pw;
 const char *myip, *myport, *targetip, *targetport;
 int privatekeyfd;
 char pbuf[64];
-buffer sspbuf;
+substdio sspbuf;
 
 int main(int argc,char **argv)
 {
@@ -84,7 +83,7 @@ int main(int argc,char **argv)
   outs(auto_home); outs("/bin/curvedns $LISTEN_IPS $LISTEN_PORT $TARGET_IP $TARGET_PORT\n'\n"); finish();
   perm(0755);
   start("private.key");
-  buffer_init(&sspbuf,buffer_unixread,privatekeyfd,pbuf,sizeof pbuf);
+  substdio_fdbuf(&sspbuf,read,privatekeyfd,pbuf,sizeof pbuf);
   copyfrom(&sspbuf);
   finish();
   perm(0600);

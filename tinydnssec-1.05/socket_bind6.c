@@ -20,7 +20,7 @@ int socket_bind6(int s,const char ip[16],uint16 port,uint32 scope_id)
       return socket_bind4(s,ip+12,port);
 #ifdef LIBC_HAS_IP6
   }
-  byte_zero(&sa,sizeof sa);
+  byte_zero((char *) &sa,sizeof sa);
   sa.sin6_family = AF_INET6;
   uint16_pack_big((char *) &sa.sin6_port,port);
 /*  implicit: sa.sin6_flowinfo = 0; */

@@ -1,7 +1,8 @@
 #include <unistd.h>
 #include "uint16.h"
 #include "strerr.h"
-#include "buffer.h"
+#include "substdio.h"
+#include "subfd.h"
 #include "scan.h"
 #include "str.h"
 #include "byte.h"
@@ -95,6 +96,6 @@ int main(int argc,char **argv)
     if (!printpacket_cat(&out,tx.packet,tx.packetlen)) oops();
   }
 
-  buffer_putflush(buffer_1,out.s,out.len);
+  substdio_putflush(subfdout,out.s,out.len);
   _exit(0);
 }

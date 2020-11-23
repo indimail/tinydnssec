@@ -3,7 +3,7 @@
 #include "dns.h"
 #include "uint32.h"
 #include "uint64.h"
-#include "exit.h"
+#include <unistd.h>
 #include "tai.h"
 #include "cache.h"
 #include "siphash.h"

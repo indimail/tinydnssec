@@ -1,4 +1,5 @@
-#include "buffer.h"
+#include "substdio.h"
+#include "subfd.h"
 #include "uint32.h"
 #include "uint16.h"
 #include "error.h"
@@ -21,24 +22,24 @@ static void u64_print(void)
     u64 /= 10;
   } while(u64);
 
-  buffer_put(buffer_2,buf + pos,sizeof buf - pos);
+  substdio_put(subfderr,buf + pos,sizeof buf - pos);
 }
 
 static void hex(unsigned char c)
 {
-  buffer_put(buffer_2,"0123456789abcdef" + (c >> 4),1);
-  buffer_put(buffer_2,"0123456789abcdef" + (c & 15),1);
+  substdio_put(subfderr,"0123456789abcdef" + (c >> 4),1);
+  substdio_put(subfderr,"0123456789abcdef" + (c & 15),1);
 }
 
 static void string(const char *s)
 {
-  buffer_puts(buffer_2,s);
+  substdio_puts(subfderr,s);
 }
 
 static void line(void)
 {
   string("\n");
-  buffer_flush(buffer_2);
+  substdio_flush(subfderr);
 }
 
 static void space(void)
@@ -81,7 +82,7 @@ static void name(const char *q)
       --state;
       if ((ch <= 32) || (ch > 126)) ch = '?';
       if ((ch >= 'A') && (ch <= 'Z')) ch += 32;
-      buffer_put(buffer_2,&ch,1);
+      substdio_put(subfderr,&ch,1);
     }
     string(".");
   }
@@ -148,7 +149,7 @@ void log_tx(const char *q,const char qtype[2],const char *control,const char ser
   logtype(qtype); space(); name(q); space();
   name(control);
   for (i = 0;i < 256;i += 16)
-    if (byte_diff(servers + i,16,V6any)) {
+    if (byte_diff(servers + i,16,(const char *) V6any)) {
       space();
       ip(servers + i);
     }

@@ -1,9 +1,10 @@
-#include "buffer.h"
+#include "substdio.h"
+#include "subfd.h"
 #include "qlog.h"
 
 static void put(char c)
 {
-  buffer_put(buffer_2,&c,1);
+  substdio_put(subfderr,&c,1);
 }
 
 static void hex(unsigned char c)
@@ -35,7 +36,7 @@ void qlog(const char ip[16],uint16 port,const char id[2],const char *q,const cha
   put(':');
   hex(id[0]);
   hex(id[1]);
-  buffer_puts(buffer_2,result);
+  substdio_puts(subfderr,result);
   hex(qtype[0]);
   hex(qtype[1]);
   put(' ');
@@ -59,5 +60,5 @@ void qlog(const char ip[16],uint16 port,const char id[2],const char *q,const cha
     }
 
   put('\n');
-  buffer_flush(buffer_2);
+  substdio_flush(subfderr);
 }

@@ -5,7 +5,7 @@ void h(const char *, int,int,int);
 void d(const char *,const char *,int,int,int);
 void l(const char *,const char *,const char *);
 
-void hier(char *inst_dir)
+void hier(const char *inst_dir)
 {
   const char *auto_h = auto_home;
 

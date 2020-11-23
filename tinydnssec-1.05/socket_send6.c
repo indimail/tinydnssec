@@ -16,13 +16,13 @@ int socket_send6(int s,const char *buf,unsigned int len,const char ip[16],uint16
   struct sockaddr_in sa;
 #endif
 
-  byte_zero(&sa,sizeof sa);
+  byte_zero((char *) &sa,sizeof sa);
 #ifdef LIBC_HAS_IP6
   if (noipv6) {
 #endif
     if (ip6_isv4mapped(ip))
       return socket_send4(s,buf,len,ip+12,port);
-    if (byte_equal(ip,16,V6loopback))
+    if (byte_equal(ip,16,(const char *) V6loopback))
       return socket_send4(s,buf,len,ip4loopback,port);
 #ifdef LIBC_HAS_IP6
     errno=error_proto;

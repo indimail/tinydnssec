@@ -1,15 +1,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "buffer.h"
+#include "substdio.h"
 #include "stralloc.h"
 #include "strerr.h"
 #include "error.h"
 #include "open.h"
-#include "exit.h"
 #include "sgetopt.h"
 
-extern void hier(char *);
+extern void hier(const char *);
 
 char           *destdir = 0, *mandir = 0;
 const char     *usage = "usage: setup -d destdir [-m mandir] [instdir]";
@@ -135,10 +134,10 @@ int mode;
     strerr_die6sys(111,FATAL,"unable to chmod ",tmpdir.s,"/",subdir,": ");
 }
 
-char inbuf[BUFFER_INSIZE];
-char outbuf[BUFFER_OUTSIZE];
-buffer ssin;
-buffer ssout;
+char inbuf[SUBSTDIO_INSIZE];
+char outbuf[SUBSTDIO_OUTSIZE];
+substdio ssin;
+substdio ssout;
 
 void c(home,subdir,file,uid,gid,mode)
 char *home;
@@ -157,7 +156,7 @@ int mode;
   fdin = open_read(file);
   if (fdin == -1)
     strerr_die4sys(111,FATAL,"unable to read ",file,": ");
-  buffer_init(&ssin,buffer_unixread,fdin,inbuf,sizeof inbuf);
+  substdio_fdbuf(&ssin,read,fdin,inbuf,sizeof inbuf);
 
   if (destdir) {
     if (!stralloc_copys(&tmpdir, destdir))
@@ -178,9 +177,9 @@ int mode;
   fdout = open_trunc(file);
   if (fdout == -1)
     strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
-  buffer_init(&ssout,buffer_unixwrite,fdout,outbuf,sizeof outbuf);
+  substdio_fdbuf(&ssout,write,fdout,outbuf,sizeof outbuf);
 
-  switch(buffer_copy(&ssout,&ssin)) {
+  switch(substdio_copy(&ssout,&ssin)) {
     case -2:
       strerr_die4sys(111,FATAL,"unable to read ",file,": ");
     case -3:
@@ -188,7 +187,7 @@ int mode;
   }
 
   close(fdin);
-  if (buffer_flush(&ssout) == -1)
+  if (substdio_flush(&ssout) == -1)
     strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
   if (fsync(fdout) == -1)
     strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
@@ -231,13 +230,13 @@ int mode;
   fdout = open_trunc(file);
   if (fdout == -1)
     strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
-  buffer_init(&ssout,buffer_unixwrite,fdout,outbuf,sizeof outbuf);
+  substdio_fdbuf(&ssout,write,fdout,outbuf,sizeof outbuf);
 
   while (len-- > 0)
-    if (buffer_put(&ssout,"",1) == -1)
+    if (substdio_put(&ssout,"",1) == -1)
       strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
 
-  if (buffer_flush(&ssout) == -1)
+  if (substdio_flush(&ssout) == -1)
     strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
   if (fsync(fdout) == -1)
     strerr_die6sys(111,FATAL,"unable to write .../",subdir,"/",file,": ");
@@ -250,7 +249,7 @@ int mode;
     strerr_die6sys(111,FATAL,"unable to chmod .../",subdir,"/",file,": ");
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
   int             opt;
 

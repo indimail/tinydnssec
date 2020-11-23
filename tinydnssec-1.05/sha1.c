@@ -86,7 +86,7 @@ A million repetitions of "a"
   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
 */
 
-/* #define SHA1HANDSOFF  */
+#define SHA1HANDSOFF
 
 #ifdef DNSSEC
 #ifdef HAVE_CONFIG_H

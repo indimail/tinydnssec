@@ -17,9 +17,9 @@ int find_client_loc(char loc[2],const char ip[16])
   byte_zero(loc,2);
   key[0] = 0;
   key[1] = '%';
-  if (byte_equal(ip,12,V4mappedprefix)) {
+  if (byte_equal(ip,12,(const char *) V4mappedprefix)) {
     key[2] = 'f';
-    byte_copy(key + 3,4,ip+12);
+    byte_copy(key + 3,4,(const char *) ip+12);
     r = cdb_find(&c,key,7);
     if (!r) r = cdb_find(&c,key,6);
     if (!r) r = cdb_find(&c,key,5);

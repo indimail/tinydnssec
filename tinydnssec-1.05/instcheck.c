@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include "strerr.h"
 #include "error.h"
-#include "exit.h"
 #include "stralloc.h"
 #include "str.h"
 

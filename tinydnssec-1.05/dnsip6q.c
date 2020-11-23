@@ -1,5 +1,6 @@
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include "subfd.h"
+#include <unistd.h>
 #include "strerr.h"
 #include "ip6.h"
 #include "dns.h"
@@ -27,17 +28,17 @@ int main(int argc,char **argv)
     if (dns_ip6_qualify(&out,&fqdn,&in) == -1)
       strerr_die4sys(111,FATAL,"unable to find IP6 address for ",*argv,": ");
 
-    buffer_put(buffer_1,fqdn.s,fqdn.len);
-    buffer_puts(buffer_1," ");
+    substdio_put(subfdout,fqdn.s,fqdn.len);
+    substdio_puts(subfdout," ");
     for (i = 0;i + 16 <= out.len;i += 16) {
-      buffer_put(buffer_1,str,ip6_fmt(str,out.s + i));
-      buffer_puts(buffer_1," ");
+      substdio_put(subfdout,str,ip6_fmt(str,out.s + i));
+      substdio_puts(subfdout," ");
     }
-    buffer_puts(buffer_1,"\n");
+    substdio_puts(subfdout,"\n");
 
     ++argv;
   }
 
-  buffer_flush(buffer_1);
+  substdio_flush(subfdout);
   _exit(0);
 }

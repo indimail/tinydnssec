@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <utime.h>
 #include "scan.h"
-#include "exit.h"
+#include <unistd.h>
 
 char *fn;
 

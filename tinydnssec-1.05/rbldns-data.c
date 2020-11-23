@@ -2,8 +2,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "buffer.h"
-#include "exit.h"
+#include "substdio.h"
+#include <unistd.h>
 #include "cdb_make.h"
 #include "open.h"
 #include "stralloc.h"
@@ -22,7 +22,7 @@ void nomem(void)
 }
 
 int fd;
-buffer b;
+substdio b;
 char bspace[1024];
 
 int fdcdb;
@@ -57,7 +57,7 @@ int main()
 
   fd = open_read("data");
   if (fd == -1) strerr_die2sys(111,FATAL,"unable to open data: ");
-  buffer_init(&b,buffer_unixread,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
 
   fdcdb = open_trunc("data.tmp");
   if (fdcdb == -1) die_datatmp();

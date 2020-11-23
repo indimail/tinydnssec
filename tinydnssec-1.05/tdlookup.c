@@ -61,22 +61,11 @@ static uint32   ttl;
 #ifdef DNSSEC
 static char    *nsec3;
 static char    *cname = 0;
-
-/*
- * returns -1 on failure,
- * * returns 0 on not found
- * * returns 1 when found
- * * returns 2 when flagwild is true and no wildcard match has been found but
- * * a direct match exists. This is for RFC-1034 section 4.3.3 compatibility.
- */
 #endif
 static int
 find(char *d, int flagwild)
 {
 	int             r;
-#ifdef DNSSEC
-	int             direct = 0;
-#endif
 	char            ch;
 	struct tai      cutoff;
 	char            ttd[8];
@@ -86,16 +75,8 @@ find(char *d, int flagwild)
 
 	for (;;) {
 		r = cdb_findnext(&c, d, dns_domain_length(d));
-#ifdef DNSSEC
-		if (r < 0)
-			return r;			/* -1 */
-		if (r == 0) {
-			return flagwild ? direct ? 2 : 0 : 0;
-		}
-#else
 		if (r <= 0)
 			return r;
-#endif
 		dlen = cdb_datalen(&c);
 		if (dlen > sizeof data)
 			return -1;
@@ -115,9 +96,6 @@ find(char *d, int flagwild)
 			if (byte_diff(recordloc, 2, clientloc))
 				continue;
 		}
-#ifdef DNSSEC
-		direct = direct || (ch != '*');
-#endif
 		if (flagwild != (ch == '*'))
 			continue;
 		dpos = dns_packet_copy(data, dlen, dpos, ttlstr, 4);
@@ -172,6 +150,8 @@ static int
 addNSEC3(char *hashName)
 {
 	int             r;
+
+	if (!want(hashName, DNS_T_NSEC3)) return 1;
 
 	cdb_findstart(&c);
 	while ((r = find(hashName, 0))) {
@@ -250,10 +230,7 @@ addNSEC3Cover(char *name, char *control, int wild)
 /*
  * Find covering hash 
  */
-	char            nibble = ((digest[0] >> 4) & 0xf) + '0';
-	if (nibble > '9') {
-		nibble += 'a' - '9' - 1;
-	}
+	char nibble = ((digest[0] >> 4) & 0xf) + 'A';
 	salt[0] = 1;
 	salt[1] = nibble;
 	byte_copy(salt + 2, dns_domain_length(control), control);
@@ -263,7 +240,7 @@ addNSEC3Cover(char *name, char *control, int wild)
 			return 0;
 		if (byte_equal(type, 2, DNS_T_HASHLIST) && dlen - dpos >= SHA1_DIGEST_SIZE) {
 			int             hpos = dpos + SHA1_DIGEST_SIZE;
-			while (byte_diff(digest, SHA1_DIGEST_SIZE, data + hpos) > 0 && hpos < dlen)
+			while (byte_diff((char *) digest, SHA1_DIGEST_SIZE, data + hpos) > 0 && hpos < dlen)
 				hpos += SHA1_DIGEST_SIZE;
 			hpos -= SHA1_DIGEST_SIZE;
 			*salt = base32hex(salt + 1, (uint8_t *) data + hpos, SHA1_DIGEST_SIZE);
@@ -416,10 +393,6 @@ doit(char *q, char qtype[2])
 		while ((r = find(wild, wild != q))) {
 			if (r == -1)
 				return 0;
-#ifdef DNSSEC
-			if (r == 2)
-				break;
-#endif
 			flagfound = 1;
 			if (flaggavesoa && byte_equal(type, 2, DNS_T_SOA))
 				continue;
@@ -542,10 +515,6 @@ doit(char *q, char qtype[2])
 				return 0;
 			response_rfinish(RESPONSE_ANSWER);
 		}
-#ifdef DNSSEC
-		if (r == 2)
-			break;
-#endif
 		for (i = 0; i < addrnum; ++i)
 			if (i < 8) {
 				if (!response_rstart(q, DNS_T_A, addrttl))
@@ -568,7 +537,15 @@ doit(char *q, char qtype[2])
 		if (wild == control)
 			break;
 		if (!*wild)
-			break;				/* impossible */
+			break; /* impossible */
+#ifdef DNSSEC
+		if (wild != q) {
+			cdb_findstart(&c);
+			if (find(wild,0))
+				break; /* RFC-1089 section 4.3.3 */
+		}
+
+#endif
 		wild += *wild;
 		wild += 1;
 	}
