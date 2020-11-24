@@ -103,7 +103,6 @@ make-compile
 make-load
 makelib
 okclient.o
-openreadclose.o
 parsetype.o
 pickdns
 pickdns-conf
@@ -125,7 +124,6 @@ rbldns-conf.o
 rbldns-data
 rbldns-data.o
 rbldns.o
-readclose.o
 response.o
 roots.o
 rts

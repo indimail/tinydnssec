@@ -191,11 +191,11 @@ compile dns_random.c dns.h iopause.h
 	./compile dns_random.c
 
 dns_rcip.o: \
-compile dns_rcip.c ip4.h dns.h iopause.h openreadclose.h
+compile dns_rcip.c ip4.h dns.h iopause.h
 	./compile dns_rcip.c
 
 dns_rcrw.o: \
-compile dns_rcrw.c dns.h iopause.h openreadclose.h
+compile dns_rcrw.c dns.h iopause.h
 	./compile dns_rcrw.c
 
 dns_resolve.o: \
@@ -241,7 +241,7 @@ generic-conf.h auto_sysconfdir.h
 dnscache.o: \
 compile dnscache.c ip4.h socket.h dns.h \
 roots.h iopause.h query.h response.h cache.h \
-log.h okclient.h droproot.h openreadclose.h
+log.h okclient.h droproot.h
 	./compile dnscache.c
 
 dnsfilter: \
@@ -587,14 +587,6 @@ rbldns.o: \
 compile rbldns.c ip4.h dns.h iopause.h dd.h response.h
 	./compile rbldns.c
 
-openreadclose.o: \
-compile openreadclose.c readclose.h openreadclose.h 
-	./compile openreadclose.c
-
-readclose.o: \
-compile readclose.c readclose.h
-	./compile readclose.c
-
 response.o: \
 compile response.c dns.h iopause.h response.h conf-dnssec
 	./compile `grep -h -v "^#" conf-dnssec` response.c
@@ -775,17 +767,17 @@ compile tinydns.c dns.h iopause.h
 	./compile tinydns.c
 
 socket.a: \
-makelib readclose.o socket_accept.o socket_bind.o socket_conn.o \
+makelib socket_accept.o socket_bind.o socket_conn.o \
 socket_listen.o socket_recv.o socket_send.o socket_tcp.o \
 socket_udp.o socket_udp6.o socket_getifidx.o socket_recv6.o \
 socket_send6.o socket_bind6.o socket_noipv6.o socket_tcp6.o \
-socket_connect6.o socket_accept6.o openreadclose.o \
+socket_connect6.o socket_accept6.o \
 ip4_fmt.o ip6_fmt.o ip4_scan.o ip6_scan.o
-	./makelib socket.a readclose.o socket_accept.o socket_bind.o \
+	./makelib socket.a socket_accept.o socket_bind.o \
 	socket_conn.o socket_listen.o socket_recv.o socket_send.o \
 	socket_tcp.o socket_udp.o socket_udp6.o socket_getifidx.o \
 	socket_recv6.o socket_send6.o socket_bind6.o socket_noipv6.o \
-	socket_tcp6.o socket_connect6.o socket_accept6.o openreadclose.o \
+	socket_tcp6.o socket_connect6.o socket_accept6.o \
 	ip4_fmt.o ip6_fmt.o ip4_scan.o ip6_scan.o
 
 utime: load utime.o 
