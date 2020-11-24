@@ -159,6 +159,11 @@ $ sudo make install
 
 For help in installing and setting up curvedns look at this [Document](https://github.com/mbhangui/tinydnssec/blob/master/tinydnssec-1.05/curvedns-0.88/INSTALL-curvedns.md)
 
+# Binary Installation
+
+binaries for tinydnssec is available for most linux distributions at [openSUSE Build Service](https://software.opensuse.org//download.html?project=home%3Aindimail&package=tinydnssec). You just need to click and follow the instructions to install and setup tinydnssec with ease.
+
+
 # SUPPORT INFORMATION
 
 tinydnssec is supported at IndiMail
