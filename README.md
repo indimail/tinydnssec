@@ -159,10 +159,58 @@ $ sudo make install
 
 For help in installing and setting up curvedns look at this [Document](https://github.com/mbhangui/tinydnssec/blob/master/tinydnssec-1.05/curvedns-0.88/INSTALL-curvedns.md)
 
-# Binary Installation
+# Binary Builds on openSUSE Build Service
 
-binaries for tinydnssec is available for most linux distributions at [openSUSE Build Service](https://software.opensuse.org//download.html?project=home%3Aindimail&package=tinydnssec). You just need to click and follow the instructions to install and setup tinydnssec with ease.
+You can get binary RPM / Debian packages at
 
+* [Stable Releases](http://download.opensuse.org/repositories/home:/indimail/)
+* [Experimental Releases](http://download.opensuse.org/repositories/home:/mbhangui/)
+
+If you want to use DNF / YUM / apt-get, the corresponding install instructions for the two repositories, depending on whether you want to install a stable or an experimental release, are
+
+* [Stable](https://software.opensuse.org/download.html?project=home%3Aindimail&package=ezmlm-idx)
+* [Experimental](https://software.opensuse.org/download.html?project=home%3Ambhangui&package=ezmlm-idx)
+
+```
+Currently, the list of supported distributions for IndiMail is
+
+    * SUSE
+          o openSUSE_Leap_15.0
+          o openSUSE_Leap_15.1
+          o openSUSE_Leap_15.2
+          o openSUSE_Tumbleweed
+          o SUSE Linux Enterprise 12
+          o SUSE Linux Enterprise 12 SP1
+          o SUSE Linux Enterprise 12 SP2
+          o SUSE Linux Enterprise 12 SP3
+          o SUSE Linux Enterprise 12 SP4
+          o SUSE Linux Enterprise 12 SP5
+          o SUSE Linux Enterprise 15
+          o SUSE Linux Enterprise 15 SP1
+
+    * Red Hat
+          o Fedora 33
+          o Fedora 32
+          o Red Hat Enterprise Linux 6
+          o Red Hat Enterprise Linux 7
+          o CentOS 6
+          o CentOS 7
+          o CentOS 8
+
+    * Debian
+          o Debian  8.0
+          o Debian  9.0
+          o Debian 10.0
+
+    * Ubuntu
+          o Ubuntu 16.04
+          o Ubuntu 17.04
+          o Ubuntu 18.04
+          o Ubuntu 19.04
+          o Ubuntu 19.10
+          o Ubuntu 20.04
+          o Ubuntu 20.10
+```
 
 # SUPPORT INFORMATION
 
