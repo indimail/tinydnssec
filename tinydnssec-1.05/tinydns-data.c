@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -24,6 +23,8 @@
 #define TTL_NEGATIVE 2560
 
 #define FATAL "tinydns-data: fatal: "
+
+int rename(const char *old, const char *new);
 
 void die_datatmp(void)
 {
