@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -15,6 +14,8 @@
 #include "ip4.h"
 
 #define FATAL "rbldns-data: fatal: "
+
+int rename(const char *old, const char *new);
 
 void nomem(void)
 {

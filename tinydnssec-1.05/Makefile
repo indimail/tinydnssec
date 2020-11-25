@@ -841,7 +841,7 @@ compile dns-notify.c dns-notify.h
 
 dns-notify: \
 load dns-notify.o
-	./load dns-notify
+	./load dns-notify -lqmail
 
 tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog conf-version conf-release
 	(cat $@.in;./catChangeLog) | $(edit) > $@

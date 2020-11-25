@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -19,6 +18,8 @@
 
 #define TTL_NS 259200
 #define TTL_POSITIVE 86400
+
+int rename(const char *old, const char *new);
 
 char *fn;
 char *fnnew;

@@ -1,5 +1,3 @@
- 
-#include <stdio.h>
 #include <string.h>
 #include "uint32.h"
 #include "uint64.h"
