@@ -38,9 +38,11 @@ CurveDNS supports:
 
 # Source Compiling/Linking
 
+tinydnssec uses functions from [libqmail](https://github.com/mbhangui/libqmail) for standard io, string functions and other common tasks.
+
 ## Download / clone libqmail
 
-libqmail uses GNU autotools. You need to haave autoconf, automake, libtool and pkg config package. Follow the instructions below to have them installed in case you don't have them.
+libqmail uses GNU autotools. You need to have autoconf, automake, libtool and pkg config package. Follow the instructions below to have them installed in case you don't have them.
 
 ```
 $ cd /usr/local/src
