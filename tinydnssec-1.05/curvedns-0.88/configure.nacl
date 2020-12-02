@@ -7,7 +7,7 @@
 
 project=nacl
 version=`cat "$project"/version`
-shorthostname=`hostname | sed 's/\..*//' | tr -cd '[a-z][A-Z][0-9]'`
+shorthostname=`uname -n | sed 's/\..*//' | tr -cd '[a-z][A-Z][0-9]'`
 
 top="`pwd`/$project/build"
 bin="$top/bin"
