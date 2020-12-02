@@ -3,7 +3,7 @@ Section: misc
 Priority: optional
 Maintainer: Manvendra Bhangui <manvendra@indimail.org>
 Standards-Version: 3.9.1
-Build-Depends: cdbs, debhelper (>= 9), m4, autotools-dev, libev-dev, libqmail-dev
+Build-Depends: cdbs, debhelper (>= 9), m4, autotools-dev, binutils, coreutils, libev-dev, libqmail-dev
 Homepage: http://indimail.sourceforge.net
 
 Package: tinydnssec
