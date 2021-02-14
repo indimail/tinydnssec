@@ -63,7 +63,7 @@ compile axfrdns-conf.c auto_home.h generic-conf.h
 	./compile axfrdns-conf.c
 
 axfrdns.o: \
-compile axfrdns.c droproot.h ip4.h \
+compile axfrdns.c droproot.h ip4.h iopause.h \
 dns.h qlog.h response.h clientloc.h conf-dnssec
 	./compile `grep -h -v "^#" conf-dnssec` axfrdns.c
 
@@ -215,7 +215,7 @@ compile dns_transmit.c socket.h dns.h iopause.h
 	./compile dns_transmit.c
 
 dns_txt.o: \
-compile dns_txt.c dns.h
+compile dns_txt.c dns.h iopause.h
 	./compile dns_txt.c
 
 dnscache: \
