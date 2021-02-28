@@ -29,3 +29,4 @@ tinydnssec (@version@-@release@) stable; urgency=low
   * query.c, dnscache.c: use env variable QUERY_MAXNS, QUERY_MAXALIAS, QUERY_MAXLOOP, QUERY_MAXLEVEL to set maxns, max alias, max iteration and max level
   * dnscaache-conf: create env/QUERY_MAXLOOP
   * use libqmail for common functions
+  * Makefile: added iopause.h depdendency for dns.h
