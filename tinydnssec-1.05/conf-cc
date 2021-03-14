@@ -1,3 +1,3 @@
-gcc -I/usr/include/qmail -g -O2 -fPIC -Wall -Wimplicit -Wunused -Wcomment -Wchar-subscripts -Wuninitialized -Wshadow -Wcast-align -Wwrite-strings
+cc -I/usr/include/qmail -I/opt/local/include/qmail -I/usr/local/include/qmail -g -O2 -fPIC -Wall -Wimplicit -Wunused -Wcomment -Wchar-subscripts -Wuninitialized -Wshadow -Wcast-align -Wwrite-strings
 
 This will be used to compile .c files.
