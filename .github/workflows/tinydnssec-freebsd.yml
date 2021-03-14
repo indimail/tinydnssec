@@ -40,4 +40,4 @@ jobs:
           cd libqmail; ./default.configure; make; make install-strip
           cd ../main/tinydnssec-1.05; ./default.configure; make
           cd dq-20161210; make
-          cd ../curvedns-0.88; make
+          cd ../curvedns-0.88; ./configure.nacl; ./configure.curvedns; make

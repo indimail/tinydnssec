@@ -25,7 +25,9 @@ jobs:
     
     steps:
     - name: extra_packages
-      run: if [ "${OS}" = "macos-latest" ]; then brew install automake autoconf libtool pkgconfig openssl libev-dev; fi
+      run: |
+        if [ "${OS}" = "macos-latest" ] ; then brew install automake autoconf libtool pkgconfig openssl; fi
+        if [ "${OS}" = "ubuntu-latest" ] ; then sudo apt-get install gcc g++ automake autoconf libtool libssl-dev libev-dev ; fi
       env:
         OS: ${{ matrix.host }}
 
@@ -47,4 +49,5 @@ jobs:
     - name: build_dq
       run: cd main/tinydnssec-1.05/dq-20161210; make
     - name: build_curvedns
-      run: cd main/tinydnssec-1.05/curvedns-0.88; make
+      run: cd main/tinydnssec-1.05/curvedns-0.88; ./configure.nacl; ./configure.curvedns; make
+
