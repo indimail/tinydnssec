@@ -2,6 +2,11 @@
 
 djbdns with dnssec, dnscurve support - a collection of Domain Name System tools
 
+**Complation Status (from Github Actions)**
+
+[![tinydnssec Ubuntu CI](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-c-cpp.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-c-cpp.yml)
+[![tinydnssec FreeBSD CI](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-freebsd.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-freebsd.yml)
+
 The internet has evolved a lot since djbdns was written, and dnscache does not handle todays (questionable) site setups spread over multiple domains very well. In most cases using a cache like unbound will perform significantly better.
 
 If you still want to run dnscache follow the instructions on the djbdns
