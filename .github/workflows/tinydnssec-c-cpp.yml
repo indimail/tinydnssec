@@ -1,4 +1,4 @@
-name: tinydnssec Ubuntu, Mac OSX CI
+name: tinydnssec Ubuntu CI
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [ubuntu-latest, macos-latest]
+        host: [ubuntu-latest]
     
     steps:
     - name: extra_packages
