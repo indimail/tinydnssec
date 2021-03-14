@@ -6,7 +6,7 @@ on:
       - master
     paths:
       - '**/tinydnssec-1.05/**'
-      - .github/workflows/tinydnssec-c-cpp.yml
+      - .github/workflows/tinydnssec-freebsd.yml
       - '!**/tinydnssec-1.05/tinydnssec.spec.in'
       - '!**/tinydnssec-1.05/debian/*'
       - '!**/tinydnssec-1.05x/doc/*'
