@@ -35,7 +35,7 @@ jobs:
       with:
         envs: 'MYTOKEN MYTOKEN2'
         usesh: true
-        prepare: pkg install -y curl automake autoconf libtool pkgconf
+        prepare: pkg install -y curl automake autoconf libtool pkgconf bash
         run: |
           cd libqmail; ./default.configure; make; make install-strip
           cd ../main/tinydnssec-1.05; ./default.configure; make
