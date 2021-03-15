@@ -50,7 +50,8 @@ jobs:
       run: cd main/tinydnssec-1.05/dq-20161210; make
     - name: build_curvedns
       run: |
-        if [ "${OS}" = "ubuntu-latest" ] ; cd main/tinydnssec-1.05/curvedns-0.88; ./configure.nacl; ./configure.curvedns; make; fi
+        if [ "${OS}" = "ubuntu-latest" ] ; then cd main/tinydnssec-1.05/curvedns-0.88; ./configure.nacl; ./configure.curvedns; make; fi
+        if [ "${OS}" = "macos-latest" ] ; then echo "no curvedns on macos"; fi
       env:
         OS: ${{ matrix.host }}
 
