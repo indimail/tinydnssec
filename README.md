@@ -170,6 +170,10 @@ For help in installing and setting up curvedns look at this [Document](https://g
 
 # Binary Builds on openSUSE Build Service
 
+**Build Status on [Open Build Service](https://build.opensuse.org/project/show/home:mbhangui)**
+
+[![tinydnssec obs trigger](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-obs.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-obs.yml)
+
 You can get binary RPM / Debian packages at
 
 * [Stable Releases](http://download.opensuse.org/repositories/home:/indimail/)
