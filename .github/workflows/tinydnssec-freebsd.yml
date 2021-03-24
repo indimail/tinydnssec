@@ -2,17 +2,13 @@ name: tinydnssec FreeBSD CI
 
 on:
   push:
-    branches:
-      - master
     paths:
       - '**/tinydnssec-1.05/**'
       - .github/workflows/tinydnssec-freebsd.yml
       - '!**/tinydnssec-1.05/tinydnssec.spec.in'
       - '!**/tinydnssec-1.05/debian/*'
-      - '!**/tinydnssec-1.05x/doc/*'
+      - '!**/doc/*'
       - '!**.md'
-  pull_request:
-    branches: [ master ]
 
 jobs:
   testfreebsd:
