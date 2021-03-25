@@ -24,22 +24,22 @@ Release 1.1 Start 11/04/2017
 22. upgraded dnscurve to version 0.88
 23. added call to setgroups(0, 0) to drop supplementary groups
 24. fixed tryshsgr.c
-23/04/2020
+- 23/04/2020
 25. create/delete UNSHARE variable during installation/uninstallation
 26. turn on/off executable bit on svscan run file on install/removal of
     tinydnssec
-23/04/2020
+- 23/04/2020
 27. tinydnssec.spec, debian/preinst.in debian/postinst.in - fixes for
     service shutdown startup on upgrade
-19/11/2020
+- 19/11/2020
 28. query.[c,h]: Increase QUERY_MAXLEVEL to 10 from 5 to fix
     dnscache CNAME chain lookup problem with gluelessness & improve short ttl
     cname resolution and glueless answer from akadnsk
-20/11/2020
+- 20/11/2020
 29. query.c, dnscache.c: use env variable QUERY_MAXNS, QUERY_MAXALIAS,
     QUERY_MAXLOOP, QUERY_MAXLEVEL to set maxns, max alias, max iteration and max level
 30. dnscaache-conf: create env/QUERY_MAXLOOP
-23/11/2020
+- 23/11/2020
 31. use libqmail for common functions
-13/02/2021
+- 13/02/2021
 32. Makefile: added iopause.h depdendency for dns.h

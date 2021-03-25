@@ -1,9 +1,9 @@
 Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
 Name: IndiMail
-Maintainer: Manvendra Bhangui <mbhangui@gmail.com>
+Maintainer: @email@
 Source: http://cr.yp.to/djbdns.html
 
-Copyright: 2008-2020, Manvendra Bhangui <tinydnssec@indimail.org>
+Copyright: 2008-2020, Manvendra Bhangui <mbhangui@gmail.com>
 Copyright: And many others
 License: GPL-3+
 

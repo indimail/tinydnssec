@@ -173,6 +173,7 @@ tinydns-get
 tinydns-get.o
 tinydns.o
 tinydnssec.spec
+tinydnssec.changes
 utime
 utime.o
 walldns
@@ -180,6 +181,8 @@ walldns-conf
 walldns-conf.o
 walldns.o
 debian/changelog
+debian/copyright
+debian/control
 debian/debian.tar.gz
 debian/dummy.tar.gz
 debian/postinst

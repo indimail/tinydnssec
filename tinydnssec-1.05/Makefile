@@ -448,7 +448,7 @@ compile ip6_scan.c ip6.h
 	./compile ip6_scan.c
 
 it: \
-prog setup instcheck tinydnssec.spec
+prog setup instcheck tinydnssec.spec tinydnssec.changes
 
 load: warn-auto.sh conf-ld systype make-load
 	( cat warn-auto.sh; ./make-load "`cat systype`" ) > load
@@ -843,8 +843,11 @@ dns-notify: \
 load dns-notify.o
 	./load dns-notify -lqmail
 
-tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog conf-version conf-release
+tinydnssec.spec: tinydnssec.spec.in catChangeLog doc/ChangeLog \
+conf-version conf-release conf-email
 	(cat $@.in;./catChangeLog) | $(edit) > $@
+tinydnssec.changes: doc/ChangeLog conf-version conf-release conf-email
+	./catChangeLog --changes doc/ChangeLog > $@
 
 clean:
 	rm -f `cat TARGETS` data data.cdb test/[ot]*
