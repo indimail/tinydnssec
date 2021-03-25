@@ -228,6 +228,8 @@ tinydnssec is supported at IndiMail
 
 ## IRC / Matrix
 
+![Matrix](https://img.shields.io/matrix/indimail:matrix.org)
+
 * Join me [#indimail:matrix.org](https://matrix.to/#/#indimail:matrix.org)
 * IndiMail has an IRC channel #indimail-mta
 
