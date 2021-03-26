@@ -47,13 +47,12 @@ prepare_artifacts()
 
   mkdir -p $stage
   if [ $multi_mode -eq 0 ] ; then
-    # Create spec file
-    for i in spec changes
-    do
-      if [ -f $pkg_name.$i.in -a -f Makefile -a ! -f $pkg_name.$i ] ; then
-        make $pkg_name.$i
-      fi
-    done
+    # Create spec, changes file
+    if [ -f $pkg_name.spec.in -a -f Makefile -a ! -f $pkg_name.spec ] ; then
+      make $pkg_name.spec
+    fi
+    # This will build the $name.changes file
+    ./catChangeLog --changes > $pkg_name.changes
 
     for i in permissions.easy permissions.secure permissions.paranoid rpmlintrc
     do
@@ -96,7 +95,7 @@ prepare_artifacts()
 
   if [ -f Makefile ] ; then
     make clean >/dev/null
-	find . -type d \( -name autom4te.cache -o -name .deps \) -exec /bin/rm -rf {} +
+    find . -type d \( -name autom4te.cache -o -name .deps \) -exec /bin/rm -rf {} +
   fi
 
   cp -rpf . $stage/$pkg_name-$ver
@@ -139,17 +138,19 @@ if [ -f $name.packages ] ; then
   fi
   mkdir -p $HOME/stage
   echo "Preparing $name-$ver"
-  cp -rp ../catChangeLog $HOME/stage # for spec file, changes, debian/changelog to get built
   cp -rp . $HOME/stage/$name-$ver
+  if [ -L $HOME/stage/$name-$ver/catChangeLog ] ; then
+    /bin/rm -f $HOME/stage/$name-$ver/catChangeLog
+    cp catChangeLog $HOME/stage/$name-$ver # for spec file, changes, debian/changelog to get built
+  fi
   cd $HOME/stage/$name-$ver
 
-  # now build the master spec file and master dsc files
-  for i in spec changes
-  do
-    if [ -f $name.$i.in -a -f Makefile -a ! -f $name.$i ] ; then
-      make $name.$i
-    fi
-  done
+  # now build the spec, changes and dsc files
+  if [ -f $name.spec.in -a -f Makefile -a ! -f $name.$i ] ; then
+    make $name.spec
+  fi
+  # This will build the $name.changes file
+  ./catChangeLog --changes > $name.changes
 
   for i in permissions.easy permissions.secure permissions.paranoid rpmlintrc
   do
