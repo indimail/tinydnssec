@@ -99,6 +99,10 @@ prepare_artifacts()
   fi
 
   cp -rpf . $stage/$pkg_name-$ver
+  if [ -L $stage/$pkg_name-$ver/catChangeLog ] ; then
+    /bin/rm -f $stage/$pkg_name-$ver/catChangeLog
+    cp catChangeLog $stage/$pkg_name-$ver # for spec file, changes, debian/changelog to get built
+  fi
   # change cwd to staging directory
   cd $stage
   if [ $multi_mode -eq 1 ] ; then
