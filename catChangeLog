@@ -138,7 +138,7 @@ do
 	if [ $status -eq 0 -a $flag -ne 0 ] ; then
 		break
 	fi
-    if [ $option -eq 1 -a $status -ne 0 -a $flag -eq 0 ] ; then
+    if [ $status -ne 0 -a $flag -eq 0 ] ; then
         continue
     fi
 	echo "$line" | grep "^- [0-9]*/.*/.*" > /dev/null # skip dates
