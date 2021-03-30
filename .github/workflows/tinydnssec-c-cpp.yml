@@ -3,10 +3,10 @@ name: tinydnssec Ubuntu Mac OSX CI
 on:
   push:
     paths:
-      - '**/tinydnssec-1.05/**'
+      - '**/tinydnssec-x/**'
       - .github/workflows/tinydnssec-c-cpp.yml
-      - '!**/tinydnssec-1.05/tinydnssec.spec.in'
-      - '!**/tinydnssec-1.05/debian/*'
+      - '!**/tinydnssec-x/tinydnssec.spec.in'
+      - '!**/tinydnssec-x/debian/*'
       - '!**/doc/*'
       - '!**.md'
 
@@ -41,12 +41,12 @@ jobs:
     - name: install_qmail
       run: cd libqmail;env CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" ./default.configure; env CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" make; sudo make install-strip
     - name: build_tinydnssec
-      run: cd main/tinydnssec-1.05; ./default.configure; make
+      run: cd main/tinydnssec-x; ./default.configure; make
     - name: build_dq
-      run: cd main/tinydnssec-1.05/dq-20161210; make
+      run: cd main/tinydnssec-x/dq-20161210; make
     - name: build_curvedns
       run: |
-        if [ "${OS}" = "ubuntu-latest" ] ; then cd main/tinydnssec-1.05/curvedns-0.88; ./configure.nacl; ./configure.curvedns; make; fi
+        if [ "${OS}" = "ubuntu-latest" ] ; then cd main/tinydnssec-x/curvedns-0.88; ./configure.nacl; ./configure.curvedns; make; fi
         if [ "${OS}" = "macos-latest" ] ; then echo "no curvedns on macos"; fi
       env:
         OS: ${{ matrix.host }}

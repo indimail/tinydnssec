@@ -3,10 +3,10 @@ name: tinydnssec FreeBSD CI
 on:
   push:
     paths:
-      - '**/tinydnssec-1.05/**'
+      - '**/tinydnssec-x/**'
       - .github/workflows/tinydnssec-freebsd.yml
-      - '!**/tinydnssec-1.05/tinydnssec.spec.in'
-      - '!**/tinydnssec-1.05/debian/*'
+      - '!**/tinydnssec-x/tinydnssec.spec.in'
+      - '!**/tinydnssec-x/debian/*'
       - '!**/doc/*'
       - '!**.md'
 
@@ -34,5 +34,5 @@ jobs:
         prepare: pkg install -y curl bash automake autoconf libtool pkgconf
         run: |
           cd libqmail; ./default.configure; make; make install-strip
-          cd ../main/tinydnssec-1.05; ./default.configure; make
+          cd ../main/tinydnssec-x; ./default.configure; make
           cd dq-20161210; make
