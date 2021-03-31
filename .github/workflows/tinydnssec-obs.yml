@@ -55,6 +55,5 @@ jobs:
         # copy to /home/frs/project/indimail
         scp -q -i ~/.private_key $GITHUB_WORKSPACE/tinydnssec-obs.tar.gz \
           ~/stage/tinydnssec-obs.sig "${{secrets.sf_user}}:${{secrets.sf_upload_path}}"
-        # copy to /home/frs/project/indimail
         rm -f ~/.private_key ~/.ssh/known_hosts $GITHUB_WORKSPACE/tinydnssec-obs.tar.gz
         rm -rf ~/stage
