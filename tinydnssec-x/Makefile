@@ -4,10 +4,12 @@ SHELL=/bin/sh
 curvedns_version=0.88
 version=$(shell cat conf-version)
 release=$(shell cat conf-release)
+email=$(shell cat conf-email)
 
 edit = sed \
 	-e 's}@version\@}$(version)}g' \
-	-e 's|@release\@|$(release)|g'
+	-e 's|@release\@|$(release)|g' \
+	-e 's|@email\@|$(email)|g'
 
 default: it
 
@@ -448,7 +450,7 @@ compile ip6_scan.c ip6.h
 	./compile ip6_scan.c
 
 it: \
-prog setup instcheck tinydnssec.spec tinydnssec.changes
+prog setup instcheck tinydnssec.spec tinydnssec.changes PKGBUILD
 
 load: warn-auto.sh conf-ld systype make-load
 	( cat warn-auto.sh; ./make-load "`cat systype`" ) > load
@@ -848,6 +850,9 @@ conf-version conf-release conf-email
 	(cat $@.in;./catChangeLog) | $(edit) > $@
 tinydnssec.changes: doc/ChangeLog conf-version conf-release conf-email
 	./catChangeLog --changes doc/ChangeLog > $@
+PKGBUILD: PKGBUILD.in conf-version conf-release doc/ChangeLog \
+conf-email tinydnssec.changes
+	cat $@.in | $(edit) > PKGBUILD
 
 clean:
 	rm -f `cat TARGETS` data data.cdb test/[ot]*

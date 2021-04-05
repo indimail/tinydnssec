@@ -193,3 +193,4 @@ debian/tinydnssec.dsc
 *.o
 *.a
 curvedns-0.88/nacl/build
+PKGBUILD

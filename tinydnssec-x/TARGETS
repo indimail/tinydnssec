@@ -172,3 +172,4 @@ walldns
 walldns-conf
 walldns-conf.o
 walldns.o
+PKGBUILD

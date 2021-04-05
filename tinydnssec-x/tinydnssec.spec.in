@@ -158,6 +158,14 @@ if [ -d curvedns-%{curvedns_version} ] ; then
   %{__make} -s %{?_smp_mflgs}
   cd ..
 fi
+(
+echo "NAME=%{name}"
+echo "Description=\"A collection of Domain Name System tools\""
+echo "tinydnssec="%{version}-%{release}""
+echo "ID=%{name}"
+echo "HOME_URL=\"https://github.com/mbhangui/tinydnssec\""
+echo "PACKAGE_BUGREPORT=\"'@email@'\""
+) > %{name}-release
 
 %install
 %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
@@ -178,6 +186,7 @@ if [ -d curvedns-%{curvedns_version} ] ; then
   %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
   cd ..
 fi
+%{__mv} %{name}-release %{buildroot}%{_sysconfdir}
 
 %clean
 [ "%{buildroot}" != "/" ] && %{__rm} -fr %{buildroot}
@@ -228,6 +237,7 @@ fi
 %attr(755,root,root)                   %{_prefix}/sbin/curvedns-conf
 %config(noreplace)                     %{_sysconfdir}/dnsroots.global
 %config(noreplace)                     %{_sysconfdir}/curvedns.private.key
+%attr(444,root,root) %config(noreplace) %{_sysconfdir}/%{name}-release
 
 %doc README.md dq-20161210/README-dq.md dq-20161210/INSTALL-dq.md
 %doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO doc/README-tinydnssec.md

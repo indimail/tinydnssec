@@ -187,6 +187,8 @@ If you want to use DNF / YUM / apt-get, the corresponding install instructions f
 ```
 Currently, the list of supported distributions for tinydnssec is
 
+    * Arch Linux
+
     * SUSE
           o openSUSE_Leap_15.0
           o openSUSE_Leap_15.1
@@ -200,6 +202,8 @@ Currently, the list of supported distributions for tinydnssec is
           o SUSE Linux Enterprise 12 SP5
           o SUSE Linux Enterprise 15
           o SUSE Linux Enterprise 15 SP1
+          o SUSE Linux Enterprise 15 SP2
+          o SUSE Linux Enterprise 15 SP3
 
     * Red Hat
           o Fedora 32
@@ -211,6 +215,8 @@ Currently, the list of supported distributions for tinydnssec is
     * Debian
           o Debian  9.0
           o Debian 10.0
+          o Univention_4.3
+          o Univention_4.4
 
     * Ubuntu
           o Ubuntu 16.04

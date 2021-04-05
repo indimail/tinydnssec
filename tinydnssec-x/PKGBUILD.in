@@ -1,0 +1,158 @@
+# Maintainer: @email@
+pkgname=tinydnssec
+pkgver=@version@
+pkgrel=@release@
+pkgdesc="A collection of Domain Name System tools"
+arch=('i686' 'x86_64')
+url="https://github.com/mbhangui/tinydnssec"
+license=('GPL2')
+groups=('base-devel')
+depends=('coreutils' 'findutils' 'sed' 'binutils')
+makedepends=('libqmail' 'libev')
+source=("$pkgname-${pkgver}.tar.gz")
+sha256sums=('SKIP')
+provides=("pkgname")
+options=('strip' '!libtool' 'docs' 'staticlibs' 'zipman' 'debug')
+backup=('etc/indimail/dnsroots.global' 'etc/indimail/curvedns.private.key')
+install=archpkg.install
+changelog=$pkgname.changes
+_prefix=/usr
+_curvedns_version=0.88
+_mandir=${_prefix}/share/man
+_sysconfdir=/etc/indimail
+
+build() {
+  cd $srcdir/$pkgname-${pkgver}
+  make -s
+  if [ -d dq-20161210 ] ; then
+    cd dq-20161210
+    make -s
+    cd ..
+  fi
+  if [ -d curvedns-${_curvedns_version} ] ; then
+    cd curvedns-${_curvedns_version}
+    ./configure.nacl
+    ./configure.curvedns
+    make -s 
+    cd ..
+  fi
+}
+
+package() {
+  depends=('daemontools')
+  cd $srcdir/$pkgname-${pkgver}
+  install -D -m 0644 ${pkgname}.changes "$pkgdir"${_prefix}/share/doc/${pkgname}/${pkgname}.changes
+  make -s DESTDIR=${pkgdir} install
+  if [ -d dq-20161210 ] ; then
+    cd dq-20161210
+    sh make-install.sh ${pkgdir}
+    cd ..
+  fi
+  if [ -d curvedns-${_curvedns_version} ] ; then
+    cd curvedns-${_curvedns_version}
+    mkdir -p ${pkgdir}${_prefix}/bin
+    mkdir -p ${pkgdir}${_mandir}/man8
+    mkdir -p ${pkgdir}${_sysconfdir}
+    install -D -m 0755 -s curvedns ${pkgdir}${_prefix}/bin/curvedns
+    install -D -m 0755 -s curvedns-keygen ${pkgdir}${_prefix}/bin/curvedns-keygen
+    for i in curvedns.8 curvedns-keygen.8
+    do
+      install -D -m 0644 $i ${pkgdir}${_mandir}/man8/$i
+    done
+    install -D -m 0600 curvedns.private.key ${pkgdir}${_sysconfdir}/curvedns.private.key
+  fi
+  cd $srcdir
+  (
+  echo "NAME=${pkgname}"
+  echo "Description=\"A collection of Domain Name System tools\""
+  echo "tinydnssec_version="${pkgver}-${pkgrel}""
+  echo "ID=${pkgname}"
+  echo "HOME_URL=\"https://github.com/mbhangui/tinydnssec\""
+  echo "PACKAGE_BUGREPORT=\"'@email@'\""
+  ) > ${pkgname}-release
+  install -D -m 0644 ${pkgname}-release "$pkgdir"${_rcdir}/${pkgname}-release
+}
+
+#### INSTALL SCRIPTS #####
+
+stop_service() {
+  if [ -f ${_prefix}/bin/svstat ] ; then
+    for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
+    do
+      ${_prefix}/bin/svstat ${_sysconfdir}/$i >/dev/null 2>&1
+      if [ $? -eq 0 ] ; then
+	    touch ${_sysconfdir}/$i/.down
+        ${_prefix}/bin/svc -d ${_sysconfdir}/$i >/dev/null 2>&1
+      fi
+    done
+  fi
+}
+
+pre_install() {
+  for i in Gdnscache Gtinydns
+  do
+    rm -f /var/spool/mail/$i
+    /usr/bin/getent passwd $i > /dev/null || /usr/sbin/useradd -l -M -g nofiles  -d ${_sysconfdir} -s /sbin/nologin $i || true
+  done
+}
+
+post_install() {
+  if [ ! -d ${_sysconfdir}/dnscache ] ; then
+    ${_prefix}/sbin/dnscache-conf Gdnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1
+    if [ $? -eq 0 ] ; then
+      if [ ! -h /service/dnscache ] ; then
+        ln -s ${_sysconfdir}/dnscache /service/dnscache
+      fi
+    fi
+  else
+    if [ ! -h /service/dnscache ] ; then
+      ln -s ${_sysconfdir}/dnscache /service/dnscache
+    fi
+  fi
+  echo > /service/.svscan/variables/UNSHARE
+  if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
+    if [ -f /service/.svscan/run ] ; then
+      /bin/chmod +x /service/.svscan/run
+    fi
+  fi
+  for i in tinydns dqcache curvedns
+  do
+    if [ " $i" = " dqcache" ] ; then
+      acct=Gdnscache
+    else
+      acct=Gtinydns
+    fi
+    if [ " $i" = " curvedns" ] ; then
+      ip=x.x.x.x
+    else
+      ip=127.0.0.1
+    fi
+    if [ ! -d ${_sysconfdir}/$i ] ; then
+      ${_prefix}/sbin/$i-conf $acct qmaill ${_sysconfdir}/$i $ip
+      if [ ! " $i" = " curvedns" ] ; then
+        continue
+      fi
+      if [ -d ${_sysconfdir}/$i ] ; then
+        mask=`umask`
+        umask 077
+        # Generate private key
+        sed -n \$p ${_sysconfdir}/curvedns.private.key > ${_sysconfdir}/$i/curvedns.keygen
+        /bin/sh ${_sysconfdir}/$i/curvedns.keygen && rm -f ${_sysconfdir}/$i/curvedns.keygen
+        umask $mask
+      fi
+    fi
+  done
+}
+
+post_upgrade() {
+  if [ -f ${_prefix}/bin/svok ] ; then
+    for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
+    do
+      ${_prefix}/bin/svok ${_sysconfdir}/$i >/dev/null 2>&1
+      if [ $? -eq 0 -a -f ${_sysconfdir}/$i/.down ] ; then
+        rm -f ${_sysconfdir}/$i/.down
+        ${_prefix}/bin/svc -u ${_sysconfdir}/$i >/dev/null 2>&1
+      fi
+    done
+  fi
+}
