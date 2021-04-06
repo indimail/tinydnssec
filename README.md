@@ -170,7 +170,7 @@ For help in installing and setting up curvedns look at this [Document](https://g
 
 # Binary Builds on openSUSE Build Service
 
-**Build Status on [Open Build Service](https://build.opensuse.org/project/show/home:mbhangui)**
+**[Build Status on](https://build.opensuse.org/project/monitor/home:mbhangui) [Open Build Service](https://build.opensuse.org/project/show/home:mbhangui)**
 
 [![tinydnssec obs trigger](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-obs.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-obs.yml)
 
