@@ -228,6 +228,8 @@ Currently, the list of supported distributions for tinydnssec is
           o Ubuntu 20.10
 ```
 
+NOTE: You can also build local binary packages. To generate RPM packages locally for all components refer to [Binary Packages](.github/CREATE-Packages.md)
+
 # SUPPORT INFORMATION
 
 tinydnssec is supported at IndiMail
