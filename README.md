@@ -83,6 +83,7 @@ Gentoo Linux
 # emerge-webrsync
 # emerge -a app-portage/eix
 # eix-sync
+# emerge -a dev-libs/libev-4.33
 # etc-update
 ```
 
