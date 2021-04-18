@@ -63,12 +63,14 @@ $ sudo make install-strip
 NOTE Darwin (Mac OSX) install [MacPorts](https://www.macports.org/) or brew. You can look at this [document](https://paolozaino.wordpress.com/2015/05/05/how-to-install-and-use-autotools-on-mac-os-x/) for installing MacPorts.
 
 ```
+Darwin
 # port install autoconf libtool automake pkgconfig libev
 # port install openssl (# openssl is required for building libqmail)
 # port update outdated
+```
 
-FreeBSD
-for FreeBSD, install packages using pkg
+```
+FreeBSD - install packages using pkg
 # pkg install automake autoconf libtool pkgconf
 
 Arch Linux
