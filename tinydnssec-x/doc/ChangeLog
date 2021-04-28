@@ -43,3 +43,5 @@ Release 1.1 Start 11/04/2017
 31. use libqmail for common functions
 - 13/02/2021
 32. Makefile: added iopause.h depdendency for dns.h
+- 28/04/2021
+33. conf-cc: added -Wno-array-parameter -fno-lto
