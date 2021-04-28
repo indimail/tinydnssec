@@ -51,7 +51,7 @@ URL: http://cr.yp.to/djbdns.html
 Source0: http://downloads.sourceforge.net/indimail/%{name}-%{version}.tar.gz
 # ipv6 from http://www.fefe.de/dns/
 BuildRequires: perl binutils coreutils
-BuildRequires: libev-devel libqmail-devel
+BuildRequires: libev-devel libqmail-devel openssl-devel
 %if 0%{?suse_version} < 1120
 BuildRequires: elfutils
 %endif
