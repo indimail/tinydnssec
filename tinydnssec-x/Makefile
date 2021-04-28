@@ -54,7 +54,7 @@ prot.o clientloc.o dns.a sha1.o base32hex.o edns0.o ip4_scan.o \
 ip6_scan.o ip4_fmt.o ip6_fmt.o
 	./load axfrdns iopause.o droproot.o tdlookup.o response.o \
 	qlog.o prot.o clientloc.o dns.a sha1.o base32hex.o edns0.o \
-	ip4_scan.o ip6_scan.o ip4_fmt.o ip6_fmt.o -lqmail
+	ip4_scan.o ip6_scan.o ip4_fmt.o ip6_fmt.o -lqmail -lssl -lcrypto
 
 axfrdns-conf: \
 load axfrdns-conf.o generic-conf.o auto_home.o
@@ -720,7 +720,7 @@ load tinydns.o server.o iopause.o droproot.o tdlookup.o response.o qlog.o \
 prot.o clientloc.o dns.a socket.a socket.lib sha1.o base32hex.o edns0.o
 	./load tinydns server.o iopause.o droproot.o tdlookup.o response.o \
 	qlog.o prot.o clientloc.o dns.a socket.a `cat socket.lib` sha1.o \
-	base32hex.o edns0.o -lqmail
+	base32hex.o edns0.o -lqmail -lssl -lcrypto
 
 tinydns-conf: \
 load tinydns-conf.o generic-conf.o auto_home.o \
@@ -757,7 +757,7 @@ ip4_scan.o ip6_scan.o
 	./load tinydns-get tdlookup.o response.o printpacket.o \
 	printrecord.o parsetype.o clientloc.o dns.a sha1.o \
 	base32hex.o printtype.o ip4_fmt.o ip6_fmt.o \
-	ip4_scan.o ip6_scan.o -lqmail
+	ip4_scan.o ip6_scan.o -lqmail -lssl -lcrypto
 
 tinydns-get.o: \
 compile tinydns-get.c response.h printpacket.h \
