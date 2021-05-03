@@ -111,16 +111,16 @@ static stralloc rules = {0}; /* defined if ok */
 
 int dns_resolvconfrewrite(stralloc *out)
 {
-  struct taia now;
+  struct taia cur;
 
-  taia_now(&now);
-  if (taia_less(&deadline,&now)) ok = 0;
+  taia_now(&cur);
+  if (taia_less(&deadline,&cur)) ok = 0;
   if (!uses) ok = 0;
 
   if (!ok) {
     if (init(&rules) == -1) return -1;
     taia_uint(&deadline,600);
-    taia_add(&deadline,&now,&deadline);
+    taia_add(&deadline,&cur,&deadline);
     uses = 10000;
     ok = 1;
   }

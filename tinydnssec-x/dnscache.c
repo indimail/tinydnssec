@@ -189,11 +189,11 @@ void t_free(int j)
 
 void t_timeout(int j)
 {
-  struct taia now;
+  struct taia cur;
   if (!t[j].active) return;
-  taia_now(&now);
+  taia_now(&cur);
   taia_uint(&t[j].timeout,10);
-  taia_add(&t[j].timeout,&t[j].timeout,&now);
+  taia_add(&t[j].timeout,&t[j].timeout,&cur);
 }
 
 void t_close(int j)

@@ -469,7 +469,7 @@ int main(int argc,char **argv)
     if (dns_domain_equal(q,"\011localhost\0")) {
       substdio_put(subfdout,querystr.s,querystr.len);
       substdio_puts(subfdout,"ALERT:some caches do not handle localhost internally\n");
-      address_add(q,"\177\0\0\1");
+      address_add(q,"\177\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0");
     }
     if (dd(q,"",ip) == 4) {
       substdio_put(subfdout,querystr.s,querystr.len);

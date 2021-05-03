@@ -78,7 +78,7 @@ static unsigned int hash(const char *key,unsigned int keylen)
 char *cache_get(const char *key,unsigned int keylen,unsigned int *datalen,uint32 *ttl)
 {
   struct tai expire;
-  struct tai now;
+  struct tai cur;
   uint32 pos;
   uint32 prevpos;
   uint32 nextpos;
@@ -98,10 +98,10 @@ char *cache_get(const char *key,unsigned int keylen,unsigned int *datalen,uint32
       if (pos + 20 + keylen > size) cache_impossible();
       if (byte_equal(key,keylen,x + pos + 20)) {
         tai_unpack(x + pos + 12,&expire);
-        tai_now(&now);
-        if (tai_less(&expire,&now)) return 0;
+        tai_now(&cur);
+        if (tai_less(&expire,&cur)) return 0;
 
-        tai_sub(&expire,&expire,&now);
+        tai_sub(&expire,&expire,&cur);
         d = tai_approx(&expire);
         if (d > 604800) d = 604800;
         *ttl = d;
@@ -124,7 +124,7 @@ char *cache_get(const char *key,unsigned int keylen,unsigned int *datalen,uint32
 
 void cache_set(const char *key,unsigned int keylen,const char *data,unsigned int datalen,uint32 ttl)
 {
-  struct tai now;
+  struct tai cur;
   struct tai expire;
   unsigned int entrylen;
   unsigned int keyhash;
@@ -160,9 +160,9 @@ void cache_set(const char *key,unsigned int keylen,const char *data,unsigned int
 
   keyhash = hash(key,keylen);
 
-  tai_now(&now);
+  tai_now(&cur);
   tai_uint(&expire,ttl);
-  tai_add(&expire,&expire,&now);
+  tai_add(&expire,&expire,&cur);
 
   pos = get4(keyhash);
   if (pos)

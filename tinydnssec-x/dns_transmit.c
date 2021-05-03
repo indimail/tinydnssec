@@ -114,10 +114,10 @@ static int thisudp(struct dns_transmit *d)
 
         if (socket_connect6(d->s1 - 1,ip,53,d->scope_id) == 0)
           if (send(d->s1 - 1,d->query + 2,d->querylen - 2,0) == d->querylen - 2) {
-            struct taia now;
-            taia_now(&now);
+            struct taia cur;
+            taia_now(&cur);
             taia_uint(&d->deadline,timeouts[d->udploop]);
-            taia_add(&d->deadline,&d->deadline,&now);
+            taia_add(&d->deadline,&d->deadline,&cur);
             d->tcpstate = 0;
             return 0;
           }
@@ -147,7 +147,7 @@ static int nextudp(struct dns_transmit *d)
 
 static int thistcp(struct dns_transmit *d)
 {
-  struct taia now;
+  struct taia cur;
   const char *ip;
 
   socketfree(d);
@@ -163,9 +163,9 @@ static int thistcp(struct dns_transmit *d)
       if (!d->s1) { dns_transmit_free(d); return -1; }
       if (randombind(d) == -1) { dns_transmit_free(d); return -1; }
   
-      taia_now(&now);
+      taia_now(&cur);
       taia_uint(&d->deadline,10);
-      taia_add(&d->deadline,&d->deadline,&now);
+      taia_add(&d->deadline,&d->deadline,&cur);
       if (socket_connect6(d->s1 - 1,ip,53,d->scope_id) == 0) {
         d->pos = 0;
         d->tcpstate = 2;
@@ -296,10 +296,10 @@ have sent query to curserver on UDP socket s
     if (r <= 0) return nexttcp(d);
     d->pos += r;
     if (d->pos == d->querylen) {
-      struct taia now;
-      taia_now(&now);
+      struct taia cur;
+      taia_now(&cur);
       taia_uint(&d->deadline,10);
-      taia_add(&d->deadline,&d->deadline,&now);
+      taia_add(&d->deadline,&d->deadline,&cur);
       d->tcpstate = 3;
     }
     return 0;

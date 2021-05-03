@@ -16,6 +16,6 @@
 #ifndef _EDNS0_H
 #define _EDNS0_H
 #ifdef DNSSEC
-extern unsigned int check_edns0(const char *, const char *, const int, unsigned int);
+extern unsigned int check_edns0(const char header[12], const char *, const int, unsigned int);
 #endif
 #endif

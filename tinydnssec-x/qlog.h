@@ -3,6 +3,6 @@
 
 #include "uint16.h"
 
-extern void qlog(const char *,uint16,const char *,const char *,const char *,const char *);
+extern void qlog(const char ip[16],uint16 port,const char id[2],const char *q,const char qtype[2],const char *result);
 
 #endif

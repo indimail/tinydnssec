@@ -28,7 +28,7 @@ struct query {
 
 extern int maxloop, maxlevel, maxalias, maxns;
 
-extern int query_start(struct query *,char *,char *,char *,char *,unsigned int);
+extern int query_start(struct query *,char *dn,char type[2],char class[2],char localip[16],unsigned int);
 extern void query_io(struct query *,iopause_fd *,struct taia *);
 extern int query_get(struct query *,iopause_fd *,struct taia *);
 

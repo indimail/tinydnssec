@@ -50,7 +50,7 @@ static char    *d1;
 static char    *wantAddr;
 #endif
 static char     clientloc[2];
-static struct tai now;
+static struct tai cur;
 static struct cdb c;
 
 static char     data[32767];
@@ -108,16 +108,16 @@ find(char *d, int flagwild)
 		if (byte_diff(ttd, 8, "\0\0\0\0\0\0\0\0")) {
 			tai_unpack(ttd, &cutoff);
 			if (ttl == 0) {
-				if (tai_less(&cutoff, &now))
+				if (tai_less(&cutoff, &cur))
 					continue;
-				tai_sub(&cutoff, &cutoff, &now);
+				tai_sub(&cutoff, &cutoff, &cur);
 				newttl = tai_approx(&cutoff);
 				if (newttl <= 2.0)
 					newttl = 2.0;
 				if (newttl >= 3600.0)
 					newttl = 3600.0;
 				ttl = newttl;
-			} else if (!tai_less(&cutoff, &now))
+			} else if (!tai_less(&cutoff, &cur))
 				continue;
 		}
 		return 1;
@@ -415,11 +415,11 @@ doit(char *q, char qtype[2])
 					continue;
 				uint32_unpack_big(data + dpos + 12, &validFrom);
 				tai_unix(&valid, validFrom);
-				if (tai_less(&now, &valid))
+				if (tai_less(&cur, &valid))
 					continue;
 				uint32_unpack_big(data + dpos + 8, &validUntil);
 				tai_unix(&valid, validUntil);
-				if (tai_less(&valid, &now))
+				if (tai_less(&valid, &cur))
 					continue;
 			}
 			if (byte_equal(type, 2, DNS_T_A) && (dlen - dpos == 4) && (!do_dnssec || addrnum < 8)) {
@@ -820,8 +820,8 @@ respond(char *q, char qtype[2], char ip[16])
 
 	find_client_loc(clientloc, ip);
 
-	tai_now(&now);
-	if (tai_less(&cdb_valid, &now)) {
+	tai_now(&cur);
+	if (tai_less(&cdb_valid, &cur)) {
 		if (fd != -1) {
 			cdb_free(&c);
 			close(fd);
@@ -831,7 +831,7 @@ respond(char *q, char qtype[2], char ip[16])
 			return 0;
 		cdb_init(&c, fd);
 		tai_uint(&one_second, 1);
-		tai_add(&cdb_valid, &now, &one_second);
+		tai_add(&cdb_valid, &cur, &one_second);
 	}
 
 	r = doit(q, qtype);

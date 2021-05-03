@@ -1,11 +1,11 @@
 #ifndef IP6_H
 #define IP6_H
 
-extern unsigned int ip6_scan(const char *,char *);
-extern unsigned int ip6_fmt(char *,const char *);
+extern unsigned int ip6_scan(const char *,char ip[16]);
+extern unsigned int ip6_fmt(char *,const char ip[16]);
 
-extern unsigned int ip6_scan_flat(const char *,char *);
-extern unsigned int ip6_fmt_flat(char *,const char *);
+extern unsigned int ip6_scan_flat(const char *,char ip[16]);
+extern unsigned int ip6_fmt_flat(char *,const char ip[16]);
 
 /*
  ip6 address syntax: (h = hex digit), no leading '0' required

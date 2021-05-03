@@ -18,7 +18,7 @@
 #ifdef DNSSEC
 #include "stralloc.h"
 
-extern int printtype(stralloc *, const char *);
+extern int printtype(stralloc *, const char type[2]);
 
 #endif
 #endif

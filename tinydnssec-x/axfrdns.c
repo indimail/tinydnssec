@@ -132,7 +132,7 @@ char ip[16];
 unsigned long port;
 char clientloc[2];
 
-struct tai now;
+struct tai cur;
 char data[32767];
 uint32 dlen;
 uint32 dpos;
@@ -186,11 +186,11 @@ int build(stralloc *sa,char *q,int flagsoa,char id[2])
   if (byte_diff(ttd,8,"\0\0\0\0\0\0\0\0")) {
     tai_unpack(ttd,&cutoff);
     if (byte_equal(ttl,4,"\0\0\0\0")) {
-      if (tai_less(&cutoff,&now)) return 0;
+      if (tai_less(&cutoff,&cur)) return 0;
       uint32_pack_big(ttl,2);
     }
     else
-      if (!tai_less(&cutoff,&now)) return 0;
+      if (!tai_less(&cutoff,&cur)) return 0;
   }
 
   if (!stralloc_catb(sa,DNS_C_IN,2)) nomem();
@@ -238,7 +238,7 @@ void doaxfr(char id[2])
 
   find_client_loc(clientloc, ip);
 
-  tai_now(&now);
+  tai_now(&cur);
   cdb_init(&c,fdcdb);
 
   cdb_findstart(&c);
