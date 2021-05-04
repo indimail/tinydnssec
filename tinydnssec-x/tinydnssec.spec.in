@@ -3,7 +3,9 @@
 # $Id: $
 %undefine _missing_build_ids_terminate_build
 %global _unpackaged_files_terminate_build 1
+%if %{defined nodebug}
 %global debug_package %{nil}
+%endif
 
 %if %{defined _project}
 # define if building on openSUSE build service
@@ -15,6 +17,8 @@
 %global reconfigure_mode   0
 %global _hardened_build    1
 %endif
+%global nodq               0
+%global nocurvedns         0
 %if %build_on_obs == 1
 %global packager Manvendra Bhangui <manvendra@indimail.org>
 %endif
@@ -30,6 +34,13 @@
 %global disttag fedora
 %endif
 %global curvedns_version 0.88
+# Packages which do not use autosetup or setup macro
+# in the prep section have a problem in enabling debuginfo.
+# This isn't documented clearly anywhere. A workaround is
+# to define buildsubdir
+%if %{undefined nodebug}
+%global buildsubdir        ""
+%endif
 
 %global _sysconfdir /etc/indimail
 %global _prefix            /usr
@@ -101,12 +112,16 @@ administrators use to diagnose misconfigured remote servers.
 
 See http://cr.yp.to/djbdns.html
 
+%if %{nodq} == 0
 DQ: A package with DNS/DNSCurve related software.
 It contains a recursive DNS server with DNSCurve support called
 dqcache and also a commandline tool to debug DNS/DNScurve called dq.
 
 See https://mojzis.com/software/dq/
 
+%endif
+
+%if %{nocurvedns} == 0
 CurveDNS: CurveDNS is the first publicly released forwarding implementation
 that implements the DNSCurve protocol.  DNSCurve uses high-speed
 high-security elliptic-curve cryptography to drastically improve every
@@ -127,12 +142,13 @@ CurveDNS supports:
 * Forwarding of regular (non-protected) DNS packets;
 * Unboxing of DNSCurve queries and forwarding the regular DNS packets
 * Boxing of regular DNS responses to DNSCurve responses;
-* Both DNSCurve's streamlined- and TXT-format;
+* Both DNSCurve''s streamlined- and TXT-format;
 * Caching of shared secrets;
 * Both UDP and TCP;
 * Both IPv4 and IPv6.
 
 See http://curvedns.on2it.net/
+%endif
 
 %build
 %{__sed} -i 's{/usr{%{_prefix}{' conf-home
@@ -146,18 +162,22 @@ See http://curvedns.on2it.net/
 %endif
 %{__make} -s %{?_smp_mflags} CC="%{__cc}" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
 pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
-if [ -d dq-20161210 ] ; then
-  cd dq-20161210
-  %{__make} -s %{?_smp_mflags} CC="%{__cc}" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
-  cd ..
-fi
-if [ -d curvedns-%{curvedns_version} ] ; then
-  cd curvedns-%{curvedns_version}
-  ./configure.nacl
-  ./configure.curvedns
-  %{__make} -s %{?_smp_mflgs}
-  cd ..
-fi
+%if %{nodq} == 0
+  if [ -d dq-20161210 ] ; then
+    cd dq-20161210
+    %{__make} -s %{?_smp_mflags} CC="%{__cc}" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+    cd ..
+  fi
+%endif
+%if %{nocurvedns} == 0
+  if [ -d curvedns-%{curvedns_version} ] ; then
+    cd curvedns-%{curvedns_version}
+    ./configure.nacl
+    ./configure.curvedns
+    %{__make} -s %{?_smp_mflgs}
+    cd ..
+  fi
+%endif
 (
 echo "NAME=%{name}"
 echo "Description=\"A collection of Domain Name System tools\""
@@ -168,32 +188,48 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 ) > %{name}-release
 
 %install
+%if %{defined nodebug}
 %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
-if [ -d dq-20161210 ] ; then
-  cd dq-20161210
-  sh make-install.sh %{buildroot}
-  cd ..
-fi
-if [ -d curvedns-%{curvedns_version} ] ; then
-  cd curvedns-%{curvedns_version}
-  %{__mkdir_p} %{buildroot}%{_prefix}/bin
-  %{__mkdir_p} %{buildroot}%{_prefix}/sbin
-  %{__mkdir_p} %{buildroot}%{_mandir}/man8
-  %{__mkdir_p} %{buildroot}%{_sysconfdir}
-  %{__install} -m 0755 -s curvedns %{buildroot}%{_prefix}/bin
-  %{__install} -m 0755 -s curvedns-keygen %{buildroot}%{_prefix}/sbin
-  %{__install} -m 0644 curvedns.8 curvedns-keygen.8 %{buildroot}%{_mandir}/man8
-  %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
-  cd ..
-fi
+%else
+%{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install
+%endif
+
+%if %{nodq} == 0
+  if [ -d dq-20161210 ] ; then
+    cd dq-20161210
+    sh make-install.sh %{buildroot}
+    cd ..
+  fi
+%else
+  %{__rm} -f %{buildroot}%{_prefix}/sbin/dqcache-conf
+%endif
+%{__mkdir_p} %{buildroot}%{_sysconfdir}
 %{__mv} %{name}-release %{buildroot}%{_sysconfdir}
+%if %{nocurvedns} == 0
+  if [ -d curvedns-%{curvedns_version} ] ; then
+    %{__mkdir_p} %{buildroot}%{_prefix}/bin
+    %{__mkdir_p} %{buildroot}%{_prefix}/sbin
+    %{__mkdir_p} %{buildroot}%{_mandir}/man8
+    cd curvedns-%{curvedns_version}
+    %{__install} -m 0755 -s curvedns %{buildroot}%{_prefix}/bin
+    %{__install} -m 0755 -s curvedns-keygen %{buildroot}%{_prefix}/sbin
+    %{__install} -m 0644 curvedns.8 curvedns-keygen.8 %{buildroot}%{_mandir}/man8
+    %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
+    cd ..
+  fi
+%else
+  %{__rm} -f %{buildroot}%{_prefix}/sbin/curvedns-conf
+%endif
+%if %{undefined nodebug}
+ /bin/chmod -R 755 %{buildroot}%{_prefix}/bin
+ /bin/chmod -R 755 %{buildroot}%{_prefix}/sbin
+%endif
 
 %clean
 [ "%{buildroot}" != "/" ] && %{__rm} -fr %{buildroot}
 
 %files
 %defattr(-, root, root,-)
-%attr(755,root,root)                   %{_prefix}/bin/dq
 %attr(755,root,root)                   %{_prefix}/bin/axfr-get
 %attr(755,root,root)                   %{_prefix}/bin/axfrdns
 %attr(755,root,root)                   %{_prefix}/bin/dnscache
@@ -222,29 +258,41 @@ fi
 %attr(755,root,root)                   %{_prefix}/bin/tinydns-get
 %attr(755,root,root)                   %{_prefix}/bin/tinydns-sign
 %attr(755,root,root)                   %{_prefix}/bin/walldns
-%attr(755,root,root)                   %{_prefix}/bin/curvedns
-%attr(755,root,root)                   %{_prefix}/bin/dqcache
-%attr(755,root,root)                   %{_prefix}/sbin/dqcache-makekey
-%attr(755,root,root)                   %{_prefix}/sbin/curvedns-keygen
-%attr(755,root,root)                   %{_prefix}/sbin/dqcache-start
 %attr(755,root,root)                   %{_prefix}/sbin/axfrdns-conf
 %attr(755,root,root)                   %{_prefix}/sbin/dnscache-conf
 %attr(755,root,root)                   %{_prefix}/sbin/pickdns-conf
 %attr(755,root,root)                   %{_prefix}/sbin/rbldns-conf
 %attr(755,root,root)                   %{_prefix}/sbin/tinydns-conf
 %attr(755,root,root)                   %{_prefix}/sbin/walldns-conf
+%if %{nodq} == 0
+%attr(755,root,root)                   %{_prefix}/bin/dq
+%attr(755,root,root)                   %{_prefix}/bin/dqcache
+%attr(755,root,root)                   %{_prefix}/sbin/dqcache-makekey
+%attr(755,root,root)                   %{_prefix}/sbin/dqcache-start
 %attr(755,root,root)                   %{_prefix}/sbin/dqcache-conf
+%endif
+%if %{nocurvedns} == 0
+%attr(755,root,root)                   %{_prefix}/bin/curvedns
 %attr(755,root,root)                   %{_prefix}/sbin/curvedns-conf
-%config(noreplace)                     %{_sysconfdir}/dnsroots.global
+%attr(755,root,root)                   %{_prefix}/sbin/curvedns-keygen
 %config(noreplace)                     %{_sysconfdir}/curvedns.private.key
+%endif
+%config(noreplace)                     %{_sysconfdir}/dnsroots.global
 %attr(444,root,root) %config(noreplace) %{_sysconfdir}/%{name}-release
 
-%doc README.md dq-20161210/README-dq.md dq-20161210/INSTALL-dq.md
-%doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO doc/README-tinydnssec.md
+%doc README.md
+%doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO
+%doc doc/README-tinydnssec.md doc/COPYING.tinydnssec
+%doc doc/LifeWithdjbdns.pdf doc/README.dnstransmit.bug doc/Thedjbway_djbdns.pdf
+%if %{nodq} == 0
+%doc dq-20161210/README-dq.md dq-20161210/INSTALL-dq.md
+%doc dq-20161210/LICENCE-dq.md
+%endif
+%if %{nocurvedns} == 0
 %doc curvedns-%{curvedns_version}/INSTALL-curvedns.md
 %doc curvedns-%{curvedns_version}/README-curvedns.md
-%doc doc/LifeWithdjbdns.pdf doc/README.dnstransmit.bug doc/Thedjbway_djbdns.pdf
-%doc dq-20161210/LICENCE-dq.md curvedns-%{curvedns_version}/LICENSE.curvedns doc/COPYING.tinydnssec
+%doc curvedns-%{curvedns_version}/LICENSE.curvedns
+%endif
 
 %doc %{_mandir}/man1/*
 %doc %{_mandir}/man5/*
@@ -266,7 +314,7 @@ if [ -f %{_prefix}/bin/svstat ] ; then
   do
     %{_prefix}/bin/svstat %{_sysconfdir}/$i >/dev/null 2>&1
     if [ $? -eq 0 ] ; then
-	  touch %{_sysconfdir}/$i/.down
+      touch %{_sysconfdir}/$i/.down
       %{_prefix}/bin/svc -d %{_sysconfdir}/$i >/dev/null 2>&1
     fi
   done

@@ -60,10 +60,12 @@ if [ $copy_src -eq 1 ] ; then
 	if [ $? -ne 0 ] ; then
 		exit 1
 	fi
-	cp -rp tinydnssec-$version stage
+	cp -rp tinydnssec-x stage/tinydnssec-$version
 	if [ $? -ne 0 ] ; then
 		exit 1
 	fi
+	/bin/rm -f stage/tinydnssec-$version/catChangeLog
+	cp tinydnssec-x/catChangeLog stage/tinydnssec-$version/catChangeLog
 	cd stage/tinydnssec-$version
 	if [ $? -ne 0 ] ; then
 		exit 1
@@ -109,8 +111,8 @@ read key
 if [ " $key" = " Y" -o " $key" = " y" ] ; then
 	tmprel=`cat tinydnssec-$version/conf-release 2>/dev/null`
 	if [ ! " $tmprel" = " 1.$release" ] ; then
-		echo 1.$release > tinydnssec-$version/conf-release
-		cd tinydnssec-$version
+		echo 1.$release > tinydnssec-x/conf-release
+		cd tinydnssec-x
 		make tinydnssec.spec
 		cp tinydnssec.spec /tmp
 		cd debian

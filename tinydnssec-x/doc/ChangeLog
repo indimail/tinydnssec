@@ -45,5 +45,8 @@ Release 1.1 Start 11/04/2017
 32. Makefile: added iopause.h depdendency for dns.h
 - 28/04/2021
 33. Makefile: use -lssl -lcrypto for programs using sha1.o
-03/05/2021
+- 03/05/2021
 33. fixed warnings from -Warray-parameter
+- 04/05/2021
+34. Use internal SHA1 functions and remove -lssl -lcrypto from linking command
+    line

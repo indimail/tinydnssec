@@ -181,7 +181,7 @@ addNSEC3(char *hashName)
 static int
 addNSEC3Cover(char *name, char *control, int wild)
 {
-	SHA1_CTX        ctx;
+	dnsSHA1_CTX     ctx;
 	int             algo = 0, flags = 0, saltlen = 0, r;
 	uint16          iterations = 0;
 	char            salt[255];
@@ -214,17 +214,17 @@ addNSEC3Cover(char *name, char *control, int wild)
  * Compute hash value 
  */
 	case_lowerb(name, dns_domain_length(name));
-	SHA1_Init(&ctx);
+	dnsSHA1_Init(&ctx);
 	if (wild)
-		SHA1_Update(&ctx, (const uint8_t *) "\1*", 2);
-	SHA1_Update(&ctx, (const uint8_t *) name, dns_domain_length(name));
-	SHA1_Update(&ctx, (const uint8_t *) salt, saltlen);
-	SHA1_Final(&ctx, digest);
+		dnsSHA1_Update(&ctx, (const uint8_t *) "\1*", 2);
+	dnsSHA1_Update(&ctx, (const uint8_t *) name, dns_domain_length(name));
+	dnsSHA1_Update(&ctx, (const uint8_t *) salt, saltlen);
+	dnsSHA1_Final(&ctx, digest);
 	while (iterations-- > 0) {
-		SHA1_Init(&ctx);
-		SHA1_Update(&ctx, digest, SHA1_DIGEST_SIZE);
-		SHA1_Update(&ctx, (const uint8_t *) salt, saltlen);
-		SHA1_Final(&ctx, digest);
+		dnsSHA1_Init(&ctx);
+		dnsSHA1_Update(&ctx, digest, SHA1_DIGEST_SIZE);
+		dnsSHA1_Update(&ctx, (const uint8_t *) salt, saltlen);
+		dnsSHA1_Final(&ctx, digest);
 	}
 
 /*
