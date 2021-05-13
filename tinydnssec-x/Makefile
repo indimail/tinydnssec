@@ -125,10 +125,6 @@ dd.o: \
 compile dd.c dns.h iopause.h dd.h
 	./compile dd.c
 
-direntry.h: \
-choose compile trydrent.c direntry.h1 direntry.h2
-	./choose c trydrent direntry.h1 direntry.h2 > direntry.h
-
 dns.a: \
 makelib dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o dns_ipq.o dns_mx.o \
 dns_name.o dns_nd.o dns_packet.o dns_random.o dns_rcip.o dns_rcrw.o \
@@ -594,7 +590,7 @@ compile response.c dns.h iopause.h response.h conf-dnssec
 	./compile `grep -h -v "^#" conf-dnssec` response.c
 
 roots.o: \
-compile roots.c direntry.h ip4.h \
+compile roots.c ip4.h \
 dns.h iopause.h roots.h
 	./compile roots.c
 
