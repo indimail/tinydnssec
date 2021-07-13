@@ -29,7 +29,7 @@ tinydnssec.dsc: tinydnssec.dsc.in Makefile
 	$(edit) $@.in > $@
 changelog: ../doc/ChangeLog Makefile ../conf-version ../conf-release \
 ../conf-email
-	../catChangeLog --debian --name=tinydnssec --state=unstable \
+	../catChangeLog --debian --name=tinydnssec --state=stable \
 		--urgency=low ../doc/ChangeLog > $@
 copyright: copyright.in ../conf-email
 	$(edit) $@.in > $@
