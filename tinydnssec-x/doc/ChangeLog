@@ -1,5 +1,6 @@
-* Tue May 22 2018 12:45:06 +0530 mbhangui@gmail.com @version@-@release@%{?dist}
+*
 Release 1.1 Start 11/04/2017
+- 22/05/2018
 1.  Added dnsgetroot
 2.  added str_diffn()
 3.  added comments for dempsky's patch djbdns<=1.05 lets AXFRed subdomains overwrite domains
@@ -33,11 +34,12 @@ Release 1.1 Start 11/04/2017
     service shutdown startup on upgrade
 - 19/11/2020
 28. query.[c,h]: Increase QUERY_MAXLEVEL to 10 from 5 to fix
-    dnscache CNAME chain lookup problem with gluelessness & improve short ttl
-    cname resolution and glueless answer from akadnsk
+    dnscache CNAME chain lookup problem with gluelessness & improve short
+    ttl cname resolution and glueless answer from akadnsk
 - 20/11/2020
 29. query.c, dnscache.c: use env variable QUERY_MAXNS, QUERY_MAXALIAS,
-    QUERY_MAXLOOP, QUERY_MAXLEVEL to set maxns, max alias, max iteration and max level
+    QUERY_MAXLOOP, QUERY_MAXLEVEL to set maxns, max alias, max iteration
+    and max level
 30. dnscaache-conf: create env/QUERY_MAXLOOP
 - 23/11/2020
 31. use libqmail for common functions
@@ -48,5 +50,5 @@ Release 1.1 Start 11/04/2017
 - 03/05/2021
 33. fixed warnings from -Warray-parameter
 - 04/05/2021
-34. Use internal SHA1 functions and remove -lssl -lcrypto from linking command
-    line
+34. Use internal SHA1 functions and remove -lssl -lcrypto from linker
+    command line
