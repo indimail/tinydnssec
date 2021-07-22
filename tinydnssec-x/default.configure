@@ -14,14 +14,14 @@ if [ ! -f conf-servicedir ] ; then
 fi
 case "$SYSTEM" in
 	Linux)
-	sed -i -e '1 s{^.*${/usr{'                           conf-home
-	sed -i -e '1 s{^.*${/etc/indimail{'                  conf-sysconfdir
-	sed -i -e '1 s{^.*${/service{'                       conf-servicedir
+	sed -i -e '1 s{^.*${/usr{'                       conf-home
+	sed -i -e '1 s{^.*${/etc/indimail{'              conf-sysconfdir
+	sed -i -e '1 s{^.*${/service{'                   conf-servicedir
 	;;
 	FreeBSD|Darwin)
-	sed -i -e '1 s{^.*${/usr/local{'                     conf-home
-	sed -i -e '1 s{^.*${/usr/local/etc/indimail{'        conf-sysconfdir
-	sed -i -e '1 s{^.*${/usr/local/libexec/indimail/sv{' conf-servicedir
+	sed -i -e '1 s{^.*${/usr/local{'                 conf-home
+	sed -i -e '1 s{^.*${/usr/local/etc/indimail{'    conf-sysconfdir
+	sed -i -e '1 s{^.*${/usr/local/etc/indimail/sv{' conf-servicedir
 	;;
 	*)
 	echo "Unknown system $SYSTEM. Please configure conf-* files manually" 1>&2
