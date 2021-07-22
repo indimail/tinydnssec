@@ -362,7 +362,57 @@ fi
 if [ -z "$argv1" ] ; then
   argv1=0
 fi
+
+configure_resolvconf()
+{
+dnscache_configured=0
+if [ -d %{_sysconfdir}/dnscache ] ; then
+  dnscache_configured=1
+  if [ -d ${servicedir} ] ; then
+    if [ ! -h ${servicedir}/dnscache ] ; then
+      ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
+      if [ $? -ne 0 ] ; then
+        dnscache_configured=0
+      fi
+    fi
+  elif [ -h ${servicedir} ] ; then
+    dir=`readlink ${servicedir}`
+    if [ -d $dir ] ; then
+      if [ ! -h $dir/dnscache ] ; then
+        ln -s %{_sysconfdir}/dnscache $dir/dnscache
+        if [ $? -ne 0 ] ; then
+          dnscache_configured=0
+        fi
+      fi
+    fi
+  fi
+fi
+if [ $dnscache_configured -eq 1 ] ; then
+  if [ -d ${servicedir}/.svscan ] ; then
+    mkdir -p ${servicedir}/.svscan/variables
+    echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
+      if [ -f ${servicedir}/.svscan/run ] ; then
+        /bin/chmod +x ${servicedir}/.svscan/run
+      fi
+    fi
+  fi
+  grep resolvconf %{servicedir}/.svscan/variables/.options > /dev/null 2>&1
+  if [ $? -ne 0 ] ; then
+    options="`cat %{servicedir}/.svscan/variables/.options`"
+    options="$options --resolvconf"
+    %{__mv} %{servicedir}/.svscan/variables/.options \
+      %{servicedir}/.svscan/variables/.options.noresolvconf
+    echo $options > %{servicedir}/.svscan/variables/.options
+    if [ -x %{_prefix}/sbin/minisvc ] ; then
+      %{_prefix}/sbin/minisvc --refreshsvc=/service/.svscan
+    fi
+  fi
+fi
+}
+
 if [ $argv1 -eq 2 ] ; then # upgrade
+  configure_resolvconf
   if [ -f %{_prefix}/bin/svok ] ; then
     for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
     do
@@ -378,46 +428,38 @@ fi
 # created due to ghost definition in files section
 /bin/rmdir --ignore-fail-on-non-empty %{_sysconfdir}/dnscache 2>/dev/null
 /bin/rmdir --ignore-fail-on-non-empty %{_sysconfdir}/tinydns 2>/dev/null
+
+dnscache_configured=0
 if [ ! -d %{_sysconfdir}/dnscache ] ; then
   %{_prefix}/sbin/dnscache-conf Gdnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1
   if [ $? -eq 0 ] ; then
+    dnscache_configured=1
     if [ -d ${servicedir} ] ; then
       if [ ! -h ${servicedir}/dnscache ] ; then
         ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
+        if [ $? -ne 0 ] ; then
+          dnscache_configured=0
+        fi
       fi
     elif [ -h ${servicedir} ] ; then
       dir=`readlink ${servicedir}`
       if [ -d $dir ] ; then
         if [ ! -h ${servicedir}/dnscache ] ; then
           ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
+          if [ $? -ne 0 ] ; then
+            dnscache_configured=0
+          fi
         fi
       fi
     fi
+  else
+    echo "%{_prefix}/sbin/dnscache-conf Gdnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1: failed"
   fi
 else
-  if [ -d ${servicedir} ] ; then
-    if [ ! -h ${servicedir}/dnscache ] ; then
-      ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
-    fi
-  elif [ -h ${servicedir} ] ; then
-    dir=`readlink ${servicedir}`
-    if [ -d $dir ] ; then
-      if [ ! -h $dir/dnscache ] ; then
-        ln -s %{_sysconfdir}/dnscache $dir/dnscache
-      fi
-    fi
-  fi
+  dnscache_configured=1
 fi
+configure_resolvconf
 
-if [ -d ${servicedir}/.svscan ] ; then
-  mkdir -p ${servicedir}/.svscan/variables
-  echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
-  if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
-    if [ -f ${servicedir}/.svscan/run ] ; then
-      /bin/chmod +x ${servicedir}/.svscan/run
-    fi
-  fi
-fi
 for i in tinydns dqcache curvedns
 do
   if [ " $i" = " dqcache" ] ; then

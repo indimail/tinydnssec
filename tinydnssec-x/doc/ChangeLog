@@ -56,3 +56,4 @@ Release 1.1 Start 11/04/2017
 35. postinstall/postremove: update code to set/unset resolvconf in svscan if
     running under supervise
 35. Makefile: made prefix, sysconfdir, servicedir configureable using Makevars
+36. updated svscan resolvconf service if dnscache is configured
