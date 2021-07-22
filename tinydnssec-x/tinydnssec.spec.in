@@ -152,6 +152,7 @@ See http://curvedns.on2it.net/
 %endif
 
 %build
+./default.configure
 %{__sed} -i 's{/usr{%{_prefix}{' conf-home
 %if 0%{?build_cflags:1}
   CFLAGS="%{build_cflags}"

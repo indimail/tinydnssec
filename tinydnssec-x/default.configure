@@ -7,7 +7,7 @@ if [ ! -f conf-home ] ; then
 	echo /usr > conf-home
 fi
 if [ ! -f conf-sysconfdir ] ; then
-	echo /etc/indimail > conf-home
+	echo /etc/indimail > conf-sysconfdir
 fi
 if [ ! -f conf-servicedir ] ; then
 	echo /etc/indimail > conf-servicedir
