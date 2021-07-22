@@ -223,9 +223,8 @@ Currently, the list of supported distributions for tinydnssec is
     * Arch Linux
 
     * SUSE
-          o openSUSE_Leap_15.0
-          o openSUSE_Leap_15.1
           o openSUSE_Leap_15.2
+          o openSUSE_Leap_15.3
           o openSUSE_Tumbleweed
           o SUSE Linux Enterprise 12
           o SUSE Linux Enterprise 12 SP1
@@ -239,12 +238,13 @@ Currently, the list of supported distributions for tinydnssec is
           o SUSE Linux Enterprise 15 SP3
 
     * Red Hat
-          o Fedora 32
           o Fedora 33
+          o Fedora 34
           o Red Hat Enterprise Linux 7
           o Scientific Linux 7
           o CentOS 7
           o CentOS 8
+          o CentOS 8 Stream
 
     * Debian
           o Debian  9.0
@@ -260,6 +260,7 @@ Currently, the list of supported distributions for tinydnssec is
           o Ubuntu 19.10
           o Ubuntu 20.04
           o Ubuntu 20.10
+          o Ubuntu 21.04
 ```
 
 NOTE: You can also build local binary packages. To generate RPM packages locally for all components refer to [Create Local Binary Packages](.github/CREATE-Packages.md)
