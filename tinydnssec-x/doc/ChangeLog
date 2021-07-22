@@ -52,3 +52,6 @@ Release 1.1 Start 11/04/2017
 - 04/05/2021
 34. Use internal SHA1 functions and remove -lssl -lcrypto from linker
     command line
+- 22/07/2021
+35. postinstall/postremove: update code to set/unset resolvconf in svscan if
+    running under supervise

@@ -57,10 +57,12 @@ case "$1" in
 	exit 0
     ;;
 esac
-#
-# Debian silliness
-#
-> /service/.svscan/variables/UNSHARE
+if [ -d /service/.svscan -a -d /service/.svscan/variables ] ; then
+  > /service/.svscan/variables/UNSHARE
+  if [ -x /usr/bin/unshare -a -x /service/dnscache/run -a -f /service/.svscan/run ] ; then
+    /bin/chmod -x /service/.svscan/run
+  fi
+fi
 if [ " $1" = " purge" ] ; then
 	for i in Gdnscache Gdnslog Gtinydns
 	do

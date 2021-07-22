@@ -379,19 +379,41 @@ fi
 if [ ! -d %{_sysconfdir}/dnscache ] ; then
   %{_prefix}/sbin/dnscache-conf Gdnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1
   if [ $? -eq 0 ] ; then
-    if [ ! -h /service/dnscache ] ; then
-      ln -s %{_sysconfdir}/dnscache /service/dnscache
+    if [ -d /service ] ; then
+      if [ ! -h /service/dnscache ] ; then
+        ln -s %{_sysconfdir}/dnscache /service/dnscache
+      fi
+    elif [ -h /service ] ; then
+      dir=`readlink /service`
+      if [ -d $dir ] ; then
+        if [ ! -h /service/dnscache ] ; then
+          ln -s %{_sysconfdir}/dnscache /service/dnscache
+        fi
+      fi
     fi
   fi
 else
-  if [ ! -h /service/dnscache ] ; then
-    ln -s %{_sysconfdir}/dnscache /service/dnscache
+  if [ -d /service ] ; then
+    if [ ! -h /service/dnscache ] ; then
+      ln -s %{_sysconfdir}/dnscache /service/dnscache
+    fi
+  elif [ -h /service ] ; then
+    dir=`readlink /service`
+    if [ -d $dir ] ; then
+      if [ ! -h $dir/dnscache ] ; then
+        ln -s %{_sysconfdir}/dnscache $dir/dnscache
+      fi
+    fi
   fi
 fi
-echo > /service/.svscan/variables/UNSHARE
-if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
-  if [ -f /service/.svscan/run ] ; then
-    /bin/chmod +x /service/.svscan/run
+
+if [ -d /service/.svscan ] ; then
+  mkdir -p /service/.svscan/variables
+  echo > /service/.svscan/variables/UNSHARE # used by svscanboot
+  if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
+    if [ -f /service/.svscan/run ] ; then
+      /bin/chmod +x /service/.svscan/run
+    fi
   fi
 fi
 for i in tinydns dqcache curvedns
@@ -447,9 +469,9 @@ do
     %{__rm} -rf %{_sysconfdir}/$i
   fi
 done
-> /service/.svscan/variables/UNSHARE
-if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
-  if [ -f /service/.svscan/run ] ; then
+if [ -d /service/.svscan -a -d /service/.svscan/variables ] ; then
+  > /service/.svscan/variables/UNSHARE
+  if [ -x /usr/bin/unshare -a -x /service/dnscache/run -a -f /service/.svscan/run ] ; then
     /bin/chmod -x /service/.svscan/run
   fi
 fi
