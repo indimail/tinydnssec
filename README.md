@@ -273,7 +273,7 @@ tinydnssec is supported at IndiMail
 
 ![Matrix](https://img.shields.io/matrix/indimail:matrix.org)
 
-* Join me [#indimail:matrix.org](https://matrix.to/#/#indimail:matrix.org)
+* [Matrix Invite Link #indimail:matrix.org](https://matrix.to/#/#indimail:matrix.org)
 * IndiMail has an [IRC channel on libera](https://libera.chat/) #indimail-mta
 
 ## Mailing list
