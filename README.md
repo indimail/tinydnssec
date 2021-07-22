@@ -96,6 +96,26 @@ $ git clone https://github.com/mbhangui/tinydnssec.git
 
 ## Compile and install tinydnssec
 
+To configure the build for tinydnssec, you need to configure conf-home, conf-sysconfdir and conf-servicedir. Defaults are given in the table below. If you are ok with defaults, you can run the script default.configure to set the below values.
+
+**Linux**
+
+config file|value
+-----------|------
+conf-home|/usr
+conf-sysconfdir|/etc/indimail
+conf-servicedir|/service
+
+**FreeBSD**, **Darwin**
+
+config file|value
+-----------|------
+conf-home|/usr/local
+conf-sysconfdir|/usr/local/etc/indimail
+conf-servicedir|/usr/local/etc/indimail/sv
+
+The build below depends on several Makefile variables. For the build to operate without errors, you need to run default.configure the first time and everytime if you do a `make distclean`. If you don't run default.configure, you can replace `make` with `./qmake`
+
 ```
 $ cd tinydnssec/tinydnssec-1.05
 $ ./default.configure
