@@ -3,6 +3,7 @@ set -e
 
 prefix=@prefix@
 sysconfdir=@sysconfdir@
+servicedir=@servicedir@
 
 ID=`id -u`
 if [ $ID -ne 0 ] ; then
@@ -60,26 +61,26 @@ fi
 if [ ! -d ${sysconfdir}/dnscache ] ; then
   ${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1 || true
   if [ $? -eq 0 ] ; then
-    if [ -d /service ] ; then
-      if [ ! -h /service/dnscache ] ; then
-        ln -sf ${sysconfdir}/dnscache /service/dnscache || true
+    if [ -d ${servicedir} ] ; then
+      if [ ! -h ${servicedir}/dnscache ] ; then
+        ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
       fi
-    elif [ -h /service ] ; then
-      dir=`readlink /service`
+    elif [ -h ${servicedir} ] ; then
+      dir=`readlink ${servicedir}`
       if [ -d $dir ] ; then
-        if [ ! -h /service/dnscache ] ; then
-          ln -sf ${sysconfdir}/dnscache /service/dnscache || true
+        if [ ! -h ${servicedir}/dnscache ] ; then
+          ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
         fi
       fi
     fi
   fi
 else
-  if [ -d /service ] ; then
-    if [ ! -h /service/dnscache ] ; then
-      ln -sf ${sysconfdir}/dnscache /service/dnscache || true
+  if [ -d ${servicedir} ] ; then
+    if [ ! -h ${servicedir}/dnscache ] ; then
+      ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
     fi
-  elif [ -h /service ] ; then
-    dir=`readlink /service`
+  elif [ -h ${servicedir} ] ; then
+    dir=`readlink ${servicedir}`
     if [ -d $dir ] ; then
       if [ ! -h $dir/dnscache ] ; then
         ln -sf ${sysconfdir}/dnscache $dir/dnscache || true
@@ -88,12 +89,12 @@ else
   fi
 fi
 
-if [ -d /service/.svscan ] ; then
-  mkdir -p /service/.svscan/variables
-  echo > /service/.svscan/variables/UNSHARE # used by svscanboot
-  if [ -x /usr/bin/unshare -a -x /service/dnscache/run ] ; then
-    if [ -f /service/.svscan/run ] ; then
-      /bin/chmod +x /service/.svscan/run
+if [ -d ${servicedir}/.svscan ] ; then
+  mkdir -p ${servicedir}/.svscan/variables
+  echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+  if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
+    if [ -f ${servicedir}/.svscan/run ] ; then
+      /bin/chmod +x ${servicedir}/.svscan/run
     fi
   fi
 fi

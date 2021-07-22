@@ -55,3 +55,4 @@ Release 1.1 Start 11/04/2017
 - 22/07/2021
 35. postinstall/postremove: update code to set/unset resolvconf in svscan if
     running under supervise
+35. Makefile: made prefix, sysconfdir, servicedir configureable using Makevars

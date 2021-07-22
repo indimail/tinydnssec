@@ -173,3 +173,6 @@ walldns-conf
 walldns-conf.o
 walldns.o
 PKGBUILD
+conf-sysconfdir
+conf-servicedir
+conf-home

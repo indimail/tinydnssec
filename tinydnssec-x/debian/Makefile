@@ -2,30 +2,32 @@ prefix=/usr
 version=$(shell cat ../conf-version)
 release=$(shell cat ../conf-release)
 email=$(shell cat ../conf-email)
-sysconfdir=/etc/indimail
+sysconfdir=$(shell sed -n 1p ../conf-sysconfdir)
+servicedir=$(shell sed -n 1p ../conf-servicedir)
 #
 
-all: rules debian.tar.gz dummy.tar.gz tinydnssec.dsc postinst preinst postrm prerm
+all: rules debian.tar.gz tinydnssec.dsc postinst preinst postrm prerm
 
 clean:
-	/bin/rm -f rules postinst postrm *.dsc debian.tar.gz dummy.tar.gz _service
+	/bin/rm -f rules postinst postrm *.dsc debian.tar.gz _service
 
 edit = sed \
 	-e 's,@sysconfdir\@,$(sysconfdir),g' \
+	-e 's,@servicedir\@,$(servicedir),g' \
 	-e 's,@version\@,$(version),g' \
 	-e 's,@release\@,$(release),g' \
 	-e 's,@email\@,$(email),g' \
 	-e 's,@prefix\@,$(prefix),g'
 
-postrm: postrm.in
+postrm: postrm.in ../conf-sysconfdir ../conf-servicedir
 	$(edit) $@.in > $@
-prerm: prerm.in
+prerm: prerm.in ../conf-sysconfdir ../conf-servicedir
 	$(edit) $@.in > $@
-postinst: postinst.in
+postinst: postinst.in ../conf-sysconfdir ../conf-servicedir
 	$(edit) $@.in > $@
-preinst: preinst.in
+preinst: preinst.in ../conf-sysconfdir ../conf-servicedir
 	$(edit) $@.in > $@
-tinydnssec.dsc: tinydnssec.dsc.in Makefile
+tinydnssec.dsc: tinydnssec.dsc.in Makefile ../conf-version ../conf-release
 	$(edit) $@.in > $@
 changelog: ../doc/ChangeLog Makefile ../conf-version ../conf-release \
 ../conf-email
@@ -35,8 +37,6 @@ copyright: copyright.in ../conf-email
 	$(edit) $@.in > $@
 control: control.in ../conf-release ../conf-version ../conf-email
 	$(edit) $@.in > $@
-dummy.tar.gz: README
-	tar cf - README |gzip > $@
 debian.tar.gz: copyright rules control changelog compat postinst \
 preinst postrm prerm tinydnssec.install Makefile
 	tar cf - copyright rules control changelog compat postinst \

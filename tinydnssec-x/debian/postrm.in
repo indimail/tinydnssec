@@ -21,6 +21,7 @@ set -e
 
 prefix=@prefix@
 sysconfdir=@sysconfdir@
+servicedir=@servicedir@
 rm=/bin/rm
 rmdir=/bin/rmdir
 ####################################
@@ -57,10 +58,10 @@ case "$1" in
 	exit 0
     ;;
 esac
-if [ -d /service/.svscan -a -d /service/.svscan/variables ] ; then
-  > /service/.svscan/variables/UNSHARE
-  if [ -x /usr/bin/unshare -a -x /service/dnscache/run -a -f /service/.svscan/run ] ; then
-    /bin/chmod -x /service/.svscan/run
+if [ -d ${servicedir}/.svscan -a -d ${servicedir}/.svscan/variables ] ; then
+  > ${servicedir}/.svscan/variables/UNSHARE
+  if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run -a -f ${servicedir}/.svscan/run ] ; then
+    /bin/chmod -x ${servicedir}/.svscan/run
   fi
 fi
 if [ " $1" = " purge" ] ; then
@@ -73,7 +74,7 @@ if [ " $1" = " purge" ] ; then
 	sleep 5
 
 	echo "removing configuration"
-	${rm} -f /service/dnscache /service/tinydns /service/curvedns /service/dqcache
+	${rm} -f ${servicedir}/dnscache ${servicedir}/tinydns ${servicedir}/curvedns ${servicedir}/dqcache
 	for i in tinydns dnscache dqcache dnscurve
 	do
 		${rm} -rf ${sysconfdir}/$i

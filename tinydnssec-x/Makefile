@@ -1,15 +1,18 @@
 # Don't edit Makefile! Use conf-* for configuration.
 
 SHELL=/bin/sh
+include Makevars.$(SYSTEM)
 curvedns_version=0.88
-version=$(shell cat conf-version)
-release=$(shell cat conf-release)
-email=$(shell cat conf-email)
 
 edit = sed \
+	-e 's,@prefix\@,$(prefix),g' \
 	-e 's}@version\@}$(version)}g' \
 	-e 's|@release\@|$(release)|g' \
-	-e 's|@email\@|$(email)|g'
+	-e 's,@sysconfdir\@,$(sysconfdir),g' \
+	-e 's,@servicedir\@,$(servicedir),g' \
+	-e 's|@email\@|$(email)|g' \
+	-e 's,@HOST\@,$(HOST),g' \
+	-e 's,@DATE\@,$(DATE),g'
 
 default: it
 

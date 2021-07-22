@@ -194,3 +194,7 @@ debian/tinydnssec.dsc
 *.a
 curvedns-0.88/nacl/build
 PKGBUILD
+conf-home
+conf-sysconfdir
+conf-servicedir
+Makevars.
