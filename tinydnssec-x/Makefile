@@ -449,7 +449,8 @@ compile ip6_scan.c ip6.h
 	./compile ip6_scan.c
 
 it: \
-prog setup instcheck tinydnssec.spec tinydnssec.changes PKGBUILD
+prog setup instcheck tinydnssec.spec tinydnssec.changes PKGBUILD \
+dnssvc
 
 load: warn-auto.sh conf-ld systype make-load
 	( cat warn-auto.sh; ./make-load "`cat systype`" ) > load
@@ -853,6 +854,11 @@ PKGBUILD: PKGBUILD.in conf-version conf-release doc/ChangeLog \
 conf-email tinydnssec.changes
 	cat $@.in | $(edit) > PKGBUILD
 
+dnssvc: dnssvc.in conf-version conf-release conf-email conf-home \
+conf-servicedir conf-sysconfdir warn-auto.sh
+	$(edit) warn-auto.sh $@.in > dnssvc
+	chmod 755 dnssvc
+
 clean:
 	rm -f `cat TARGETS` data data.cdb test/[ot]*
 	cd dq-20161210 && make clean && cd ..
@@ -863,4 +869,3 @@ clean:
 
 distclean: clean
 	rm -f `cat TARGETS` data data.cdb test/[ot]*
-

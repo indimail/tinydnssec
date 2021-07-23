@@ -90,7 +90,7 @@ fi
 if [ $upgrade -eq 1 ] ; then
 	set +e
 	configure_resolvconf
-	# endif of resolvconf config
+	# end of of resolvconf config
 	if [ -f ${prefix}/bin/svok ] ; then
 		for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
 		do

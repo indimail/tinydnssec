@@ -198,3 +198,4 @@ conf-home
 conf-sysconfdir
 conf-servicedir
 Makevars.
+dnssvc

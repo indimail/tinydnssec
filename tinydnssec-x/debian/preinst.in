@@ -42,11 +42,11 @@ case "$1" in
 	# Create a users and groups. Do not report any problems if they already
 	# exists.
 	#
-	echo "Adding tinydns users/groups"
 	for i in Gdnscache Gtinydns
 	do
 		${rm} -f /var/spool/mail/$i
-    	/usr/bin/getent passwd $i > /dev/null || /usr/sbin/useradd -l -M -g nofiles  -d ${sysconfdir} -s /sbin/nologin $i || true
+		/usr/bin/getent passwd $i > /dev/null || ( echo "Adding tinydns users/groups" && \
+			/usr/sbin/useradd -l -M -g nofiles  -d ${sysconfdir} -s /sbin/nologin $i)
 	done
 	
 	;;
