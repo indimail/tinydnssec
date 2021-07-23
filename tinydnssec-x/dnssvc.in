@@ -351,6 +351,8 @@ if [ $dnscache_configured -eq 1 ] ; then
 fi
 }
 
+configure_dnscache()
+{
 dnscache_configured=0
 if [ ! -d ${sysconfdir}/dnscache ] ; then
   echo ${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1
@@ -382,4 +384,8 @@ else
   dnscache_configured=1
 fi
 configure_resolvconf
+}
+############################
+
 create_users
+configure_dnscache
