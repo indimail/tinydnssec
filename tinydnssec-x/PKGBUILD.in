@@ -23,6 +23,7 @@ _sysconfdir=/etc/indimail
 
 build() {
   cd $srcdir/$pkgname-${pkgver}
+  ./default.configure
   make -s
   if [ -d dq-20161210 ] ; then
     cd dq-20161210
