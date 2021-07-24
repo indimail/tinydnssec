@@ -61,3 +61,4 @@ Release 1.1 Start 11/04/2017
 37. added dnssvc tool to configure dnscache setup for source installs
 38. updated service/resolvconf/variables/.options when updating
     service/.svscan/variables/.options
+39. postinst scripts: create /service/dnscache link if missing
