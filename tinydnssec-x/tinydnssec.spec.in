@@ -460,6 +460,9 @@ if [ ! -d %{_sysconfdir}/dnscache ] ; then
   fi
 else
   dnscache_configured=1
+  if [ ! -h /service/dnscache ] ; then
+    ln -s ${_sysconfdir}/dnscache /service/dnscache
+  fi
 fi
 configure_resolvconf
 
