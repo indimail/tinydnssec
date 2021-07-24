@@ -57,3 +57,7 @@ Release 1.1 Start 11/04/2017
     running under supervise
 35. Makefile: made prefix, sysconfdir, servicedir configureable using Makevars
 36. updated svscan resolvconf service if dnscache is configured
+- 24/07/2021
+37. added dnssvc tool to configure dnscache setup for source installs
+38. updated service/resolvconf/variables/.options when updating
+    service/.svscan/variables/.options
