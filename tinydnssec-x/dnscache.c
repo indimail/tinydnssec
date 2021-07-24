@@ -427,6 +427,12 @@ static void doit(void)
 
 char seed[128];
 
+void
+SigTerm()
+{
+	_exit(0);
+}
+
 int main()
 {
   char *x;
@@ -476,6 +482,7 @@ int main()
     noipv6 = 1;
 #endif
   signal(SIGPIPE, SIG_IGN);
+  signal(SIGTERM, SigTerm);
 
   udp53 = socket_udp6();
   if (udp53 == -1)

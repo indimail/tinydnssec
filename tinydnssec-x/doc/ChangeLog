@@ -62,3 +62,5 @@ Release 1.1 Start 11/04/2017
 38. updated service/resolvconf/variables/.options when updating
     service/.svscan/variables/.options
 39. postinst scripts: create /service/dnscache link if missing
+40. dnscache.c: added SIGTERM handler to exit 0. Elminates crashed
+    messages in supervise logs
