@@ -87,6 +87,13 @@ Gentoo Linux
 # etc-update
 ```
 
+**alpine Linux**
+
+```
+# apk add gcc g++ make git autoconf automake libtool m4 sed
+# apk add libev-dev
+```
+
 ## Download tinydnssec
 
 ```
