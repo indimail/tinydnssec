@@ -85,13 +85,10 @@ Gentoo Linux
 # eix-sync
 # emerge -a dev-libs/libev
 # etc-update
-```
 
-**alpine Linux**
-
-```
+alpine Linux
 # apk add gcc g++ make git autoconf automake libtool m4 sed
-# apk add libev-dev
+# apk add libev-dev openssl-dev
 ```
 
 ## Download tinydnssec
