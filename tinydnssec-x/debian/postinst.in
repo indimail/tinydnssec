@@ -83,7 +83,7 @@ if [ $dnscache_configured -eq 1 ] ; then
        echo $options > ${servicedir}/resolvconf/variables/.options
       fi
       if [ -x ${prefix}/sbin/minisvc ] ; then
-        ${prefix}/sbin/minisvc --refreshsvc=/service/.svscan
+        ${prefix}/sbin/minisvc --refreshsvc=/service/.svscan --force
       fi
     fi
   fi
