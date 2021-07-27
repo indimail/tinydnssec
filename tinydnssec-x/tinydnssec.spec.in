@@ -396,19 +396,19 @@ if [ $dnscache_configured -eq 1 ] ; then
         /bin/chmod +x ${servicedir}/.svscan/run
       fi
     fi
-  fi
-  grep resolvconf %{servicedir}/.svscan/variables/.options > /dev/null 2>&1
-  if [ $? -ne 0 ] ; then
-    options="`cat %{servicedir}/.svscan/variables/.options`"
-    options="$options --resolvconf"
-    %{__mv} %{servicedir}/.svscan/variables/.options \
-      %{servicedir}/.svscan/variables/.options.noresolvconf
-    echo $options > %{servicedir}/.svscan/variables/.options
-    if [ -d %{servicedir}/resolvconf/variables ] ; then
-      echo $options > %{servicedir}/resolvconf/variables/.options
-    fi
-    if [ -x %{_prefix}/sbin/minisvc ] ; then
-      %{_prefix}/sbin/minisvc --refreshsvc=/service/.svscan
+    grep resolvconf %{servicedir}/.svscan/variables/.options > /dev/null 2>&1
+    if [ $? -ne 0 -a -f %{servicedir}/.svscan/variables/.options ] ; then
+      options="`cat %{servicedir}/.svscan/variables/.options`"
+      options="$options --resolvconf"
+      %{__mv} %{servicedir}/.svscan/variables/.options \
+        %{servicedir}/.svscan/variables/.options.noresolvconf
+      echo $options > %{servicedir}/.svscan/variables/.options
+      if [ -d %{servicedir}/resolvconf/variables ] ; then
+        echo $options > %{servicedir}/resolvconf/variables/.options
+      fi
+      if [ -x %{_prefix}/sbin/minisvc ] ; then
+        %{_prefix}/sbin/minisvc --refreshsvc=/service/.svscan
+      fi
     fi
   fi
 fi
