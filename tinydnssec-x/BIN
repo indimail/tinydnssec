@@ -1,0 +1,34 @@
+# installer input files for Universal programs in @prefix@/bin
+# @prefix@/bin
+d::::/bin::
+#
+# Files in @prefix@/bin
+#
+f:::0755:/bin/:dnscache:dnscache
+f:::0755:/bin/:tinydns:tinydns
+f:::0755:/bin/:walldns:walldns
+f:::0755:/bin/:rbldns:rbldns
+f:::0755:/bin/:pickdns:pickdns
+f:::0755:/bin/:axfrdns:axfrdns
+f:::0755:/bin/:tinydns-get:tinydns-get
+f:::0755:/bin/:tinydns-data:tinydns-data
+f:::0755:/bin/:tinydns-edit:tinydns-edit
+f:::0755:/bin/:rbldns-data:rbldns-data
+f:::0755:/bin/:pickdns-data:pickdns-data
+f:::0755:/bin/:axfr-get:axfr-get
+f:::0755:/bin/:dnsip:dnsip
+f:::0755:/bin/:dnsip6:dnsip6
+f:::0755:/bin/:dnsnamex:dnsnamex
+f:::0755:/bin/:dnsipq:dnsipq
+f:::0755:/bin/:dnsip6q:dnsip6q
+f:::0755:/bin/:dnsname:dnsname
+f:::0755:/bin/:dnstxt:dnstxt
+f:::0755:/bin/:dnsmx:dnsmx
+f:::0755:/bin/:dnsfilter:dnsfilter
+f:::0755:/bin/:random-ip:random-ip
+f:::0755:/bin/:dnsqr:dnsqr
+f:::0755:/bin/:dnsq:dnsq
+f:::0755:/bin/:dnstrace:dnstrace
+f:::0755:/bin/:dnstracesort:dnstracesort
+f:::0755:/bin/:dnsgetroot:dnsgetroot
+f:::0755:/bin/:tinydns-sign:tinydns-sign

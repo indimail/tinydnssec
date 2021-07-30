@@ -8,6 +8,7 @@ edit = sed \
 	-e 's,@prefix\@,$(prefix),g' \
 	-e 's}@version\@}$(version)}g' \
 	-e 's|@release\@|$(release)|g' \
+	-e 's,@libexecdir\@,$(libexecdir),g' \
 	-e 's,@sysconfdir\@,$(sysconfdir),g' \
 	-e 's,@servicedir\@,$(servicedir),g' \
 	-e 's|@email\@|$(email)|g' \
@@ -408,14 +409,6 @@ hier.o: \
 compile hier.c auto_home.h
 	./compile hier.c
 
-setup: \
-load setup.o hier.o auto_home.o
-	./load setup hier.o auto_home.o -lqmail
-
-setup.o: \
-compile setup.c
-	./compile setup.c
-
 instcheck: \
 load instcheck.o hier.o auto_home.o
 	./load instcheck hier.o auto_home.o -lqmail
@@ -449,8 +442,8 @@ compile ip6_scan.c ip6.h
 	./compile ip6_scan.c
 
 it: \
-prog setup instcheck tinydnssec.spec tinydnssec.changes PKGBUILD \
-dnssvc
+prog instcheck tinydnssec.spec tinydnssec.changes PKGBUILD \
+dnssvc installer
 
 load: warn-auto.sh conf-ld systype make-load
 	( cat warn-auto.sh; ./make-load "`cat systype`" ) > load
@@ -614,9 +607,46 @@ compile server.c ip4.h socket.h droproot.h qlog.h \
 response.h dns.h iopause.h edns0.h conf-dnssec
 	./compile `grep -h -v "^#" conf-dnssec` server.c
 
-install: \
-it setup
-	./setup -d "$(DESTDIR)" -m /usr/share/man
+installer: \
+load installer.o
+	./load installer -lqmail
+
+installer.o: \
+compile installer.c
+	./compile installer.c
+
+DIRS: DIRS.in \
+conf-home conf-sysconfdir
+	([ -f DIRS.$(SYSTEM) ] && \
+	$(edit) DIRS.in DIRS.$(SYSTEM) || $(edit) DIRS.in) > DIRS
+
+BIN: BIN.in
+	([ -f BIN.$(SYSTEM) ] && \
+	cat BIN.in BIN.$(SYSTEM) || cat BIN.in) > BIN
+
+SBIN: SBIN.in SBIN.sql
+	([ -f SBIN.$(SYSTEM) ] && \
+	cat SBIN.in SBIN.$(SYSTEM) || cat SBIN.in; \
+	[ -n "$(USE_SQL)" ] && cat SBIN.sql) > SBIN
+
+SHARED: SHARED.in doc/INSTALL-MINI
+	([ -f SHARED.$(SYSTEM) ] && \
+	cat SHARED.in SHARED.$(SYSTEM) || cat SHARED.in) > SHARED
+
+MAN: MAN.in MAN.sql
+	([ -f MAN.$(SYSTEM) ] && \
+	cat MAN.in MAN.$(SYSTEM) || cat MAN.in; \
+	[ -n "$(USE_SQL)" ] && cat MAN.sql || true) > MAN
+
+
+install: it installer DIRS conf-home conf-sysconfdir conf-libexec
+	./installer $(DESTDIR)                         < DIRS
+	./installer $(DESTDIR)$(prefix)                < BIN
+	./installer $(DESTDIR)$(prefix)                < SBIN
+	./installer $(DESTDIR)$(libexecdir)            < LIBEXEC
+	./installer $(DESTDIR)$(sysconfdir)            < ETC
+	./installer $(DESTDIR)$(prefix)/share/man      < MAN
+	[ -z $(DESTDIR) ] && ./instcheck || true
 
 socket.lib: \
 trylsock.c compile load

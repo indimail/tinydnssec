@@ -1,3 +1,4 @@
 etc/indimail /etc
 usr/bin /usr
 usr/share /usr
+usr/libexec/indimail /usr/libexec

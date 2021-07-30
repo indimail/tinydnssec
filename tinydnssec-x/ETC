@@ -1,0 +1,10 @@
+#
+# Plugins installation input for installer
+#
+# Base Directory
+d::::::
+
+# Control Directory
+# @sysconfdir@/control
+# 
+f::::/:dnsroots.global:dnsroots.global

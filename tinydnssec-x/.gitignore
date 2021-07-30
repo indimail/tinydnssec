@@ -199,3 +199,6 @@ conf-sysconfdir
 conf-servicedir
 Makevars.
 dnssvc
+DIRS
+installer
+installer.o

@@ -64,3 +64,5 @@ Release 1.1 Start 11/04/2017
 39. postinst scripts: create /service/dnscache link if missing
 40. dnscache.c: added SIGTERM handler to exit 0. Elminates crashed
     messages in supervise logs
+- 30/07/2021
+41. replaced setup with installer to make installation more configurable

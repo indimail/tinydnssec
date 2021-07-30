@@ -1,5 +1,6 @@
 SYSTEM           != uname -s | tr "[:lower:]" "[:upper:]"
 prefix           != head -1 conf-home 2>/dev/null
+libexecdir       != head -1 conf-libexec 2>/dev/null
 sysconfdir       != head -1 conf-sysconfdir 2>/dev/null
 servicedir       != head -1 conf-servicedir/dev/null
 version          != cat conf-version

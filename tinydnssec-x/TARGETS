@@ -177,3 +177,6 @@ conf-sysconfdir
 conf-servicedir
 conf-home
 dnssvc
+DIRS
+installer
+installer.o

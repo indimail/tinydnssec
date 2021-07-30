@@ -1,0 +1,16 @@
+# installer input files for Universal directories
+#
+d::::::
+d::::@prefix@::
+d::::@prefix@/bin::
+d::::@prefix@/sbin::
+d::::@prefix@/share::
+d::::@prefix@/share/man::
+d::::@prefix@/share/man/man1::
+d::::@prefix@/share/man/man5::
+d::::@prefix@/share/man/man7::
+d::::@prefix@/share/man/man8::
+d::::@prefix@/libexec::
+d::::@libexecdir@::
+d::::/etc/::
+d::::@sysconfdir@::
