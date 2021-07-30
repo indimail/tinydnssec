@@ -20,8 +20,8 @@ void hier(const char *inst_dir)
   d(mandir,"man5",-1,-1,0755);
   d(mandir,"man7",-1,-1,0755);
   d(mandir,"man8",-1,-1,0755);
-  d(auto_h,"bin",-1,-1,0755);
-  d(auto_h,"sbin",-1,-1,0755);
+  d(auto_h,"bin",-1,-1,0555);
+  d(auto_h,"sbin",-1,-1,0555);
 
   c(auto_h,"sbin","dnscache-conf",-1,-1,0755);
   c(auto_h,"sbin","tinydns-conf",-1,-1,0755);
