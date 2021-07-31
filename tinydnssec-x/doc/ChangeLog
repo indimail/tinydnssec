@@ -66,3 +66,5 @@ Release 1.1 Start 11/04/2017
     messages in supervise logs
 - 30/07/2021
 41. replaced setup with installer to make installation more configurable
+- 31/07/2021
+42. PKGBUILD: fixed variables

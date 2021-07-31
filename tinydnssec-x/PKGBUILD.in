@@ -76,6 +76,9 @@ package() {
 }
 
 #### INSTALL SCRIPTS #####
+_prefix=/usr
+_sysconfdir=@sysconfdir@
+_servicedir=@servicedir@
 
 stop_service() {
   if [ -f ${_prefix}/bin/svstat ] ; then
@@ -101,20 +104,20 @@ pre_install() {
 configure_resolvconf()
 {
 dnscache_configured=0
-if [ -d ${sysconfdir}/dnscache ] ; then
+if [ -d ${_sysconfdir}/dnscache ] ; then
 	dnscache_configured=1
-	if [ -d ${servicedir} ] ; then
-		if [ ! -h ${servicedir}/dnscache ] ; then
-			ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
+	if [ -d ${_servicedir} ] ; then
+		if [ ! -h ${_servicedir}/dnscache ] ; then
+			ln -sf ${_sysconfdir}/dnscache ${_servicedir}/dnscache || true
 			if [ $? -ne 0 ] ; then
 				dnscache_configured=0
 			fi
 		fi
-	elif [ -h ${servicedir} ] ; then
-		dir=`readlink ${servicedir}`
+	elif [ -h ${_servicedir} ] ; then
+		dir=`readlink ${_servicedir}`
 		if [ -d $dir ] ; then
 			if [ ! -h $dir/dnscache ] ; then
-				ln -sf ${sysconfdir}/dnscache $dir/dnscache || true
+				ln -sf ${_sysconfdir}/dnscache $dir/dnscache || true
 				if [ $? -ne 0 ] ; then
 					dnscache_configured=0
 				fi
@@ -123,27 +126,27 @@ if [ -d ${sysconfdir}/dnscache ] ; then
 	fi
 fi
 if [ $dnscache_configured -eq 1 ] ; then
-  if [ -d ${servicedir}/.svscan ] ; then
-    mkdir -p ${servicedir}/.svscan/variables
-    echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
-    if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
-      if [ -f ${servicedir}/.svscan/run ] ; then
-        /bin/chmod +x ${servicedir}/.svscan/run
+  if [ -d ${_servicedir}/.svscan ] ; then
+    mkdir -p ${_servicedir}/.svscan/variables
+    echo > ${_servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    if [ -x /usr/bin/unshare -a -x ${_servicedir}/dnscache/run ] ; then
+      if [ -f ${_servicedir}/.svscan/run ] ; then
+        /bin/chmod +x ${_servicedir}/.svscan/run
       fi
     fi
   fi
-  grep resolvconf ${servicedir}/.svscan/variables/.options > /dev/null 2>&1
+  grep resolvconf ${_servicedir}/.svscan/variables/.options > /dev/null 2>&1
   if [ $? -ne 0 ] ; then
-    options="`cat ${servicedir}/.svscan/variables/.options`"
+    options="`cat ${_servicedir}/.svscan/variables/.options`"
     options="$options --resolvconf"
-    mv ${servicedir}/.svscan/variables/.options \
-      ${servicedir}/.svscan/variables/.options.noresolvconf
-    echo $options > ${servicedir}/.svscan/variables/.options
-    if [ -d ${servicedir}/resolvconf/variables ] ; then
-     echo $options > ${servicedir}/resolvconf/variables/.options
+    mv ${_servicedir}/.svscan/variables/.options \
+      ${_servicedir}/.svscan/variables/.options.noresolvconf
+    echo $options > ${_servicedir}/.svscan/variables/.options
+    if [ -d ${_servicedir}/resolvconf/variables ] ; then
+     echo $options > ${_servicedir}/resolvconf/variables/.options
     fi
-    if [ -x ${prefix}/sbin/minisvc ] ; then
-      ${prefix}/sbin/minisvc --refreshsvc=/service/.svscan
+    if [ -x ${_prefix}/sbin/minisvc ] ; then
+      ${_prefix}/sbin/minisvc --refreshsvc=/service/.svscan
     fi
   fi
 fi
@@ -155,18 +158,18 @@ post_install() {
     ${_prefix}/sbin/dnscache-conf Gdnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1
     if [ $? -eq 0 ] ; then
       dnscache_configured=1
-      if [ -d ${servicedir} ] ; then
+      if [ -d ${_servicedir} ] ; then
         if [ ! -h /service/dnscache ] ; then
           ln -s ${_sysconfdir}/dnscache /service/dnscache
           if [ $? -ne 0 ] ; then
             dnscache_configured=0
           fi
         fi
-      elif [ -h ${servicedir} ] ; then
-        dir=`readlink ${servicedir}`
+      elif [ -h ${_servicedir} ] ; then
+        dir=`readlink ${_servicedir}`
         if [ -d $dir ] ; then
-          if [ ! -h ${servicedir}/dnscache ] ; then
-            ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
+          if [ ! -h ${_servicedir}/dnscache ] ; then
+            ln -sf ${_sysconfdir}/dnscache ${_servicedir}/dnscache || true
             if [ $? -ne 0 ] ; then
               dnscache_configured=0
             fi
@@ -174,7 +177,7 @@ post_install() {
         fi
       fi
 	else
-      echo "${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1: failed"
+      echo "${_prefix}/sbin/dnscache-conf Gdnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1: failed"
     fi
   else
     dnscache_configured=1
