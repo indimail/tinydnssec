@@ -32,6 +32,7 @@ build() {
     cd ..
   fi
   if [ -d curvedns-${_curvedns_version} ] ; then
+    echo "configuring curvedns"
     cd curvedns-${_curvedns_version}
     ./configure.nacl
     ./configure.curvedns
@@ -48,6 +49,7 @@ package() {
   make -s DESTDIR=${pkgdir} install
   if [ -d dq-20161210 ] ; then
     cd dq-20161210
+	echo "/usr/bin" > conf-sbin
     sh make-install.sh ${pkgdir}
     cd ..
   fi
