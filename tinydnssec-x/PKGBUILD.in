@@ -44,7 +44,7 @@ build() {
 package() {
   depends=('daemontools')
   cd $srcdir/$pkgname-${pkgver}
-  sed -i 's|/sbin/|/bin/|g' SBIN
+  sed -i 's|/sbin|/bin|g' SBIN
   sed -i '/sbin/d' DIRS.in
   install -D -m 0644 ${pkgname}.changes "$pkgdir"${_prefix}/share/doc/${pkgname}/${pkgname}.changes
   make -s DESTDIR=${pkgdir} install
