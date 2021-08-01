@@ -1,17 +1,17 @@
 # INSTALLATION
 
-1. create users dnscache dnslog
+1. create users dnscache qmaill
 
 ```
    # /usr/sbin/useradd -l -M -g nofiles  -d /etc/indimail -s /sbin/nologin dnscache
-   # /usr/sbin/useradd -l -M -g nofiles  -d /etc/indimail -s /sbin/nologin dnslog
+   # /usr/sbin/useradd -l -M -g nofiles  -d /etc/indimail -s /sbin/nologin qmaill
    # /usr/sbin/useradd -l -M -g nofiles  -d /etc/indimail -s /sbin/nologin tinydns
 ```
 
 2. run dnscache-conf
 
 ```
-   # dnscache-conf Gdnscache Gdnslog /etc/indimail/dnscache 127.0.0.1
+   # dnscache-conf dnscache qmaill /etc/indimail/dnscache 127.0.0.1
 ```
 
 3. Put service under supervise
