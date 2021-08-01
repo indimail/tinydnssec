@@ -175,6 +175,7 @@ pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
 %endif
 %if %{nocurvedns} == 0
   if [ -d curvedns-%{curvedns_version} ] ; then
+    echo "configuring curvedns"
     cd curvedns-%{curvedns_version}
     ./configure.nacl
     ./configure.curvedns
