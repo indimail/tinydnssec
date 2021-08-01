@@ -69,3 +69,4 @@ Release 1.1 Start 11/04/2017
 - 31/07/2021
 42. PKGBUILD: fixed variables
 43. PKGBUILD: change sbin to bin in installer input file SBIN, DIRS.in
+44. changed dns account names to dnscache, tinydns

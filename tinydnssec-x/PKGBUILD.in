@@ -98,7 +98,7 @@ stop_service() {
 }
 
 pre_install() {
-  for i in Gdnscache Gtinydns
+  for i in dnscache tinydns
   do
     rm -f /var/spool/mail/$i
     /usr/bin/getent passwd $i > /dev/null || /usr/sbin/useradd -l -M -g nofiles  -d ${_sysconfdir} -s /sbin/nologin $i || true
@@ -159,7 +159,7 @@ fi
 post_install() {
   dnscache_configured=0
   if [ ! -d ${_sysconfdir}/dnscache ] ; then
-    ${_prefix}/sbin/dnscache-conf Gdnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1
+    ${_prefix}/sbin/dnscache-conf dnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1
     if [ $? -eq 0 ] ; then
       dnscache_configured=1
       if [ -d ${_servicedir} ] ; then
@@ -181,7 +181,7 @@ post_install() {
         fi
       fi
 	else
-      echo "${_prefix}/sbin/dnscache-conf Gdnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1: failed"
+      echo "${_prefix}/sbin/dnscache-conf dnscache qmaill ${_sysconfdir}/dnscache 127.0.0.1: failed"
     fi
   else
     dnscache_configured=1
@@ -192,9 +192,9 @@ post_install() {
   for i in tinydns dqcache curvedns
   do
     if [ " $i" = " dqcache" ] ; then
-      acct=Gdnscache
+      acct=dnscache
     else
-      acct=Gtinydns
+      acct=tinydns
     fi
     if [ " $i" = " curvedns" ] ; then
       ip=x.x.x.x

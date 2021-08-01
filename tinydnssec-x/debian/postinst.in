@@ -114,7 +114,7 @@ fi
 dnscache_configured=0
 if [ ! -d ${sysconfdir}/dnscache ] ; then
   set +e
-  ${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1 || true
+  ${prefix}/sbin/dnscache-conf dnscache qmaill ${sysconfdir}/dnscache 127.0.0.1 || true
   if [ $? -eq 0 ] ; then
     dnscache_configured=1
     if [ -d ${servicedir} ] ; then
@@ -136,7 +136,7 @@ if [ ! -d ${sysconfdir}/dnscache ] ; then
       fi
     fi
   else
-    echo "${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1: failed"
+    echo "${prefix}/sbin/dnscache-conf dnscache qmaill ${sysconfdir}/dnscache 127.0.0.1: failed"
   fi
 else
   dnscache_configured=1
@@ -150,9 +150,9 @@ set -e
 for i in tinydns dqcache curvedns
 do
   if [ " $i" = " dqcache" ] ; then
-    acct=Gdnscache
+    acct=dnscache
   else
-    acct=Gtinydns
+    acct=tinydns
   fi
   if [ " $i" = " curvedns" ] ; then
     ip=x.x.x.x

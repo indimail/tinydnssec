@@ -85,8 +85,8 @@ Requires: /usr/sbin/useradd /usr/sbin/groupadd /usr/sbin/groupdel /usr/sbin/user
 Requires: daemontools
 Requires: group(nofiles)
 Requires: user(qmaill)
-Provides: user(Gtinydns)  > 999
-Provides: user(Gdnscache) > 999
+Provides: user(tinydns)  > 999
+Provides: user(dnscache) > 999
 
 %description
 A collection of Domain Name System tools
@@ -342,7 +342,7 @@ fi
 if [ $argv1 -eq 2 ] ; then
   exit 0
 fi
-for i in Gdnscache Gtinydns
+for i in dnscache tinydns
 do
   %{__rm} -f /var/spool/mail/$i
   /usr/bin/getent passwd $i > /dev/null || /usr/sbin/useradd -l -M -g nofiles  -d %{_sysconfdir} -s /sbin/nologin $i || true
@@ -440,7 +440,7 @@ fi
 
 dnscache_configured=0
 if [ ! -d %{_sysconfdir}/dnscache ] ; then
-  %{_prefix}/sbin/dnscache-conf Gdnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1
+  %{_prefix}/sbin/dnscache-conf dnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1
   if [ $? -eq 0 ] ; then
     dnscache_configured=1
     if [ -d ${servicedir} ] ; then
@@ -462,7 +462,7 @@ if [ ! -d %{_sysconfdir}/dnscache ] ; then
       fi
     fi
   else
-    echo "%{_prefix}/sbin/dnscache-conf Gdnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1: failed"
+    echo "%{_prefix}/sbin/dnscache-conf dnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1: failed"
   fi
 else
   dnscache_configured=1
@@ -475,9 +475,9 @@ configure_resolvconf
 for i in tinydns dqcache curvedns
 do
   if [ " $i" = " dqcache" ] ; then
-    acct=Gdnscache
+    acct=dnscache
   else
-    acct=Gtinydns
+    acct=tinydns
   fi
   if [ " $i" = " curvedns" ] ; then
     ip=x.x.x.x
@@ -531,7 +531,7 @@ if [ -d ${servicedir}/.svscan -a -d ${servicedir}/.svscan/variables ] ; then
     /bin/chmod -x ${servicedir}/.svscan/run
   fi
 fi
-for i in Gtinydns Gdnscache
+for i in tinydns dnscache
 do
   echo "Removing user $i"
   /usr/bin/getent passwd $i > /dev/null && /usr/sbin/userdel $i >/dev/null || true

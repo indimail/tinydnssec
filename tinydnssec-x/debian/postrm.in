@@ -65,7 +65,7 @@ if [ -d ${servicedir}/.svscan -a -d ${servicedir}/.svscan/variables ] ; then
   fi
 fi
 if [ " $1" = " purge" ] ; then
-	for i in Gdnscache Gdnslog Gtinydns
+	for i in dnscache tinydns
 	do
 		echo "removing user $i"
 		/usr/bin/getent passwd $i > /dev/null && /usr/sbin/userdel $i >/dev/null || true
