@@ -294,7 +294,7 @@ linuxgroupadd()
 
 create_users()
 {
-	for i in Gdnscache Gtinydns
+	for i in dnscache tinydns
 	do
     	/usr/bin/getent passwd $i > /dev/null || ( echo "adding tinydns user $i" && \
 			linuxuseradd -l -M -g nofiles  -d ${sysconfdir} -s /sbin/nologin $i )
@@ -358,8 +358,8 @@ configure_dnscache()
 {
 dnscache_configured=0
 if [ ! -d ${sysconfdir}/dnscache ] ; then
-  echo ${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1
-  ${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1
+  echo ${prefix}/sbin/dnscache-conf dnscache qmaill ${sysconfdir}/dnscache 127.0.0.1
+  ${prefix}/sbin/dnscache-conf dnscache qmaill ${sysconfdir}/dnscache 127.0.0.1
   if [ $? -eq 0 ] ; then
     dnscache_configured=1
     if [ -d ${servicedir} ] ; then
@@ -381,7 +381,7 @@ if [ ! -d ${sysconfdir}/dnscache ] ; then
       fi
     fi
   else
-    echo "${prefix}/sbin/dnscache-conf Gdnscache qmaill ${sysconfdir}/dnscache 127.0.0.1: failed"
+    echo "${prefix}/sbin/dnscache-conf dnscache qmaill ${sysconfdir}/dnscache 127.0.0.1: failed"
   fi
 else
   dnscache_configured=1
