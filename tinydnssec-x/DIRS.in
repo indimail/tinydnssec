@@ -13,4 +13,4 @@ d::::@prefix@/share/man/man8::
 d::::@prefix@/libexec::
 d::::@libexecdir@::
 d::::/etc/::
-d::::@sysconfdir@::
+d:::02755:@sysconfdir@::
