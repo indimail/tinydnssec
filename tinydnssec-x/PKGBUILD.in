@@ -50,7 +50,7 @@ package() {
   install -D -m 0644 ${pkgname}.changes "$pkgdir"${_prefix}/share/doc/${pkgname}/${pkgname}.changes
   make -s DESTDIR=${pkgdir} install
   ./installer -fc ${DESTDIR}                     < DIRS
-  ./installer -fc $(DESTDIR}${_prefix}           < BIN
+  ./installer -fc ${DESTDIR}${_prefix}           < BIN
   ./installer -fc ${DESTDIR}${_prefix}           < SBIN
   ./installer -fc ${DESTDIR}${_libexecdir}       < LIBEXEC
   ./installer -fc ${DESTDIR}${_sysconfdir}       < ETC
