@@ -72,3 +72,4 @@ Release 1.1 Start 11/04/2017
 44. changed dns account names to dnscache, tinydns
 - 02/08/2021
 45. PKGBUILD: fix permissions of installed files in destdir
+46. PKGBUILD: replaced DESTDIR with pkgdir
