@@ -74,3 +74,5 @@ Release 1.1 Start 11/04/2017
 45. PKGBUILD: fix permissions of installed files in destdir
 46. PKGBUILD: replaced DESTDIR with pkgdir
 47. installer.c: set default permissions when mode=-1
+- 05/08/2021
+48. added permission files for indimail-mta

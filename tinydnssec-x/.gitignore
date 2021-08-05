@@ -202,3 +202,4 @@ dnssvc
 DIRS
 installer
 installer.o
+INPUT

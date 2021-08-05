@@ -1,5 +1,12 @@
 /*
  * $Log: installer.c,v $
+ * Revision 1.16  2021-08-05 13:03:45+05:30  Cprogrammer
+ * added -p option to create parent directories as needed
+ * display usage for wrong usage
+ *
+ * Revision 1.15  2021-08-03 15:51:43+05:30  Cprogrammer
+ * added -m option to ignore missing files
+ *
  * Revision 1.14  2021-08-02 13:30:11+05:30  Cprogrammer
  * set default permissions when mode=-1
  *
@@ -46,7 +53,6 @@
  * Initial revision
  *
  */
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -65,15 +71,14 @@
 #include <scan.h>
 #include <fmt.h>
 
-stralloc        target = { 0 };
-char           *user, *group, *to;
+static stralloc target = { 0 };
+static char    *user, *group, *to;
 const char      FATAL[] = "installer: fatal: ";
 const char      WARN[] = "installer: warning: ";
-static char     strnum[FMT_ULONG];
-char            inbuf[SUBSTDIO_INSIZE], outbuf[SUBSTDIO_OUTSIZE];
-substdio        ssin, ssout;
-uid_t           my_uid;
-int             fix_perms;
+static char     strnum[FMT_ULONG], inbuf[SUBSTDIO_INSIZE], outbuf[SUBSTDIO_OUTSIZE];
+static substdio ssin, ssout;
+static uid_t    my_uid;
+static int      dofix, missing_ok, create_paths;
 
 void
 nomem()
@@ -145,6 +150,26 @@ print_info(const char *str, char *source, char *dest, int mode, int uid, int gid
 	substdio_flush(subfdout);
 }
 
+int
+myr_mkdir(char *home, mode_t mode)
+{
+	static stralloc dirbuf = { 0 };
+	char           *ptr;
+	int             i;
+
+	if (!stralloc_copys(&dirbuf, home) || !stralloc_0(&dirbuf))
+		strerr_die2sys(111, FATAL, "out of memory: ");
+	for (ptr = dirbuf.s + 1;*ptr;ptr++) {
+		if (*ptr == '/') {
+			*ptr = 0;
+			if (access(dirbuf.s, F_OK) && (i = mkdir(dirbuf.s, 0755)) == -1)
+				return (i);
+			*ptr = '/';
+		}
+	}
+	return (mkdir(dirbuf.s, mode));
+}
+
 void
 set_perms(char *dest, char *uidstr, char *gidstr, char *modestr, uid_t uid,
 		gid_t gid, mode_t mode, int check)
@@ -161,7 +186,7 @@ set_perms(char *dest, char *uidstr, char *gidstr, char *modestr, uid_t uid,
 				strnum[fmt_ulong(strnum, uid)] = 0;
 				strerr_warn4(WARN, "unable to get uid entry for ", strnum, ": ", &strerr_sys);
 			}
-			if (!fix_perms || !my_uid)
+			if (!dofix)
 				strerr_warn7(WARN, dest, " has wrong owner [", pw->pw_name, "] needs to be [", uidstr, "]", 0);
 		}
 		if (gid != -1 && st.st_gid != gid) {
@@ -169,18 +194,18 @@ set_perms(char *dest, char *uidstr, char *gidstr, char *modestr, uid_t uid,
 				strnum[fmt_ulong(strnum, gid)] = 0;
 				strerr_warn4(WARN, "unable to get gid entry for ", strnum, ": ", &strerr_sys);
 			}
-			if (!fix_perms || !my_uid)
-				strerr_warn7(WARN, dest, " has wrong owner [", gr->gr_name, "] needs to be [", gidstr, "]", 0);
+			if (!dofix)
+				strerr_warn7(WARN, dest, " has wrong group [", gr->gr_name, "] needs to be [", gidstr, "]", 0);
 		}
 		if (mode != -1 && (st.st_mode & 07777) != mode) {
-			if (!fix_perms)
+			if (!dofix)
 				strerr_warn7(WARN, dest, " has wrong mode  [", get_octal(st.st_mode & 07777), "] needs to be [", modestr, "]", 0);
 		}
 	}
-	if (!fix_perms && my_uid)
+	if (!dofix && my_uid)
 		return;
 	if (!my_uid && ((uid != -1 && st.st_uid != uid) || (gid != -1 && st.st_gid != gid))) {
-		if (fix_perms && uid != -1 && st.st_uid != uid) {
+		if (dofix && uid != -1 && st.st_uid != uid) {
 			if (!(pw = getpwuid(st.st_uid))) {
 				strnum[fmt_ulong(strnum, uid)] = 0;
 				strerr_warn4(WARN, "unable to get uid entry for ", strnum, ": ", &strerr_sys);
@@ -192,7 +217,7 @@ set_perms(char *dest, char *uidstr, char *gidstr, char *modestr, uid_t uid,
 			substdio_put(subfdout, "\n", 1);
 			strerr_warn7(WARN, dest, " has wrong owner [", pw->pw_name, "], will change it to [", uidstr, "]", 0);
 		}
-		if (fix_perms && gid != -1 && st.st_gid != gid) {
+		if (dofix && gid != -1 && st.st_gid != gid) {
 			if (!(gr = getgrgid(st.st_gid))) {
 				strnum[fmt_ulong(strnum, gid)] = 0;
 				strerr_warn4(WARN, "unable to get gid entry for ", strnum, ": ", &strerr_sys);
@@ -212,7 +237,7 @@ set_perms(char *dest, char *uidstr, char *gidstr, char *modestr, uid_t uid,
 		}
 	}
 	if (mode != -1 && (st.st_mode & 07777) != mode) {
-		if (fix_perms)
+		if (dofix)
 			strerr_warn7(WARN, dest, " has wrong mode  [", get_octal(st.st_mode & 07777), "], will change it to [", modestr, "]", 0);
 		substdio_put(subfdout, "\tchmod ", 7);
 		substdio_puts(subfdout, modestr);
@@ -233,7 +258,7 @@ set_perms(char *dest, char *uidstr, char *gidstr, char *modestr, uid_t uid,
  * c:owner:group:mode:target_device:devnum:
  */
 void
-doit(stralloc *line, int uninstall, int ignore_dirs, int check)
+doit(stralloc *line, int uninstall, int check)
 {
 	char           *x;
 	char           *type, *uidstr, *gidstr, *modestr, *mid, *name;
@@ -338,8 +363,6 @@ doit(stralloc *line, int uninstall, int ignore_dirs, int check)
 				strerr_die4sys(111, FATAL, "unable to unlink ", target.s, ": ");
 			break;
 		case 'd':
-			if (ignore_dirs)
-				return;
 			print_info("rmdir", 0, target.s, -1, -1, -1);
 			if (rmdir(target.s) == -1) {
 				if (errno == error_noent)
@@ -388,18 +411,18 @@ doit(stralloc *line, int uninstall, int ignore_dirs, int check)
 	switch (*type)
 	{
 	case 'c':
-		if (!check) {
+		if (!check || access(target.s, F_OK)) {
 			print_info("mknod", 0, target.s, mode == -1 ? 0644 : mode, uid, gid);
 			scan_ulong(name, (unsigned long *) &dev);
 			if (mknod(target.s, mode == -1 ? 0644 : mode, dev) == -1) {
 				if (errno != error_exist)
 					strerr_die4sys(111, FATAL, "mknod ", target.s, ": ");
-			} 
+			}
 		}
 		if (uid != -1 || gid != -1 || mode != -1)
 			set_perms(target.s, uidstr, gidstr, modestr, (uid_t) uid, (gid_t) gid, mode, check);
 	case 'p':
-		if (!check) {
+		if (!check || access(target.s, F_OK)) {
 			print_info("mkfifo", 0, target.s, mode == -1 ? 0644 : mode, uid, gid);
 			if (fifo_make(target.s, mode == -1 ? 0644 : mode) == -1) {
 				if (errno != error_exist)
@@ -409,27 +432,19 @@ doit(stralloc *line, int uninstall, int ignore_dirs, int check)
 		if (uid != -1 || gid != -1 || mode != -1)
 			set_perms(target.s, uidstr, gidstr, modestr, (uid_t) uid, (gid_t) gid, mode, check);
 	case 'l': /*- here name is target */
-		if (!check) {
+		if (!check || access(name, F_OK)) {
 			print_info("make link", name, target.s, -1, -1, -1);
 			if (symlink(name, target.s) == -1 && errno != error_exist)
 				strerr_die6sys(111, FATAL, "unable to symlink ", target.s, " to ", name, ": ");
 		}
 		break;
 	case 'd':
-		if (!check) {
-			print_info("makedir", 0, target.s, my_uid || mode == -1 ? 0755 : mode, uid, gid);
-			if (mkdir(target.s, my_uid || mode == -1 ? 0755 : mode) == -1) {
+		if (!check || access(target.s, F_OK)) {
+			print_info("mkdir", 0, target.s, (my_uid || mode == -1) ? 0755 : mode, uid, gid);
+			if ((create_paths ?  myr_mkdir(target.s, (my_uid || mode == -1) ? 0755 : mode)
+						: mkdir(target.s, (my_uid || mode == -1) ? 0755 : mode)) == -1) {
 				if (errno != error_exist)
 					strerr_die4sys(111, FATAL, "unable to mkdir ", target.s, ": ");
-			}
-			if (my_uid) {
-				substdio_put(subfdout, "\tchmod ", 7);
-				substdio_puts(subfdout, modestr);
-				substdio_put(subfdout, " ", 1);
-				substdio_puts(subfdout, target.s);
-				substdio_put(subfdout, "\n", 1);
-				if (chmod(target.s, my_uid || mode == -1 ? 0755 : mode) == -1)
-					strerr_die4sys(111, FATAL, "unable to chmod ", target.s, ": ");
 			}
 		}
 		if (uid != -1 || gid != -1 || mode != -1)
@@ -476,6 +491,14 @@ doit(stralloc *line, int uninstall, int ignore_dirs, int check)
 				if (chmod(target.s, mode == -1 ? 0644 : mode) == -1)
 					strerr_die4sys(111, FATAL, "unable to chmod ", target.s, ": ");
 			}
+		} else
+		if (access(target.s, F_OK)) {
+			if (errno == error_noent) {
+				if (!missing_ok)
+					strerr_die3sys(111, FATAL, target.s, ": ");
+				uid = gid = mode = -1;
+			} else
+				strerr_die3sys(111, FATAL, target.s, ": ");
 		}
 		if (uid != -1 || gid != -1 || mode != -1)
 			set_perms(target.s, uidstr, gidstr, modestr, (uid_t) uid, (gid_t) gid, mode, check);
@@ -487,32 +510,50 @@ doit(stralloc *line, int uninstall, int ignore_dirs, int check)
 
 }
 
+void
+die_usage()
+{
+	const char     *usage_str =
+		"USAGE: installer [options] dest_dir\n"
+		"options\n"
+		"       -c check permissions of dir/files\n"
+		"       -m ignore missing files\n"
+		"       -f fix permissions\n"
+		"       -p make parent directories as needed\n"
+		"       -u uninstall";
+	strerr_die2x(100, FATAL, usage_str);
+}
+
 char            buf[256];
 substdio        in = SUBSTDIO_FDBUF(read, 0, buf, sizeof (buf));
 stralloc        line = { 0 };
 
 int
-main(argc, argv)
-	int             argc;
-	char          **argv;
+main(int argc, char **argv)
 {
-	int             opt, match, uninstall = 0, ignore_dirs = 0, check = 0;
+	int             opt, match, uninstall = 0, check = 0;
 
-	while ((opt = getopt(argc, argv, "cifu")) != opteof) {
+	while ((opt = getopt(argc, argv, "cfumr")) != opteof) {
 		switch (opt)
 		{
 		case 'c':
 			check = 1;
 			break;
-		case 'i':
-			ignore_dirs = 1;
+		case 'm':
+			missing_ok = 1;
 			break;
 		case 'f':
-			fix_perms = 1;
+			dofix = 1;
+			check = 1;
 			break;
 		case 'u':
 			uninstall = 1;
 			break;
+		case 'p':
+			create_paths = 1;
+			break;
+		default:
+			die_usage();
 		}
 	}
 	if (optind < argc)
@@ -521,16 +562,14 @@ main(argc, argv)
 		to = (char *) 0;
 	if ((my_uid = getuid()))
 		umask(077);
-#if 0
-	if (fix_perms && my_uid)
-		strerr_die2x(100, FATAL, "fix mode requires root privileges");
-#endif
+	if (dofix && my_uid)
+		strerr_warn2(WARN, "installer not running as uid 0", 0);
 	for (;;) {
 		if (getln(&in, &line, &match, '\n') == -1)
 			strerr_die2sys(111, FATAL, "unable to read input");
 		if (line.len > 0)
 			line.s[--line.len] = 0;
-		doit(&line, uninstall, ignore_dirs, check);
+		doit(&line, uninstall, check);
 		if (!match)
 			_exit(0);
 	}
@@ -539,7 +578,7 @@ main(argc, argv)
 void
 getversion_installer_c()
 {
-	static const char *x = "$Id: installer.c,v 1.14 2021-08-02 13:30:11+05:30 Cprogrammer Exp mbhangui $";
+	static const char *x = "$Id: installer.c,v 1.16 2021-08-05 13:03:45+05:30 Cprogrammer Exp mbhangui $";
 
 	if (x)
 		x++;

@@ -235,6 +235,8 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 
 %files
 %defattr(-, root, root,-)
+%dir %attr(0755,root,root)             %{_sysconfdir}/perms.d
+%dir %attr(0755,root,root)             %{_sysconfdir}/perms.d/%{name}
 %attr(755,root,root)                   %{_prefix}/bin/axfr-get
 %attr(755,root,root)                   %{_prefix}/bin/axfrdns
 %attr(755,root,root)                   %{_prefix}/bin/dnscache
@@ -287,6 +289,7 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 %endif
 %config(noreplace)                     %{_sysconfdir}/dnsroots.global
 %attr(444,root,root) %config(noreplace) %{_sysconfdir}/%{name}-release
+%attr(644,root,root)                   %{_sysconfdir}/perms.d/%{name}/*
 
 %doc README.md
 %doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO

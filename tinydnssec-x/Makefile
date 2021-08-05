@@ -92,10 +92,6 @@ load cachetest.o siphash.o cache.o dns_random.o
 cachetest.o: compile cachetest.c cache.h
 	./compile cachetest.c
 
-check: \
-it instcheck
-	./instcheck
-
 chkshsgr: \
 load chkshsgr.o
 	./load chkshsgr
@@ -405,18 +401,6 @@ warn-shsgr
 	./chkshsgr || ( cat warn-shsgr; exit 1 )
 	./choose clr tryshsgr hasshsgr.h1 hasshsgr.h2 > hasshsgr.h
 
-hier.o: \
-compile hier.c auto_home.h
-	./compile hier.c
-
-instcheck: \
-load instcheck.o hier.o auto_home.o
-	./load instcheck hier.o auto_home.o -lqmail
-
-instcheck.o: \
-compile instcheck.c
-	./compile instcheck.c
-
 iopause.h: \
 choose compile load trypoll.c iopause.h1 iopause.h2
 	./choose clr trypoll iopause.h1 iopause.h2 > iopause.h
@@ -607,6 +591,11 @@ compile server.c ip4.h socket.h droproot.h qlog.h \
 response.h dns.h iopause.h edns0.h conf-dnssec
 	./compile `grep -h -v "^#" conf-dnssec` server.c
 
+instcheck: \
+warn-auto.sh instcheck.in conf-libexec conf-sysconfdir
+	cat warn-auto.sh instcheck.in | $(edit) > $@
+	chmod +x $@
+
 installer: \
 load installer.o
 	./load installer -lqmail
@@ -614,6 +603,10 @@ load installer.o
 installer.o: \
 compile installer.c
 	./compile installer.c
+
+INPUT: INPUT.in \
+conf-home conf-libexec conf-sysconfdir
+	$(edit) INPUT.in > $@
 
 DIRS: DIRS.in \
 conf-home conf-sysconfdir
@@ -639,7 +632,7 @@ MAN: MAN.in MAN.sql
 	[ -n "$(USE_SQL)" ] && cat MAN.sql || true) > MAN
 
 
-install: it installer DIRS conf-home conf-sysconfdir conf-libexec
+install: it installer DIRS conf-home conf-sysconfdir conf-libexec INPUT
 	./installer $(DESTDIR)                         < DIRS
 	./installer $(DESTDIR)$(prefix)                < BIN
 	./installer $(DESTDIR)$(prefix)                < SBIN

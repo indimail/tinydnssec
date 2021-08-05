@@ -1,6 +1,4 @@
 # installer input files for universal programs in @prefix@/sbin
-# @prefix@/sbin
-d::::/sbin::
 #
 # Files in @prefix@/sbin
 #

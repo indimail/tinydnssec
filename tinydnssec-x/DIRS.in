@@ -14,3 +14,5 @@ d::::@prefix@/libexec::
 d::::@libexecdir@::
 d::::/etc/::
 d:::02755:@sysconfdir@::
+d:::0755:@sysconfdir@/perms.d::
+d:::0755:@sysconfdir@/perms.d/tinydnssec::

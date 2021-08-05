@@ -1,10 +1,15 @@
 #
 # Plugins installation input for installer
 #
-# Base Directory
-d::::::
 
 # Control Directory
 # @sysconfdir@/control
 # 
-f::::/:dnsroots.global:dnsroots.global
+f:root:root:0644:/:dnsroots.global:dnsroots.global
+f:root:root:0644:/perms.d/tinydnssec/:INPUT:INPUT
+f:root:root:0644:/perms.d/tinydnssec/:DIR:DIRS
+f:root:root:0644:/perms.d/tinydnssec/:BIN:BIN
+f:root:root:0644:/perms.d/tinydnssec/:SBIN:SBIN
+f:root:root:0644:/perms.d/tinydnssec/:ETC:ETC
+f:root:root:0644:/perms.d/tinydnssec/:LIBEXEC:LIBEXEC
+f:root:root:0644:/perms.d/tinydnssec/:MAN:MAN

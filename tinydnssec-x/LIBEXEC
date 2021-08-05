@@ -2,8 +2,5 @@
 # indimail programs for @libexecdir@
 #
 
-# Base directory
-d:::0555:::
-
 # scripts/programs
 f:::0755:/:instcheck.tinydnssec:instcheck

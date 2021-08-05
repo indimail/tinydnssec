@@ -1,0 +1,5 @@
+@prefix@                  BIN
+@prefix@                  SBIN
+@libexecdir@ LIBEXEC
+@sysconfdir@         ETC
+@prefix@/share/man        MAN
