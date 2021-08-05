@@ -5,8 +5,6 @@
 f:::0755:/sbin/:dnscache-conf:dnscache-conf
 f:::0755:/sbin/:tinydns-conf:tinydns-conf
 f:::0755:/sbin/:walldns-conf:walldns-conf
-f:::0755:/sbin/:dqcache-conf:dqcache-conf
-f:::0755:/sbin/:curvedns-conf:curvedns-conf
 f:::0755:/sbin/:rbldns-conf:rbldns-conf
 f:::0755:/sbin/:pickdns-conf:pickdns-conf
 f:::0755:/sbin/:axfrdns-conf:axfrdns-conf

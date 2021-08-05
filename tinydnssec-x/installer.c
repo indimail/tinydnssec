@@ -1,8 +1,14 @@
 /*
  * $Log: installer.c,v $
- * Revision 1.16  2021-08-05 13:03:45+05:30  Cprogrammer
+ * Revision 1.18  2021-08-05 20:52:44+05:30  Cprogrammer
+ * fixed bug of skipping files in check mode
+ *
+ * Revision 1.17  2021-08-05 17:16:22+05:30  Cprogrammer
+ * allow installation for missig source if -m is specified
+ *
+ * Revision 1.16  2021-08-05 14:07:45+05:30  Cprogrammer
  * added -p option to create parent directories as needed
- * display usage for wrong usage
+ * display usage for wrong options/usage
  *
  * Revision 1.15  2021-08-03 15:51:43+05:30  Cprogrammer
  * added -m option to ignore missing files
@@ -452,12 +458,21 @@ doit(stralloc *line, int uninstall, int check)
 		break;
 
 	case 'f':
-		if (mode == -1) {
-			if (lstat(name, &st) == -1)
-				strerr_die4sys(111, FATAL, "lstat: ", name, ": ");
-			mode = st.st_mode;
-		}
 		if (!check) {
+			if (access(name, F_OK)) {
+				if (errno == error_noent) {
+					if (!missing_ok)
+						strerr_die3sys(111, FATAL, target.s, ": ");
+					print_info("skipping file", name, target.s, mode == -1 ? 0644 : mode, uid, gid);
+					return;
+				} else
+					strerr_die3sys(111, FATAL, name, ": ");
+			}
+			if (mode == -1) {
+				if (lstat(name, &st) == -1)
+					strerr_die4sys(111, FATAL, "lstat: ", name, ": ");
+				mode = st.st_mode;
+			}
 			print_info("install file", name, target.s, mode == -1 ? 0644 : mode, uid, gid);
 			if ((fdin = open_read(name)) == -1) {
 				if (opt)
@@ -494,9 +509,11 @@ doit(stralloc *line, int uninstall, int check)
 		} else
 		if (access(target.s, F_OK)) {
 			if (errno == error_noent) {
-				if (!missing_ok)
+				if (missing_ok)
+					strerr_warn3(WARN, target.s, " is missing", 0);
+				else
 					strerr_die3sys(111, FATAL, target.s, ": ");
-				uid = gid = mode = -1;
+				return;
 			} else
 				strerr_die3sys(111, FATAL, target.s, ": ");
 		}
@@ -578,7 +595,7 @@ main(int argc, char **argv)
 void
 getversion_installer_c()
 {
-	static const char *x = "$Id: installer.c,v 1.16 2021-08-05 13:03:45+05:30 Cprogrammer Exp mbhangui $";
+	static const char *x = "$Id: installer.c,v 1.18 2021-08-05 20:52:44+05:30 Cprogrammer Exp mbhangui $";
 
 	if (x)
 		x++;

@@ -613,32 +613,16 @@ conf-home conf-sysconfdir
 	([ -f DIRS.$(SYSTEM) ] && \
 	$(edit) DIRS.in DIRS.$(SYSTEM) || $(edit) DIRS.in) > DIRS
 
-BIN: BIN.in
-	([ -f BIN.$(SYSTEM) ] && \
-	cat BIN.in BIN.$(SYSTEM) || cat BIN.in) > BIN
-
-SBIN: SBIN.in SBIN.sql
-	([ -f SBIN.$(SYSTEM) ] && \
-	cat SBIN.in SBIN.$(SYSTEM) || cat SBIN.in; \
-	[ -n "$(USE_SQL)" ] && cat SBIN.sql) > SBIN
-
-SHARED: SHARED.in doc/INSTALL-MINI
-	([ -f SHARED.$(SYSTEM) ] && \
-	cat SHARED.in SHARED.$(SYSTEM) || cat SHARED.in) > SHARED
-
-MAN: MAN.in MAN.sql
-	([ -f MAN.$(SYSTEM) ] && \
-	cat MAN.in MAN.$(SYSTEM) || cat MAN.in; \
-	[ -n "$(USE_SQL)" ] && cat MAN.sql || true) > MAN
-
-
-install: it installer DIRS conf-home conf-sysconfdir conf-libexec INPUT
+install: it installer DIRS conf-home conf-sysconfdir conf-libexec INPUT \
+BIN SBIN LIBEXEC ETC MAN
 	./installer $(DESTDIR)                         < DIRS
 	./installer $(DESTDIR)$(prefix)                < BIN
 	./installer $(DESTDIR)$(prefix)                < SBIN
 	./installer $(DESTDIR)$(libexecdir)            < LIBEXEC
 	./installer $(DESTDIR)$(sysconfdir)            < ETC
 	./installer $(DESTDIR)$(prefix)/share/man      < MAN
+	egrep "BIN|ETC|MAN" ETC.extra | ./installer $(DESTDIR)$(sysconfdir)
+	grep "\-conf" SBIN.extra     | ./installer $(DESTDIR)$(prefix)
 	[ -z $(DESTDIR) ] && ./instcheck || true
 
 socket.lib: \

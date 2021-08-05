@@ -12,4 +12,3 @@ f:root:root:0644:/perms.d/tinydnssec/:BIN:BIN
 f:root:root:0644:/perms.d/tinydnssec/:SBIN:SBIN
 f:root:root:0644:/perms.d/tinydnssec/:ETC:ETC
 f:root:root:0644:/perms.d/tinydnssec/:LIBEXEC:LIBEXEC
-f:root:root:0644:/perms.d/tinydnssec/:MAN:MAN

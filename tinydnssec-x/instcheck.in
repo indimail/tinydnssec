@@ -28,7 +28,7 @@ if [ -f INPUT ] ; then
 	dir="./"
 else
 	dir=@libexecdir@
-	conf_dir=@qsysconfdir@
+	conf_dir=@sysconfdir@
 	if [ ! -d $conf_dir/perms.d/$package ] ; then
 		echo "$package: missing permission files" 1>&2
 		exit 111
