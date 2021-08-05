@@ -1,0 +1,8 @@
+# installer input files for Universal programs in @prefix@/bin
+# @prefix@/bin
+#
+# Files in @prefix@/bin
+#
+f:::0755:/bin/:dq:dq-20161210/build/bin/dq
+f:::0755:/bin/:dqcache:dq-20161210/build/bin/dqcache
+f:::0755:/bin/:curvedns:curvedns-0.88/curvedns

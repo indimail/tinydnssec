@@ -1,0 +1,11 @@
+# installer input files for Universal programs in @prefix@/sbin
+# @prefix@/sbin
+#
+# Files in @prefix@/bin
+#
+f:::0755:/sbin/:dqcache-conf:dqcache-conf
+f:::0755:/sbin/:dqcache-makekey:dq-20161210/build/bin/dqcache-makekey
+f:::0755:/sbin/:dqcache-start:dq-20161210/build/bin/dqcache-start
+#
+f:::0755:/sbin/:curvedns-conf:curvedns-conf
+f:::0755:/sbin/:curvedns-keygen:curvedns-0.88/curvedns-keygen

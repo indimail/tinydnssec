@@ -1,0 +1,4 @@
+f:root:root:0644:/:curvedns.private.key:curvedns-0.88/curvedns.private.key
+f:root:root:0644:/perms.d/tinydnssec/:BIN.extra:BIN.extra
+f:root:root:0644:/perms.d/tinydnssec/:SBIN.extra:SBIN.extra
+f:root:root:0644:/perms.d/tinydnssec/:ETC.extra:ETC.extra
