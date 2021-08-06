@@ -45,7 +45,7 @@ jobs:
     - name: build_dq
       run: cd main/tinydnssec-x/dq-20161210; make
     - name: build_curvedns
-      run: cd main/tinydnssec-x/curvedns-0.88; ./default.configure; make
+      run: cd main/tinydnssec-x/curvedns-0.88; env CPPFLAGS="-I../dq-20161210/crypto" ./default.configure; env CPPFLAGS="-I../dq-20161210/crypto" make
       env:
         OS: ${{ matrix.host }}
 
