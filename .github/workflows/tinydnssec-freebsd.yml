@@ -32,8 +32,13 @@ jobs:
         envs: 'MYTOKEN MYTOKEN2'
         usesh: true
         prepare: pkg install -y curl bash automake autoconf libtool pkgconf libsodium
-        run: |
-          cd libqmail; ./default.configure; make; make install-strip
-          cd ../main/tinydnssec-x; ./default.configure; make; make install-strip
-          cd dq-20161210; make; sh ./make-install.sh
-          cd ../curvedns-0.88; ./default.configure; make; make install-strip
+        - name: install_qmail
+          run: cd libqmail; ./default.configure; make; make install-strip
+        - name: tinydnssec
+          run: cd main/tinydnssec-x; ./default.configure; make; make install-strip
+        - name: dq
+          run: cd main/tinydnssec-x/dq-20161210; make; sh ./make-install.sh
+        - name: find stuff
+          run: find / -name ev.h -print; find / -name libev'*' -print
+        - name: curvedns
+          run: cd main/tinydnssec-x/curvedns-0.88; ./default.configure; make; make install-strip
