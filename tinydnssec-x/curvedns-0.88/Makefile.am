@@ -3,7 +3,7 @@
 # The @VAR@ tokens will be replaced by configure.curvedns
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 -I$(CPPFLAGS)
+CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 $(CPPFLAGS)
 
 DEFS=$(CFLAGS) -g -m64 -O3 -fomit-frame-pointer -funroll-loops $(CDNSCFLAGS) $(EVCFLAGS)
 
