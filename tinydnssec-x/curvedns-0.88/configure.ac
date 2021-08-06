@@ -5,6 +5,7 @@ AC_PREREQ([2.69])
 AC_INIT([curvedns],m4_normalize(m4_include([conf-version])),m4_normalize(m4_include([conf-email])),curvedns,[https://github.com/mbhangui/tinydnssec])
 AC_CONFIG_SRCDIR([curvedns.c])
 AC_CONFIG_HEADERS([config.h])
+AC_CANONICAL_HOST
 
 # Checks for programs.
 AM_INIT_AUTOMAKE([foreign])
@@ -34,6 +35,45 @@ AC_TYPE_UINT8_T
 AC_FUNC_MALLOC
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([clock_gettime gettimeofday memset mkdir select socket strerror])
+
+if test "$GCC" = yes ; then
+	CXXFLAGS="$CXXFLAGS -Wall"
+fi
+
+echo host=$host
+case "$host" in
+*-*-sunos4.1.1*)
+	CPPFLAGS="$CPPFLAGS -DSUNOS4"
+	CFLAGS="$CFLAGS -O4 -Wall -fPIC"
+	SYSTEM=SunOS
+	;;
+*-*-solaris*)
+	CPPFLAGS="$CPPFLAGS -DSOLARIS"
+	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC"
+	SYSTEM=Solaris
+	;;
+*-*-linux*)
+	CPPFLAGS="$CPPFLAGS -DLINUX"
+	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC -fpie"
+	LDFLAGS="$LDFLAGS -pie"
+	SYSTEM=Linux
+	;;
+*-*-freebsd*)
+	CPPFLAGS="$CPPFLAGS -DFREEBSD -I/usr/local/include -I/usr/local/include/qmail"
+	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC"
+	LDFLAGS="$LDFLAGS -L/usr/local/lib"
+	SYSTEM=FreeBSD
+	;;
+*-*-darwin*)
+	CPPFLAGS="$CPPFLAGS -DDARWIN -I/opt/local/include -I/opt/local/include/qmail"
+	CFLAGS="$CFLAGS -g -O3 -Wall"
+	LDFLAGS="$LDFLAGS -L/opt/local/lib"
+	SYSTEM=Darwin
+	;;
+*)
+	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC"
+	;;
+esac
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

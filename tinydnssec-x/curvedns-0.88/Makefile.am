@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = foreign no-dependencies
 NACLINC=/usr/include/sodium
 CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 -I$(NACLINC)
 
-CFLAGS=-g -m64 -O3 -fomit-frame-pointer -funroll-loops $(CDNSCFLAGS) $(EVCFLAGS)
+DEFS=$(CFLAGS) -g -m64 -O3 -fomit-frame-pointer -funroll-loops $(CDNSCFLAGS) $(EVCFLAGS)
 
 bin_PROGRAMS = curvedns
 sbin_PROGRAMS = curvedns-keygen
@@ -14,10 +14,10 @@ sysconf_DATA = curvedns.private.key
 man_MANS = curvedns.8 curvedns-keygen.8 curvedns-conf.8
 
 debug.o: debug.c debug.h
-	$(CC) $(CFLAGS) -c debug.c
+	$(CC) $(DEFS) -c debug.c
 
 cache_hashtable.o: cache_hashtable.c cache_hashtable.h debug.o
-	$(CC) $(CFLAGS) -c cache_hashtable.c
+	$(CC) $(DEFS) -c cache_hashtable.c
 
 # ready for possible critbit addition
 cache.a: cache_hashtable.o
@@ -25,35 +25,35 @@ cache.a: cache_hashtable.o
 	ranlib cache.a
 
 dns.o: dns.c dns.h debug.o event.a
-	$(CC) $(CFLAGS) -c dns.c
+	$(CC) $(DEFS) -c dns.c
 
 dnscurve.o: dnscurve.c dnscurve.h debug.o event.a
-	$(CC) $(CFLAGS) -c dnscurve.c
+	$(CC) $(DEFS) -c dnscurve.c
 
 curvedns.o: curvedns.c curvedns.h debug.o ip.o misc.o
-	$(CC) $(CFLAGS) -c curvedns.c
+	$(CC) $(DEFS) -c curvedns.c
 
 ip.o: ip.c ip.h debug.o
-	$(CC) $(CFLAGS) -c ip.c
+	$(CC) $(DEFS) -c ip.c
 
 event_tcp.o: event_tcp.c event.h debug.o ip.o cache.a
-	$(CC) $(CFLAGS) -c event_tcp.c
+	$(CC) $(DEFS) -c event_tcp.c
 
 event_udp.o: event_udp.c event.h debug.o ip.o cache.a
-	$(CC) $(CFLAGS) -c event_udp.c
+	$(CC) $(DEFS) -c event_udp.c
 
 event_main.o: event_main.c event.h debug.o ip.o cache.a
-	$(CC) $(CFLAGS) -c event_main.c
+	$(CC) $(DEFS) -c event_main.c
 
 event.a: event_main.o event_udp.o event_tcp.o
 	$(AR) cr event.a event_main.o event_udp.o event_tcp.o
 	ranlib event.a
 
 misc.o: misc.c misc.h ip.o debug.o
-	$(CC) $(CFLAGS) -c misc.c
+	$(CC) $(DEFS) -c misc.c
 
 curvedns-keygen.o: curvedns-keygen.c
-	$(CC) $(CFLAGS) -c curvedns-keygen.c
+	$(CC) $(DEFS) -c curvedns-keygen.c
 
 # The targets:
 curvedns$(EXEEXT): debug.o ip.o misc.o cache.a event.a dnscurve.o dns.o curvedns.o
