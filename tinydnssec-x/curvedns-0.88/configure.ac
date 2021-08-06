@@ -65,7 +65,7 @@ case "$host" in
 	SYSTEM=FreeBSD
 	;;
 *-*-darwin*)
-	CPPFLAGS="$CPPFLAGS -DDARWIN -I/opt/local/include -I/opt/local/include/qmail -I/opt/local/include/sodium"
+	CPPFLAGS="$CPPFLAGS -DDARWIN -I/opt/local/include -I/opt/local/include/qmail -I/opt/local/include/sodium /usr/local/include /usr/local/include/sodium"
 	CFLAGS="$CFLAGS -g -O3 -Wall"
 	LDFLAGS="$LDFLAGS -L/opt/local/lib"
 	SYSTEM=Darwin
