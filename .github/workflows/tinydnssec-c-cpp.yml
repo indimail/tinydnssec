@@ -22,8 +22,8 @@ jobs:
     steps:
     - name: extra_packages
       run: |
-        if [ "${OS}" = "macos-latest" ] ; then brew install automake autoconf libtool pkgconfig openssl libev; fi
-        if [ "${OS}" = "ubuntu-latest" ] ; then sudo apt-get install gcc g++ automake autoconf libtool libssl-dev libev-dev; fi
+        if [ "${OS}" = "macos-latest" ] ; then brew install automake autoconf libtool pkgconfig openssl libsodium libev; fi
+        if [ "${OS}" = "ubuntu-latest" ] ; then sudo apt-get install gcc g++ automake autoconf libtool libssl-dev libsodium-dev libev-dev; fi
       env:
         OS: ${{ matrix.host }}
 
@@ -45,9 +45,7 @@ jobs:
     - name: build_dq
       run: cd main/tinydnssec-x/dq-20161210; make
     - name: build_curvedns
-      run: |
-        if [ "${OS}" = "ubuntu-latest" ] ; then cd main/tinydnssec-x/curvedns-0.88; ./configure.nacl; ./configure.curvedns; make; fi
-        if [ "${OS}" = "macos-latest" ] ; then echo "no curvedns on macos"; fi
+      run: cd main/tinydnssec-x/curvedns-0.88; ./default.configure; make
       env:
         OS: ${{ matrix.host }}
 
