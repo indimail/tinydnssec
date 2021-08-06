@@ -35,5 +35,5 @@ jobs:
         run: |
           cd libqmail; ./default.configure; make; make install-strip
           cd ../main/tinydnssec-x; ./default.configure; make; make install-strip
-          cd dq-20161210; make; make install-strip
+          cd dq-20161210; make; sh ./make-install.sh
           cd ../curvedns-0.88; ./default.configure; make; make install-strip
