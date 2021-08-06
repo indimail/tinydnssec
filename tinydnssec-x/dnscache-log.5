@@ -1,0 +1,461 @@
+.TH djbdnscurve6: dnscache-log.5
+.SH NAME
+dnscache-log \- Format of the dnscache log
+
+.SH "LOG ENTRIES"
+During operation,
+.B dnscache 
+writes the following log entry types:
+.TP 4
+o
+cached type name
+.TP 4
+o
+cached cname name cname
+.TP 4
+o
+cached ns control server
+.TP 4
+o
+cached nxdomain name
+.TP 4
+o
+drop serial error
+.TP 4
+o
+servflagged [%|-] serverip
+.TP 4
+o
+lame serverip name control
+.TP 4
+o
+nodata serverip ttl type name
+.TP 4
+o
+nxdomain serverip ttl name
+.TP 4
+o
+query serial clientip:clientport:id type name
+.TP 4
+o
+rr serverip ttl type name data
+.TP 4
+o
+rr serverip ttl cname name cname
+.TP 4
+o
+rr serverip ttl mx name preference exchanger
+.TP 4
+o
+rr serverip ttl ns name server
+.TP 4
+o
+rr serverip ttl ptr name pname
+.TP 4
+o
+rr serverip ttl soa server email serial refresh retry expire minimum
+.TP 4
+o
+sent serial length
+.TP 4
+o
+servfail name error
+.TP 4
+o
+starting dnscache listening on ip ... sending queries from ip .... udp maxsize = 
+.TP 4
+o
+stats query-count cache-motion udp-active edn-active tcp-active
+.TP 4
+o
+tcpopen clientip:clientport
+.TP 4
+o
+tcpclose clientip:clientport error
+.TP 4
+o
+tx gluelessness type name control [!|~|-|+|*] serverips...
+
+.RE
+IP addresses, ports, ids, and query types are given in hexadecimal format. 
+.SH "DESCRIPTIONS"
+.TP 4
+->
+cached \fItype\fR name
+.RE
+
+.B dnscache 
+needs some records and found them in the cache. 
+It may have needed the records because the client requested them, 
+or it may have needed the addresses of a name server in order to look up some other records.
+The actual cached data is not recorded with this log entry. 
+The cached data may include several records, but \fBdnscache\fR makes only one log entry.
+
+.EX
+	Field	Meaning
+	type		The type of records needed.
+	name		The domain name for which records were needed.
+.EE
+.TP 4
+->
+cached \fIcname\fR name cname
+.RE
+
+.B dnscache 
+found the answer to a client query in its cache, 
+and the answer was a 
+.I CNAME 
+record.  In this case, 
+.B dnscache 
+starts over, looking for the same record type but with the "canonical name".
+
+.EX
+	Field	Meaning
+	name		The domain name for which the client wants records.
+	cname	The "canonical name" for name. 
+			(Meaning: That name should be treated as an alias for cname.)
+.EX
+.TP 4
+->
+cached \fIns\fR control server
+.RE
+
+\fBdnscache\fR needed to know the authoritative nameservers for some domain, 
+and found a set of nameservers for the domain, or some ancestor of it, in the cache. 
+\fBdnscache\fR creates one log entry for each nameserver in the set. 
+The actual name for which \fBdnscache\fR needed to find nameservers is 
+on the query log entry preceding the set of cached \fIns\fR log entries.
+For example:
+
+.EX
+	query 673 7f000001:09b6:7c48 1 www.windows.com.
+	cached ns com. a.root-servers.net.
+	cached ns com. e.gtld-servers.net.
+	cached ns com. f.gtld-servers.net.
+	cached ns com. j.gtld-servers.net.
+	cached ns com. k.gtld-servers.net.
+	cached ns com. a.gtld-servers.net.
+	cached ns com. m.gtld-servers.net.
+	cached ns com. g.gtld-servers.net.
+	cached ns com. c.gtld-servers.net.
+	cached ns com. i.gtld-servers.net.
+	cached ns com. b.gtld-servers.net.
+	cached ns com. d.gtld-servers.net.
+.EE
+
+.B dnscache 
+needed to know the authoritative nameservers for 
+.IR www.windows.com , 
+and the nearest set of nameservers in its cache was the set of nameservers that are authoritative for 
+.IR com .
+
+.EX
+	Field	Meaning
+	control	The domain name for which server is authoritative.
+	server	The name of a server that is authoritative for control.
+.EE
+.TP 4
+->
+cached \fInxdomain\fR name
+.RE
+
+.B dnscache 
+needs to find records for \fIname\fR and found a cached \fInxdomain\fR entry in the cache.
+
+.EX
+	Field	Meaning
+	name		The domain name for which records were requested.
+.EE
+.TP 4
+->
+drop serial error
+.RE 
+
+.B dnscache 
+decided not to try to respond to a client query.
+
+.EX
+	Field	Meaning
+	serial	The serial number of the client request. 
+			(See query for an explanation of client request serial numbers.)
+	error	The reason \fBdnscache\fR dropped the request: timed out
+.EE
+
+.B dnscache 
+had MAXUDP (400) active UDP queries and received another UDP query. It dropped the oldest active query.
+.TP 4
+->
+permission denied
+.RE
+
+.B dnscache 
+received an AXFR request.
+.TP 4
+->
+out of memory
+.RE
+
+.B dnscache 
+could not allocate memory for parsing a query packet or building a response.
+.TP 4
+->
+servflagged [%|-] serverip
+.RE
+
+.B dnscache 
+was instructed to omitt name server with '% serverip' or to use a standard query for '- serverip'.
+.TP 4
+->
+lame serverip name control
+.RE
+
+.B dnscache 
+found a lame delegation. This means that the server is supposed to be authoritative for some domain, but isn't.
+
+.EX
+	Field	Meaning
+	serverip	The IP address of the lame server.
+	name		The domain name for which records were requested.
+	control	The domain for which the server is supposed to be authoritative, but isn't.
+.EE
+.TP 4
+->
+nodata serverip ttl type name
+.RE
+
+.B dnscache 
+received a "no data" response. 
+This means that the server has records for the requested name, but no records of the requested type.
+
+.EX
+	Field	Meaning
+	serverip	The IP address of the responding server.
+	ttl		The time-to-live of the SOA record in the response. 
+			(This is how long \fBdnscache\fR is allowed to cache the negative response. 
+			\fBdnscache\fR will not cache a negative response for more than one hour in any case.)
+	type		The requested record type.
+	name		The domain name for which records were requested.
+.EE
+.TP 4
+->
+nxdomain serverip ttl name
+.RE
+
+.B dnscache 
+received a "Name Error" response. This means that the server has no records of any type for the requested name.
+
+.EX
+	Field	Meaning
+	serverip	The IP address of the responding server.
+	ttl		The time-to-live of the SOA record in the response. 
+			(This is how long \fBdnscache\fR is allowed to cache the negative response. 
+			\fBdnscache\fR will not cache a negative response for more than one hour in any case.)
+	name		The domain name for which records were requested.
+.EE
+.TP 4
+->
+query serial clientip:clientport:id type name
+.RE
+
+.B dnscache 
+received a packet containing a query and intends to try to answer it.
+
+.EX
+	Field	Meaning
+	serial	The number of queries \fBdnscache\fR received prior to this query since starting, plus one. 
+			(In other words, serial number 1 is assigned to the first query received, 
+			serial number 2 is assigned to the second query received, and so on. 
+			The counter is stored using 64 bits, so chances of it wrapping are unlikely.)
+	clientip	The source IP address of the packet. 
+			(Presumably this is the IP address from which the packet was sent, 
+			though it could have been spoofed.)
+	clientport	The source UDP port of the packet.
+	id		The id from the packet. 
+			(The id is chosen by the client, and the server will include it in the response.)
+	type		The type of records the client wants.
+	name		The domain name for which the client wants records.
+.EE
+.TP 4
+->
+sent serial length
+.RE
+
+.B dnscache 
+finished constructing a response to a query. If the query came over UDP, then 
+.B dnscache 
+also sent the response. If the query came over TCP, then 
+.B dnscache 
+did not send the response before making this log entry. (Sending over TCP may block so 
+.B dnscache 
+trickles the data out as part of its main loop.)
+
+.EX
+	Field	Meaning
+	serial	The serial number of the client request to which \fBdnscache\fR responded. 
+			(See query for an explanation of client request serial numbers.)
+	length	The number of bytes in the response.
+.EE
+.TP 4
+->
+servfail name error
+.RE
+
+.B dnscache 
+sent a packet with \fIrcode\fR 2, "Server failure", because it encountered an error.
+Some of the errors that can make 
+.B dnscache 
+do this:
+
+.RS 3
+failure to allocate storage for a received DNS packet
+
+failure to create a UDP socket
+
+failure to set the O_NONBLOCK flag on the UDP socket
+
+failure to bind the UDP socket to a port
+
+failure to transmit a packet to any of up to 16 nameservers and receive a response packet 
+with an \fIrcode\fR of 0 (no error) or 3 (NXDOMAIN), with four attempts per nameserver
+
+failure to create a TCP socket
+
+failure to set the O_NONBLOCK flag on the TCP socket
+
+failure to bind the TCP socket to a port
+
+failure to connect the TCP socket to any of up to 16 nameservers (one attempt per nameserver), 
+transmit a query to the nameserver, and receive a response packet with an \fIrcode\fR of 0 
+(no error) or 3 (NXDOMAIN)
+.RE
+
+.EX
+	Field	Meaning
+	name		The domain name for which the \fBdnscache\fR was trying to find records.
+
+	error	Error message will always be "input/output error".
+.EE
+.TP 4
+->
+starting dnscache listening on IP ... sending queries from ... udp maxsize
+.RE
+
+.B dnscache 
+logs this entry when it starts up and providing information on it's binding
+and the default UDP maximum message size it uses.
+.TP 4
+->
+stats query-count cache-motion udp-active edn-active tcp-active
+.RE
+
+This entry contains statistics about 
+.BR dnscache's 
+behavior, both since startup and at the moment the entry was logged.
+
+.EX
+	Field		Meaning
+	query-count	Total number of queries received by \fBdnscache\fR since startup.
+	cache-motion	Total number of bytes \fBdnscache\fR has stored in its cache since startup. 
+				(This says nothing about the maximum size of the cache 
+				or how much data has been evicted from the cache. 
+				See djb's explanation of cache motion for more information.)
+	udp-active	Number of queries that \fBdnscache\fR has received via UDP but not yet responded to or dropped.
+	edn-active	Number of queries that \fBdnscache\fR has received via EDNS(0) but not yet responded to or dropped.
+	tcp-active	Number of queries that \fBdnscache\fR has received via TCP but not yet responded to or dropped.
+.EE
+.TP 4
+->
+tx gluelessness type name control [!|~|-|+|*] serverips...
+.RE
+
+This line indicates that 
+.B dnscache 
+transmitted a query.
+
+.EX
+	Field		Meaning
+	gluelessness	The amount of gluelessness that generated this query.
+				(Read djb's explanation of gluelessness.)
+	type			The requested record type.
+	name			The domain name for which records are being requested.
+	control		The authoritative anchestor domain.
+	[!|~|-|+|*]	Field indicating the server qualification.
+				(Currently, '-' means none, and '+' says CurveDNS qualification.)
+	serverips		List of IP addresses referencing authoritive servers 
+				for \fIcontrol\fR used for random name lookup. 
+.EE
+.SH "EXAMPLE FOR NAME RESOLUTION"
+Suppose the cache is empty, and you ask 
+.B dnscache 
+for the 
+.I A 
+records for 
+.IR  example.com . 
+First, 
+.B dnscache 
+will send a query to a root server, 
+because the root server is authoritative for the root domain (written "."). 
+So the 
+.I tx 
+line for the query will have "." in the control field.
+
+The root server will give 
+.B dnscache 
+a list of servers that are authoritative for the 
+.I com 
+domain. 
+.B dnscache 
+will ask one of the com servers for the 
+.I A 
+records for example.com, and the log entry will have 
+.I com. 
+in the control field.
+
+Suppose the com server says that 
+.I ns.example.net 
+is authoritative for 
+.IR example.com . 
+Then when 
+.B dnscache 
+asks 
+.I ns.example.net 
+for 
+.I AAAA 
+and
+.I A 
+records for 
+.IR example.com , 
+the log entry will have 
+.I example.com 
+in the control field.
+.SH "EXAMPLE FOR GLUELESSNESS"
+For the case of 
+.IR  www.monty.de , 
+the queries 
+.B dnscache 
+sent for 
+.I www.monty.de 
+have gluelessness 
+.IR 0 . 
+The query sent for 
+.I ns.norplex.net 
+has gluelessness 
+.IR 1 . 
+The query for 
+.I vserver.neptun11.de 
+has gluelessness 
+.IR 2 . 
+The query sent for 
+.I ns.germany.net 
+has gluelessness 
+.IR 3 . 
+And so on.
+
+.SH "SEE ALSO"
+dnscache (8),
+dnscache-conf (8)
+
+.SH "REFERENCE"
+This wonderful reference has been compiled by Rob Mayoff. You can find the
+original document here
+http://www.dqd.com/~mayoff/notes/djbdns/dnscache-log.html

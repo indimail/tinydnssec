@@ -64,7 +64,7 @@ NOTE Darwin (Mac OSX) install [MacPorts](https://www.macports.org/) or brew. You
 
 ```
 Darwin
-# port install autoconf libtool automake pkgconfig libev
+# port install autoconf libtool automake pkgconfig libev libsodium
 # port install openssl (# openssl is required for building libqmail)
 # port update outdated
 ```
@@ -76,7 +76,7 @@ FreeBSD - install packages using pkg
 Arch Linux
 # pacman -S --refresh --sysupgrade
 # pacman -S --needed archlinux-keyring
-# pacman -S base-devel diffutils coreutils openssl
+# pacman -S base-devel diffutils coreutils openssl libev libsodium
 
 Gentoo Linux
 # emaint -a sync
@@ -84,11 +84,12 @@ Gentoo Linux
 # emerge -a app-portage/eix
 # eix-sync
 # emerge -a dev-libs/libev
+# emerge -a dev-libs/libsodium
 # etc-update
 
 alpine Linux
 # apk add gcc g++ make git autoconf automake libtool m4 sed
-# apk add libev-dev openssl-dev
+# apk add libev-dev openssl-dev libsodium-dev
 ```
 
 ## Download tinydnssec

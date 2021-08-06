@@ -21,7 +21,7 @@ doMakefile() {
   sed -e "s/@ABI@/$abi/g" \
       -e "s/@CC@/$compiler/" \
       -e "s/@CFLAGS@/$cflags/" \
-          Makefile.in > Makefile
+          Makefile.nacl > Makefile
 }
 
 # ------------------- NaCl stuff

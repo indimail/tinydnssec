@@ -34,8 +34,7 @@ build-stamp:
 	if [ -d curvedns-$(curvedns_version) ] ; then \
     	echo "configuring curvedns"; \
   		cd curvedns-$(curvedns_version) ; \
-		./configure.nacl ; \
-		./configure.curvedns ; \
+		./default.configure
 		$(MAKE) -s ; \
 		cd .. ; \
 	fi
@@ -70,14 +69,7 @@ install: build
 	fi
 	if [ -d curvedns-$(curvedns_version) ] ; then \
 		cd curvedns-$(curvedns_version) ; \
-		mkdir -p $(DESTDIR)$(prefix)/bin ; \
-		mkdir -p $(DESTDIR)$(prefix)/sbin ; \
-		mkdir -p $(DESTDIR)$(prefix)/share/man/man8 ; \
-		mkdir -p $(DESTDIR)$(sysconfdir) ; \
-		install -m 0755 -s curvedns $(DESTDIR)$(prefix)/bin ; \
-		install -m 0755 -s curvedns-keygen $(DESTDIR)$(prefix)/sbin ; \
-		install -m 0644 curvedns.8 curvedns-keygen.8 $(DESTDIR)$(prefix)/share/man/man8 ; \
-		install -m 0600 curvedns.private.key $(DESTDIR)$(sysconfdir)/curvedns.private.key ; \
+	    $(MAKE) DESTDIR=$(DESTDIR) -s install
 		cd .. ; \
 	fi
 	install -m 0644 tinydnssec-release "$(DESTDIR)$(sysconfdir)"/tinydnssec-release

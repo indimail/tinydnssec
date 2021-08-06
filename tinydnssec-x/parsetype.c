@@ -25,8 +25,23 @@ int parsetype(char *s,char type[2])
   else if (case_equals(s,"aaaa")) byte_copy(type,2,DNS_T_AAAA);
   else if (case_equals(s,"axfr")) byte_copy(type,2,DNS_T_AXFR);
 #ifdef DNSSEC
-  else if (case_equals(s,"dnskey")) byte_copy(type,2,DNS_T_DNSKEY);
+  else if (case_equals(s,"naptr")) byte_copy(type,2,DNS_T_NAPTR);
+  else if (case_equals(s,"cert")) byte_copy(type,2,DNS_T_CERT);
+  else if (case_equals(s,"opt")) byte_copy(type,2,DNS_T_OPT);
   else if (case_equals(s,"ds")) byte_copy(type,2,DNS_T_DS);
+  else if (case_equals(s,"srv")) byte_copy(type,2,DNS_T_SRV);
+  else if (case_equals(s,"sshfp")) byte_copy(type,2,DNS_T_SSHFP);
+  else if (case_equals(s,"ipseckey")) byte_copy(type,2,DNS_T_IPSECKEY);
+  else if (case_equals(s,"rrsig")) byte_copy(type,2,DNS_T_RRSIG);
+  else if (case_equals(s,"nsec")) byte_copy(type,2,DNS_T_NSEC);
+  else if (case_equals(s,"dnskey")) byte_copy(type,2,DNS_T_DNSKEY);
+  else if (case_equals(s,"nsec3")) byte_copy(type,2,DNS_T_NSEC3);
+  else if (case_equals(s,"nsec3param")) byte_copy(type,2,DNS_T_NSEC3PARAM);
+  else if (case_equals(s,"tlsa")) byte_copy(type,2,DNS_T_TLSA);
+  else if (case_equals(s,"hip")) byte_copy(type,2,DNS_T_HIP);
+  else if (case_equals(s,"openpgpkey")) byte_copy(type,2,DNS_T_OPENPGPKEY);
+  else if (case_equals(s,"spf")) byte_copy(type,2,DNS_T_SPF);
+  else if (case_equals(s,"caa")) byte_copy(type,2,DNS_T_CAA);
 #endif
   else
     return 0;

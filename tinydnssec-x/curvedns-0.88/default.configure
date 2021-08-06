@@ -1,0 +1,41 @@
+#!/bin/sh
+if [ ! -f ./configure -o ! -f Makefile -o ! -f Makefile.in ] ; then
+  autoreconf -fiv
+fi
+if [ ! -f conf-release ] ; then
+  echo "1.1" > conf-release
+fi
+SYSTEM=$(uname -s)
+case "$SYSTEM" in
+  FreeBSD)
+  prefix=/usr/local
+  sbindir=$prefix/sbin
+  sysconfdir=$prefix/etc/indimail
+  mandir=/usr/local/man
+  ;;
+  Darwin)
+  prefix=/usr/local
+  sbindir=$prefix/sbin
+  sysconfdir=$prefix/etc/indimail
+  mandir=/usr/local/share/man
+  ;;
+  Linux)
+  prefix=/usr
+  sysconfdir=/etc/indimail
+  mandir=$prefix/share/man
+  if [ -f /etc/arch-release ] ; then
+    sbindir=$prefix/bin
+  else
+    sbindir=$prefix/sbin
+  fi
+  ;;
+  *)
+  prefix=/usr
+  sysconfdir=$prefix/etc/indimail
+  sbindir=$prefix/sbin
+  mandir=/usr/man
+  ;;
+esac
+./configure \
+  --prefix=$prefix --sbindir=$sbindir \
+  --sysconfdir=$sysconfdir --mandir=$mandir

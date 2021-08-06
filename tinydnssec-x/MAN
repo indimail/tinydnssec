@@ -20,6 +20,7 @@ f:::0644:/man1/:tinydns-get.1:tinydns-get.1
 f:::0644:/man1/:random-ip.1:random-ip.1
 f:::0644:/man1/:dnsgetroot.1:dnsgetroot.1
 f:::0644:/man5/:qualification.5:qualification.5
+f:::0644:/man5/:dnscache-log.5:dnscache-log.5
 f:::0644:/man7/:djbdns.7:djbdns.7
 f:::0644:/man8/:axfrdns.8:axfrdns.8
 f:::0644:/man8/:axfrdns-conf.8:axfrdns-conf.8

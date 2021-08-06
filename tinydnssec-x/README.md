@@ -37,3 +37,4 @@ CurveDNS supports
  * Caching of shared secrets;
  * Both UDP and TCP;
  * Both IPv4 and IPv6.
+ * Support for TLSA records

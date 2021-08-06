@@ -22,19 +22,29 @@
 #define DNS_T_AAAA "\0\34"
 #define DNS_T_SRV "\0\41"
 #ifdef DNSSEC
+#define DNS_T_NAPTR "\0\43"
+#define DNS_T_CERT "\0\45"
 #define DNS_T_OPT "\0\51"
 #define DNS_T_DS "\0\53"
+#define DNS_T_SSHFP "\0\54"
+#define DNS_T_IPSECKEY "\0\55"
 #define DNS_T_RRSIG "\0\56"
+#define DNS_T_NSEC "\0\57"
 #define DNS_T_DNSKEY "\0\60"
 #define DNS_T_NSEC3 "\0\62"
 #define DNS_T_NSEC3PARAM "\0\63"
+#define DNS_T_TLSA "\0\64"
+#define DNS_T_HIP "\0\67"
+#define DNS_T_OPENPGPKEY "\0\75"
 /* Pseudo-RRs for DNSSEC */
 #define DNS_T_HASHREF "\377\1"
 #define DNS_T_HASHLIST "\377\2"
 #endif
+#define DNS_T_SPF "\0\143"
 #define DNS_T_IXFR "\0\373"
 #define DNS_T_AXFR "\0\374"
 #define DNS_T_ANY "\0\377"
+#define DNS_T_CAA "\1\1"
 
 #define DNS_NAME4_DOMAIN 31
 #define DNS_IP6_INT 0

@@ -8,7 +8,7 @@ url="https://github.com/mbhangui/tinydnssec"
 license=('GPL2')
 groups=('base-devel')
 depends=('coreutils' 'findutils' 'sed' 'binutils')
-makedepends=('libqmail' 'libev')
+makedepends=('libqmail' 'libsodium' 'libev')
 source=("$pkgname-${pkgver}.tar.gz")
 sha256sums=('SKIP')
 provides=("pkgname")
@@ -35,8 +35,7 @@ build() {
   if [ -d curvedns-${_curvedns_version} ] ; then
     echo "configuring curvedns"
     cd curvedns-${_curvedns_version}
-    ./configure.nacl
-    ./configure.curvedns
+    ./default.configure
     make -s 
     cd ..
   fi
@@ -63,16 +62,7 @@ package() {
   fi
   if [ -d curvedns-${_curvedns_version} ] ; then
     cd curvedns-${_curvedns_version}
-    mkdir -p ${pkgdir}${_prefix}/bin
-    mkdir -p ${pkgdir}${_mandir}/man8
-    mkdir -p ${pkgdir}${_sysconfdir}
-    install -D -m 0755 -s curvedns ${pkgdir}${_prefix}/bin/curvedns
-    install -D -m 0755 -s curvedns-keygen ${pkgdir}${_prefix}/bin/curvedns-keygen
-    for i in curvedns.8 curvedns-keygen.8
-    do
-      install -D -m 0644 $i ${pkgdir}${_mandir}/man8/$i
-    done
-    install -D -m 0600 curvedns.private.key ${pkgdir}${_sysconfdir}/curvedns.private.key
+    make -s DESTDIR=${pkgdir} install
   fi
   cd $srcdir
   (
