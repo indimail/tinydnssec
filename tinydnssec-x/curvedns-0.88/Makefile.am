@@ -3,8 +3,7 @@
 # The @VAR@ tokens will be replaced by configure.curvedns
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-NACLINC=/usr/include/sodium
-CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 -I$(NACLINC)
+CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 -I$(CPPFLAGS)
 
 DEFS=$(CFLAGS) -g -m64 -O3 -fomit-frame-pointer -funroll-loops $(CDNSCFLAGS) $(EVCFLAGS)
 
@@ -12,6 +11,8 @@ bin_PROGRAMS = curvedns
 sbin_PROGRAMS = curvedns-keygen
 sysconf_DATA = curvedns.private.key
 man_MANS = curvedns.8 curvedns-keygen.8 curvedns-conf.8
+
+MOSTLYCLEANFILES = cache.a event.a
 
 debug.o: debug.c debug.h
 	$(CC) $(DEFS) -c debug.c

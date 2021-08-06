@@ -43,29 +43,29 @@ fi
 echo host=$host
 case "$host" in
 *-*-sunos4.1.1*)
-	CPPFLAGS="$CPPFLAGS -DSUNOS4"
+	CPPFLAGS="$CPPFLAGS -DSUNOS4 -I/usr/include/sodium"
 	CFLAGS="$CFLAGS -O4 -Wall -fPIC"
 	SYSTEM=SunOS
 	;;
 *-*-solaris*)
-	CPPFLAGS="$CPPFLAGS -DSOLARIS"
+	CPPFLAGS="$CPPFLAGS -DSOLARIS -I/usr/include/sodium"
 	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC"
 	SYSTEM=Solaris
 	;;
 *-*-linux*)
-	CPPFLAGS="$CPPFLAGS -DLINUX"
+	CPPFLAGS="$CPPFLAGS -DLINUX -I/usr/include/sodium"
 	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC -fpie"
 	LDFLAGS="$LDFLAGS -pie"
 	SYSTEM=Linux
 	;;
 *-*-freebsd*)
-	CPPFLAGS="$CPPFLAGS -DFREEBSD -I/usr/local/include -I/usr/local/include/qmail"
+	CPPFLAGS="$CPPFLAGS -DFREEBSD -I/usr/local/include -I/usr/local/include/qmail -I/usr/local/include/sodium"
 	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC"
 	LDFLAGS="$LDFLAGS -L/usr/local/lib"
 	SYSTEM=FreeBSD
 	;;
 *-*-darwin*)
-	CPPFLAGS="$CPPFLAGS -DDARWIN -I/opt/local/include -I/opt/local/include/qmail"
+	CPPFLAGS="$CPPFLAGS -DDARWIN -I/opt/local/include -I/opt/local/include/qmail -I/opt/local/include/sodium"
 	CFLAGS="$CFLAGS -g -O3 -Wall"
 	LDFLAGS="$LDFLAGS -L/opt/local/lib"
 	SYSTEM=Darwin
