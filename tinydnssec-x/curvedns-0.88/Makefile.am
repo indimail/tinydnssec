@@ -58,7 +58,7 @@ curvedns-keygen.o: curvedns-keygen.c
 
 # The targets:
 curvedns$(EXEEXT): debug.o ip.o misc.o cache.a event.a dnscurve.o dns.o curvedns.o
-	$(CC) -o curvedns -z noexecstack debug.o ip.o misc.o dnscurve.o dns.o cache.a event.a curvedns.o $(LDFLAGS) $(LIB_EV) $(LIB_SODIUM)
+	$(CC) -Wa,--noexecstack -o curvedns debug.o ip.o misc.o dnscurve.o dns.o cache.a event.a curvedns.o $(LDFLAGS) $(LIB_EV) $(LIB_SODIUM)
 
 curvedns-keygen$(EXEEXT): curvedns-keygen.o debug.o ip.o misc.o
 	$(CC) -o curvedns-keygen curvedns-keygen.o debug.o ip.o misc.o $(LDFLAGS) $(LIB_SODIUM)
