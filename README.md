@@ -192,15 +192,24 @@ under root - run dqcache server
 
 ## Compile and install curvedns
 
+Curvedns needs nacl library. It can be built with the nacl library in the `nacl` subdirectory in curvedns-0.88 directory or you can install libsodium. Instructions for installing libsodium have already been provided above.
+
 ```
 $ cd curvedns-0.88
-$ ./configure.nacl
-$ ./configure.curvedns
+
+If you have libsodium installed then you can do the below. This option is fast.
+$ ./default.configure
 $ make
-$ sudo make install
+$ sudo make install-strip
+
+If you want to use the provided nacl library present in nacl subdirectory.
+$ ./configure.nacl     # this will build the nacl library and takes time
+$ ./configure.curvedns # this command will create a Makefile
+$ make
+$ sudo make install-strip
 ```
 
-NOTE: I have not been able to build curvedns on OSX. There is an issue with the nacl library build not having the full set of include files.
+NOTE: To build curvedns on OSX you have to use libsodium
 
 ### Setting up curvedns
 
