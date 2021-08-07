@@ -185,7 +185,7 @@ pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
     ./default.configure
 %else
     ./configure.nacl
-	./configure.curvedns
+    ./configure.curvedns
 %endif
     %{__make} -s %{?_smp_mflags}
     cd ..
@@ -221,25 +221,10 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 %if %{nocurvedns} == 0
   if [ -d curvedns-%{curvedns_version} ] ; then
     cd curvedns-%{curvedns_version}
-%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined scientificlinux_version}
 %if %{defined nodebug}
     %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
 %else
     %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install
-%endif
-%else
-    %{__mkdir_p} %{buildroot}%{_prefix}/bin
-    %{__mkdir_p} %{buildroot}%{_prefix}/sbin
-    %{__mkdir_p} %{buildroot}%{_mandir}/man8
-%if %{defined nodebug}
-    %{__install} -m 0755 -s curvedns %{buildroot}%{_prefix}/bin
-    %{__install} -m 0755 -s curvedns-keygen %{buildroot}%{_prefix}/sbin
-%else
-    %{__install} -m 0755    curvedns %{buildroot}%{_prefix}/bin
-    %{__install} -m 0755    curvedns-keygen %{buildroot}%{_prefix}/sbin
-%endif
-    %{__install} -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 %{buildroot}%{_mandir}/man8
-    %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
 %endif
     cd ..
   fi

@@ -20,6 +20,8 @@ export PATH
 doMakefile() {
   sed -e "s/@ABI@/$abi/g" \
       -e "s/@CC@/$compiler/" \
+      -e "s{@prefix@{/usr{" \
+      -e "s{@sysconfdir@{/etc/indimail{" \
       -e "s/@CFLAGS@/$cflags/" \
           Makefile.nacl > Makefile
 }
