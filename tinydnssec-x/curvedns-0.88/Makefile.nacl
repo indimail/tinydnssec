@@ -5,7 +5,7 @@
 ABI=@ABI@
 NACLLIB=nacl/build/lib/$(ABI)
 NACLINC=nacl/build/include/$(ABI)
-CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 -I$(NACLINC)
+CDNSCFLAGS=-g -Wall -fno-strict-aliasing -O3 -I$(NACLINC)
 
 # If you have libev at a non-standard place, specify that here:
 #EV=

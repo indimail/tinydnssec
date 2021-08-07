@@ -64,9 +64,13 @@ URL: http://cr.yp.to/djbdns.html
 Source0: http://downloads.sourceforge.net/indimail/%{name}-%{version}.tar.gz
 # ipv6 from http://www.fefe.de/dns/
 BuildRequires: perl binutils coreutils
-BuildRequires: libev-devel libqmail-devel openssl-devel libsodium-devel
+BuildRequires: libev-devel libqmail-devel openssl-devel
 %if 0%{?suse_version} < 1120
 BuildRequires: elfutils
+%endif
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version}
+BuildRequires: libsodium-devel
+BuildRequires: autoconf automake libtool
 %endif
 ##################################### OBS ####################################
 %if %build_on_obs == 1
@@ -177,7 +181,12 @@ pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
   if [ -d curvedns-%{curvedns_version} ] ; then
     echo "configuring curvedns"
     cd curvedns-%{curvedns_version}
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version}
     ./default.configure
+%else
+    ./configure.nacl
+	./configure.curvedns
+%endif
     %{__make} -s %{?_smp_mflags}
     cd ..
   fi
@@ -212,10 +221,25 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 %if %{nocurvedns} == 0
   if [ -d curvedns-%{curvedns_version} ] ; then
     cd curvedns-%{curvedns_version}
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version}
+    %{__mkdir_p} %{buildroot}%{_prefix}/bin
+    %{__mkdir_p} %{buildroot}%{_prefix}/sbin
+    %{__mkdir_p} %{buildroot}%{_mandir}/man8
+%if %{defined nodebug}
+    %{__install} -m 0755 -s curvedns %{buildroot}%{_prefix}/bin
+    %{__install} -m 0755 -s curvedns-keygen %{buildroot}%{_prefix}/sbin
+%else
+    %{__install} -m 0755    curvedns %{buildroot}%{_prefix}/bin
+    %{__install} -m 0755    curvedns-keygen %{buildroot}%{_prefix}/sbin
+%endif
+    %{__install} -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 %{buildroot}%{_mandir}/man8
+    %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
+%else
 %if %{defined nodebug}
     %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
 %else
     %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install
+%endif
 %endif
     cd ..
   fi

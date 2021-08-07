@@ -34,7 +34,7 @@ build-stamp:
 	if [ -d curvedns-$(curvedns_version) ] ; then \
     	echo "configuring curvedns"; \
   		cd curvedns-$(curvedns_version) ; \
-		./default.configure
+		./default.configure; \
 		$(MAKE) -s ; \
 		cd .. ; \
 	fi
