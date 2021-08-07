@@ -27,16 +27,16 @@ build-stamp:
 	$(MAKE) -s
 	pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
 	if [ -d dq-20161210 ] ; then \
-		cd dq-20161210 ; \
-		$(MAKE) -s ; \
+		cd dq-20161210; \
+		$(MAKE) -s; \
 		cd ..; \
 	fi
 	if [ -d curvedns-$(curvedns_version) ] ; then \
     	echo "configuring curvedns"; \
-  		cd curvedns-$(curvedns_version) ; \
+  		cd curvedns-$(curvedns_version); \
 		./default.configure; \
-		$(MAKE) -s ; \
-		cd .. ; \
+		$(MAKE) -s; \
+		cd ..; \
 	fi
 	( \
 	echo NAME=tinydnssec; \
@@ -63,14 +63,14 @@ install: build
 	dh_installdirs
 	$(MAKE) DESTDIR=$(DESTDIR) -s install
 	if [ -d dq-20161210 ] ; then \
-		cd dq-20161210 ; \
-  		sh make-install.sh $(DESTDIR) ; \
+		cd dq-20161210; \
+  		sh make-install.sh $(DESTDIR); \
 		cd ..; \
 	fi
 	if [ -d curvedns-$(curvedns_version) ] ; then \
-		cd curvedns-$(curvedns_version) ; \
-	    $(MAKE) DESTDIR=$(DESTDIR) -s install
-		cd .. ; \
+		cd curvedns-$(curvedns_version); \
+	    $(MAKE) DESTDIR=$(DESTDIR) -s install; \
+		cd ..; \
 	fi
 	install -m 0644 tinydnssec-release "$(DESTDIR)$(sysconfdir)"/tinydnssec-release
 	/bin/rm -f tinydnssec-release

@@ -68,7 +68,7 @@ BuildRequires: libev-devel libqmail-devel openssl-devel
 %if 0%{?suse_version} < 1120
 BuildRequires: elfutils
 %endif
-%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version}
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined scientificlinux_version}
 BuildRequires: libsodium-devel
 BuildRequires: autoconf automake libtool
 %endif
@@ -181,7 +181,7 @@ pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
   if [ -d curvedns-%{curvedns_version} ] ; then
     echo "configuring curvedns"
     cd curvedns-%{curvedns_version}
-%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version}
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined scientificlinux_version}
     ./default.configure
 %else
     ./configure.nacl
@@ -221,7 +221,13 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 %if %{nocurvedns} == 0
   if [ -d curvedns-%{curvedns_version} ] ; then
     cd curvedns-%{curvedns_version}
-%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version}
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined scientificlinux_version}
+%if %{defined nodebug}
+    %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
+%else
+    %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install
+%endif
+%else
     %{__mkdir_p} %{buildroot}%{_prefix}/bin
     %{__mkdir_p} %{buildroot}%{_prefix}/sbin
     %{__mkdir_p} %{buildroot}%{_mandir}/man8
@@ -234,12 +240,6 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 %endif
     %{__install} -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 %{buildroot}%{_mandir}/man8
     %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
-%else
-%if %{defined nodebug}
-    %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
-%else
-    %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install
-%endif
 %endif
     cd ..
   fi
