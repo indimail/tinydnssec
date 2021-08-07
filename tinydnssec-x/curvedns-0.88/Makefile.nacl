@@ -2,6 +2,8 @@
 #
 # The @VAR@ tokens will be replaced by configure.curvedns
 prefix=@prefix@
+bindir=@bindir@
+sbindir=@sbindir@
 sysconfdir=@sysconfdir@
 ABI=@ABI@
 NACLLIB=nacl/build/lib/$(ABI)
@@ -35,20 +37,22 @@ distclean:
 	rm -rf nacl/build
 
 install: $(TARGETS)
-	install -m 0755 -d $(DESTDIR)$(prefix)/bin
+	install -m 0755 -d $(DESTDIR)$(bindir)
+	install -m 0755 -d $(DESTDIR)$(sbindir)
 	install -m 0755 -d $(DESTDIR)$(prefix)/share/man/man8
 	install -m 2755 -d $(DESTDIR)$(sysconfdir)
-	install -m 0755 curvedns $(DESTDIR)$(prefix)/bin
-	install -m 0755 curvedns-keygen $(DESTDIR)$(prefix)/bin
+	install -m 0755 curvedns $(DESTDIR)$(bindir)
+	install -m 0755 curvedns-keygen $(DESTDIR)$(sbindir)
 	install -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 $(DESTDIR)$(prefix)/share/man/man8
 	install -m 0644 curvedns.private.key $(DESTDIR)$(sysconfdir)/curvedns.private.key
 
 install-strip: $(TARGETS)
-	install -m 0755 -d $(DESTDIR)$(prefix)/bin
+	install -m 0755 -d $(DESTDIR)$(bindir)
+	install -m 0755 -d $(DESTDIR)$(sbindir)
 	install -m 0755 -d $(DESTDIR)$(prefix)/usr/share/man8
 	install -m 2755 -d $(DESTDIR)$(sysconfdir)
-	install -m 0755 -s curvedns $(DESTDIR)$(prefix)/bin
-	install -m 0755 -s curvedns-keygen $(DESTDIR)$(prefix)/bin
+	install -m 0755 -s curvedns $(DESTDIR)$(bindir)
+	install -m 0755 -s curvedns-keygen $(DESTDIR)$(sbindir)
 	install -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 $(DESTDIR)$(prefix)/share/man/man8
 	install -m 0644 curvedns.private.key $(DESTDIR)$(sysconfdir)/curvedns.private.key
 

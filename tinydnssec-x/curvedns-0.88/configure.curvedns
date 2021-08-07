@@ -18,9 +18,16 @@ export PATH
 # ------------------- funcs
 
 doMakefile() {
+  if [ -f /etc/arch-release ] ; then
+	  sbindir=/usr/bin
+  else
+	  sbindir=/usr/sbin
+  fi
   sed -e "s/@ABI@/$abi/g" \
       -e "s/@CC@/$compiler/" \
       -e "s{@prefix@{/usr{" \
+      -e "s{@bindir@{/usr/bin{" \
+      -e "s{@sbindir@{$sbindir{" \
       -e "s{@sysconfdir@{/etc/indimail{" \
       -e "s/@CFLAGS@/$cflags/" \
           Makefile.nacl > Makefile
