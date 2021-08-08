@@ -23,10 +23,6 @@ jobs:
         repository: mbhangui/libqmail
         path: libqmail
 
-    - name: install_qmail
-      run: |
-        sudo apt-get update; sudo apt-get install libssl-dev libmysqlclient-dev
-        cd libqmail; ./default.configure; make; sudo make install-strip
     - name: prepare obs
       run: cd tinydnssec-x; ./prepare_obs tinydnssec
     - uses: actions/upload-artifact@v2

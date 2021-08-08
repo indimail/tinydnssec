@@ -23,7 +23,7 @@ char *dir;
 char *user;
 char *loguser;
 struct passwd *pw;
-char *myip;
+const char *myip;
 
 int main(int argc,char **argv)
 {
@@ -35,7 +35,7 @@ int main(int argc,char **argv)
   if (!dir) usage();
   if (dir[0] != '/') usage();
   myip = argv[4];
-  if (!myip) usage();
+  if (!myip) myip = "127.0.0.1";
 
   pw = getpwnam(loguser);
   if (!pw)
@@ -59,7 +59,7 @@ int main(int argc,char **argv)
   perm(02755);
   start("env/ROOT"); outs(dir); outs("/root\n"); finish();
   perm(0644);
-  start("env/IP"); outs(myip); outs("\n"); finish();
+  start("env/DNSCACHEIP"); outs(myip); outs("\n"); finish();
   perm(0644);
   start("env/CACHESIZE"); outs("10000000"); outs("\n"); finish();
   perm(0644);

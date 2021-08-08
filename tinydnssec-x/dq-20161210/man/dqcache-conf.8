@@ -43,7 +43,7 @@ You can use
 .BR svc (8)
 to control the service.
 
-.B indimail/dqcache-conf
+.B dqcache-conf
 arranges for 
 .BR dqcache (8)
 to chroot to 
@@ -74,21 +74,6 @@ creates
 so that 
 .BR dqcache (8)
 will accept queries from 127.0.0.1.
-
-.B dqcache-conf
-puts 128 bytes of not-particularly-secret data
-into 
-.IR D /seed
-and arranges for 
-.BR dqcache (8)
-to pass 
-.IR D /seed
-to 
-.BR dns_random_init (3).
-If your system has a good source of random data,
-you can replace 
-.IR D /seed
-with 128 bytes of data from that source.
 
 .B dqcache-conf
 creates an automatically rotated log directory in

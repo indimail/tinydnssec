@@ -622,7 +622,7 @@ BIN SBIN LIBEXEC ETC MAN
 	./installer $(DESTDIR)$(sysconfdir)            < ETC
 	./installer $(DESTDIR)$(prefix)/share/man      < MAN
 	egrep "BIN|ETC|MAN" ETC.extra | ./installer $(DESTDIR)$(sysconfdir)
-	grep "\-conf" SBIN.extra     | ./installer $(DESTDIR)$(prefix)
+	grep "\-conf" SBIN.extra      | ./installer $(DESTDIR)$(prefix)
 	[ -z $(DESTDIR) ] && ./instcheck || true
 
 socket.lib: \

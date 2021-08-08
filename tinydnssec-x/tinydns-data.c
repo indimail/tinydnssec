@@ -191,6 +191,28 @@ void syntaxerror(const char *why)
   strerr_die4x(111,FATAL,"unable to parse data line ",strnum,why);
 }
 
+void hexparse(stralloc *sa)
+{
+  char ch, lo;
+  unsigned int i;
+  unsigned int j;
+
+  j = 0;
+  i = 0;
+  while (i < sa->len) {
+    ch = sa->s[i++];
+    if ((ch >= '0') && (ch <= '9')) ch -= 48; 
+    if ((ch >= 'a') && (ch <= 'f')) ch -= 87;
+    ch <<= 4;
+    lo = sa->s[i++];
+    if ((lo >= '0') && (lo <= '9')) lo -= 48;
+    if ((lo >= 'a') && (lo <= 'f')) lo -= 87;
+    ch += lo;
+    sa->s[j++] = ch;
+  }
+  sa->len = j;
+}
+
 int main()
 {
   int fddata;
@@ -208,6 +230,7 @@ int main()
   char soa[20];
   char buf[4];
   char srv[6];
+  unsigned int us, sl, ty;
 
   umask(022);
 
@@ -487,6 +510,68 @@ int main()
 	}
 
 	rr_finish(d1, 1);
+	break;
+	/*
+	 * Taken from Erwin Hoffman's djbdnscurve6-37
+	 */
+      case '_':	 /* TLSA  Records*/
+	/* _fqdn:u:s:fingerprint:x:port:proto:ttl:timestamp:lo */
+	/*   0   1 2     3       4  5     6    7    8        9 */
+
+	if (dns_domain_fromdot(&d1,f[0].s,f[0].len) <= 0) nomem();  // d1
+	if (!stralloc_0(&f[7])) nomem();
+	if (!scan_ulong(f[7].s,&ttl)) ttl = TTL_POSITIVE;
+	ttdparse(&f[8],ttd);
+	locparse(&f[9],loc);
+
+	if (!stralloc_0(&f[1])) nomem(); // usage
+	if (!scan_uint(f[1].s,&us)) us = 3;
+	us = 003;
+	if (!stralloc_0(&f[2])) nomem(); // selector
+	if (!scan_uint(f[2].s,&sl)) sl = 0;
+	f[2].len = 0;
+	sl = 000;
+	ty = 0;                         // type
+	if (f[3].len == 64) ty = 001;
+	if (f[3].len == 128) ty = 002;
+
+	if (f[4].len == 0 && f[5].len == 0 && f[6].len == 0) { // _25._tcp.mx.fqdn
+   	if (!stralloc_copys(&f[2],"_25._tcp.mail.")) nomem();
+	if (!stralloc_catb(&f[2],f[0].s,f[0].len)) nomem();
+	} else if (f[4].s[0] != '_') {                         // synthesize base domain
+	if (!stralloc_copys(&f[2],"_")) nomem();
+	if (f[5].len > 0) {
+	if (!stralloc_catb(&f[2],f[5].s,f[5].len)) nomem();
+	} else
+	if (!stralloc_cats(&f[2],"25")) nomem();
+	if (!stralloc_cats(&f[2],"._")) nomem();
+	if (f[6].len > 0) {
+	if (!stralloc_catb(&f[2],f[6].s,f[6].len)) nomem();
+	} else 
+	if (!stralloc_cats(&f[2],"tcp")) nomem();
+	if (f[4].s[0] != '.') 
+	if (!stralloc_cats(&f[2],".")) nomem();
+	if (!stralloc_catb(&f[2],f[4].s,f[4].len)) nomem();
+	if (!stralloc_cats(&f[2],".")) nomem();
+	if (!stralloc_catb(&f[2],f[0].s,f[0].len)) nomem();
+	} else
+	if (!stralloc_copy(&f[2],&f[4])) nomem();
+
+	if (dns_domain_fromdot(&d2,f[2].s,f[2].len) <= 0) nomem();  // d2 - new record
+
+	rr_start(DNS_T_TLSA,ttl,ttd,loc);
+
+	buf[0] = us;
+	rr_add(buf,1);
+	buf[0] = sl;
+	rr_add(buf,1);
+	buf[0] = ty;
+	rr_add(buf,1);
+
+	case_lowerb(f[3].s,f[3].len);
+	hexparse(&f[3]);
+	rr_add(f[3].s,f[3].len);
+	rr_finish(d2, 1);
 	break;
 
       case ':':

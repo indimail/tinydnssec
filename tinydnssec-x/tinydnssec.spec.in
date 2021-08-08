@@ -68,6 +68,10 @@ BuildRequires: libev-devel libqmail-devel openssl-devel
 %if 0%{?suse_version} < 1120
 BuildRequires: elfutils
 %endif
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined scientificlinux_version}
+BuildRequires: libsodium-devel
+BuildRequires: autoconf automake libtool
+%endif
 ##################################### OBS ####################################
 %if %build_on_obs == 1
 %if 0%{?suse_version}
@@ -177,9 +181,13 @@ pod2man -s 8 -c '' "tinydns-sign" >tinydns-sign.8
   if [ -d curvedns-%{curvedns_version} ] ; then
     echo "configuring curvedns"
     cd curvedns-%{curvedns_version}
+%if %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined scientificlinux_version}
+    ./default.configure
+%else
     ./configure.nacl
     ./configure.curvedns
-    %{__make} -s %{?_smp_mflgs}
+%endif
+    %{__make} -s %{?_smp_mflags}
     cd ..
   fi
 %endif
@@ -212,14 +220,12 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 %{__mv} %{name}-release %{buildroot}%{_sysconfdir}
 %if %{nocurvedns} == 0
   if [ -d curvedns-%{curvedns_version} ] ; then
-    %{__mkdir_p} %{buildroot}%{_prefix}/bin
-    %{__mkdir_p} %{buildroot}%{_prefix}/sbin
-    %{__mkdir_p} %{buildroot}%{_mandir}/man8
     cd curvedns-%{curvedns_version}
-    %{__install} -m 0755 -s curvedns %{buildroot}%{_prefix}/bin
-    %{__install} -m 0755 -s curvedns-keygen %{buildroot}%{_prefix}/sbin
-    %{__install} -m 0644 curvedns.8 curvedns-keygen.8 %{buildroot}%{_mandir}/man8
-    %{__install} -m 0600 curvedns.private.key %{buildroot}%{_sysconfdir}/curvedns.private.key
+%if %{defined nodebug}
+    %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install-strip
+%else
+    %{__make} -s %{?_smp_mflags} DESTDIR=%{buildroot} install
+%endif
     cd ..
   fi
 %else
@@ -235,61 +241,59 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
 
 %files
 %defattr(-, root, root,-)
-%dir %attr(0755,root,root)             %{_sysconfdir}/perms.d
-%dir %attr(0755,root,root)             %{_sysconfdir}/perms.d/%{name}
-%attr(755,root,root)                   %{_prefix}/bin/axfr-get
-%attr(755,root,root)                   %{_prefix}/bin/axfrdns
-%attr(755,root,root)                   %{_prefix}/bin/dnscache
-%attr(755,root,root)                   %{_prefix}/bin/dnsfilter
-%attr(755,root,root)                   %{_prefix}/bin/dnsgetroot
-%attr(755,root,root)                   %{_prefix}/bin/dnsip
-%attr(755,root,root)                   %{_prefix}/bin/dnsip6
-%attr(755,root,root)                   %{_prefix}/bin/dnsip6q
-%attr(755,root,root)                   %{_prefix}/bin/dnsipq
-%attr(755,root,root)                   %{_prefix}/bin/dnsmx
-%attr(755,root,root)                   %{_prefix}/bin/dnsname
-%attr(755,root,root)                   %{_prefix}/bin/dnsnamex
-%attr(755,root,root)                   %{_prefix}/bin/dnsq
-%attr(755,root,root)                   %{_prefix}/bin/dnsqr
-%attr(755,root,root)                   %{_prefix}/bin/dnstrace
-%attr(755,root,root)                   %{_prefix}/bin/dnstracesort
-%attr(755,root,root)                   %{_prefix}/bin/dnstxt
-%attr(755,root,root)                   %{_prefix}/bin/pickdns
-%attr(755,root,root)                   %{_prefix}/bin/pickdns-data
-%attr(755,root,root)                   %{_prefix}/bin/random-ip
-%attr(755,root,root)                   %{_prefix}/bin/rbldns
-%attr(755,root,root)                   %{_prefix}/bin/rbldns-data
-%attr(755,root,root)                   %{_prefix}/bin/tinydns
-%attr(755,root,root)                   %{_prefix}/bin/tinydns-data
-%attr(755,root,root)                   %{_prefix}/bin/tinydns-edit
-%attr(755,root,root)                   %{_prefix}/bin/tinydns-get
-%attr(755,root,root)                   %{_prefix}/bin/tinydns-sign
-%attr(755,root,root)                   %{_prefix}/bin/walldns
-%attr(755,root,root)                   %{_prefix}/sbin/axfrdns-conf
-%attr(755,root,root)                   %{_prefix}/sbin/dnscache-conf
-%attr(755,root,root)                   %{_prefix}/sbin/pickdns-conf
-%attr(755,root,root)                   %{_prefix}/sbin/rbldns-conf
-%attr(755,root,root)                   %{_prefix}/sbin/tinydns-conf
-%attr(755,root,root)                   %{_prefix}/sbin/walldns-conf
+%dir %attr(0755,root,root)              %{_sysconfdir}/perms.d
+%dir %attr(0755,root,root)              %{_sysconfdir}/perms.d/%{name}
+%attr(755,root,root)                    %{_prefix}/bin/axfr-get
+%attr(755,root,root)                    %{_prefix}/bin/axfrdns
+%attr(755,root,root)                    %{_prefix}/bin/dnscache
+%attr(755,root,root)                    %{_prefix}/bin/dnsfilter
+%attr(755,root,root)                    %{_prefix}/bin/dnsgetroot
+%attr(755,root,root)                    %{_prefix}/bin/dnsip
+%attr(755,root,root)                    %{_prefix}/bin/dnsip6
+%attr(755,root,root)                    %{_prefix}/bin/dnsip6q
+%attr(755,root,root)                    %{_prefix}/bin/dnsipq
+%attr(755,root,root)                    %{_prefix}/bin/dnsmx
+%attr(755,root,root)                    %{_prefix}/bin/dnsname
+%attr(755,root,root)                    %{_prefix}/bin/dnsnamex
+%attr(755,root,root)                    %{_prefix}/bin/dnsq
+%attr(755,root,root)                    %{_prefix}/bin/dnsqr
+%attr(755,root,root)                    %{_prefix}/bin/dnstrace
+%attr(755,root,root)                    %{_prefix}/bin/dnstracesort
+%attr(755,root,root)                    %{_prefix}/bin/dnstxt
+%attr(755,root,root)                    %{_prefix}/bin/pickdns
+%attr(755,root,root)                    %{_prefix}/bin/pickdns-data
+%attr(755,root,root)                    %{_prefix}/bin/random-ip
+%attr(755,root,root)                    %{_prefix}/bin/rbldns
+%attr(755,root,root)                    %{_prefix}/bin/rbldns-data
+%attr(755,root,root)                    %{_prefix}/bin/tinydns
+%attr(755,root,root)                    %{_prefix}/bin/tinydns-data
+%attr(755,root,root)                    %{_prefix}/bin/tinydns-edit
+%attr(755,root,root)                    %{_prefix}/bin/tinydns-get
+%attr(755,root,root)                    %{_prefix}/bin/tinydns-sign
+%attr(755,root,root)                    %{_prefix}/bin/walldns
+%attr(755,root,root)                    %{_prefix}/sbin/axfrdns-conf
+%attr(755,root,root)                    %{_prefix}/sbin/dnscache-conf
+%attr(755,root,root)                    %{_prefix}/sbin/pickdns-conf
+%attr(755,root,root)                    %{_prefix}/sbin/rbldns-conf
+%attr(755,root,root)                    %{_prefix}/sbin/tinydns-conf
+%attr(755,root,root)                    %{_prefix}/sbin/walldns-conf
+%attr(755,root,root)                    %{libexecdir}/instcheck.tinydnssec
 %if %{nodq} == 0
-%attr(755,root,root)                   %{_prefix}/bin/dq
-%attr(755,root,root)                   %{_prefix}/bin/dqcache
-%attr(755,root,root)                   %{_prefix}/sbin/dqcache-makekey
-%attr(755,root,root)                   %{_prefix}/sbin/dqcache-start
-%attr(755,root,root)                   %{_prefix}/sbin/dqcache-conf
+%attr(755,root,root)                    %{_prefix}/bin/dq
+%attr(755,root,root)                    %{_prefix}/bin/dqcache
+%attr(755,root,root)                    %{_prefix}/sbin/dqcache-makekey
+%attr(755,root,root)                    %{_prefix}/sbin/dqcache-start
+%attr(755,root,root)                    %{_prefix}/sbin/dqcache-conf
 %endif
 %if %{nocurvedns} == 0
-%attr(755,root,root)                   %{_prefix}/bin/curvedns
-%attr(755,root,root)                   %{_prefix}/sbin/curvedns-conf
-%attr(755,root,root)                   %{_prefix}/sbin/curvedns-keygen
-
-%attr(755,root,root)                   %{libexecdir}/instcheck.tinydnssec
-
-%config(noreplace)                     %{_sysconfdir}/curvedns.private.key
+%attr(755,root,root)                    %{_prefix}/bin/curvedns
+%attr(755,root,root)                    %{_prefix}/sbin/curvedns-conf
+%attr(755,root,root)                    %{_prefix}/sbin/curvedns-keygen
+%attr(644,root,root) %config(noreplace) %{_sysconfdir}/curvedns.private.key
 %endif
-%config(noreplace)                     %{_sysconfdir}/dnsroots.global
+%config(noreplace)                      %{_sysconfdir}/dnsroots.global
 %attr(444,root,root) %config(noreplace) %{_sysconfdir}/%{name}-release
-%attr(644,root,root)                   %{_sysconfdir}/perms.d/%{name}/*
+%attr(644,root,root) %config(noreplace) %{_sysconfdir}/perms.d/%{name}/*
 
 %doc README.md
 %doc doc/README-ipv6.tinydnssec doc/djbdnsFAQ.pdf doc/HOWTO

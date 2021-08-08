@@ -1,45 +1,36 @@
 .TH tinydns-data 8
-
 .SH NAME
 tinydns-data \- data tool for tinydns
-
 .SH DESCRIPTION
-This is a reference page.
-For tutorial information, see the instructions for
-.br
-.B running a DNS server
-(http://cr.yp.to/djbdns/run-server.html).
-
 .B tinydns-data
 reads local DNS information
-from a file named 
+from a file named
 .I data
 in the current directory.
-It creates 
+It creates
 .I data.cdb
 in a binary format designed for
-fast access by 
+fast access by
 .BR tinydns (8).
 It may also create some other files
-with names beginning with 
+with names beginning with
 .IR data .
 
 .B tinydns-data
-updates 
+updates
 .I data.cdb
 atomically,
-so you can use it safely while 
+so you can use it safely while
 .BR tinydns (8)
 is running.
-If anything goes wrong with the creation of 
+If anything goes wrong with the creation of
 .IR data.cdb ,
 .B tinydns-data
-stops and leaves the old 
+stops and leaves the old
 .I data.cdb
 in place.
-
 .SH Data format
-The DNS information in 
+The DNS information in
 .I data
 is a series of lines.
 There are several types of lines, as shown below.
@@ -71,13 +62,13 @@ is nonzero (or omitted),
 the timestamp is a starting time
 for the information in the line;
 the line will be ignored before that time.
-If 
+If
 .I ttl
 is zero,
 the timestamp is an ending time (``time to die'')
 for the information in the line;
 .BR tinydns (8)
-dynamically adjusts 
+dynamically adjusts
 .I ttl
 so that the line's DNS records are not cached for more than a few seconds
 past the ending time.
@@ -89,20 +80,17 @@ For example, the lines
 +www.heaven.af.mil:1.2.3.4:0:4000000038af1379
 +www.heaven.af.mil:1.2.3.7::4000000038af1379
 
-specify that 
+specify that
 .I www.heaven.af.mil
-will have address 
+will have address
 .I 1.2.3.4
-until time 
+until time
 .I 4000000038af1379
 (2000-02-19 22:04:31 UTC)
-and will then switch to IP address 
+and will then switch to IP address
 .IR 1.2.3.7 .
 
-For versions 1.04 and above:
-You may include a client location on each line.
-The line is ignored for clients outside that location.
-Client locations are specified by
+A ``split-horizon'' mode is supported specifying client locations by
 .B %
 lines:
 
@@ -138,14 +126,14 @@ for everyone else.
 
 .RI \. fqdn\fR:\fIip\fR:\fIx\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
 
-Name server for our domain 
+Name server for our domain
 .IR fqdn .
 
 .B tinydns-data
 creates
 .IP
 an NS (``name server'') record
-showing 
+showing
 .IR x .ns.\fIfqdn\fR
 as a name server for
 .IR fqdn ;
@@ -153,15 +141,17 @@ as a name server for
 .IP
 an A (``address'') record showing
 .I ip
-as the IP address
-of
+as the IPv4 address or
+an AAAA record showing
+.I ip
+as the IPv6 address of
 .IR x\fR.ns.\fIfqdn ;
 and
 .P
 .IP
-an SOA (``start of authority'') record for 
+an SOA (``start of authority'') record for
 .I fqdn
-listing 
+listing
 .IR x\fR.ns.\fIfqdn
 as the primary name server
 and hostmaster@\fIfqdn\fR
@@ -169,7 +159,7 @@ as the contact address.
 .P
 
 You may have several name servers for one domain,
-with a different 
+with a different
 .I x
 for each server.
 
@@ -179,12 +169,12 @@ will return only one SOA record per domain.
 If
 .I x
 contains a dot
-then 
+then
 .B tinydns-data
-will use 
+will use
 .I x
 as the server name
-rather than 
+rather than
 .IR x\fR.ns.\fIfqdn .
 This feature is provided only for compatibility reasons;
 names not ending with
@@ -192,11 +182,11 @@ names not ending with
 will force clients to contact parent servers
 much more often than they otherwise would,
 and will reduce the overall reliability of DNS.
-You should omit 
+You should omit
 .I ip
-if 
+if
 .I x
-has IP addresses assigned elsewhere in 
+has IP addresses assigned elsewhere in
 .IR data ;
 in this case,
 .B tinydns-data
@@ -248,9 +238,9 @@ Name server for domain
 creates
 .IP
 an NS record
-showing 
+showing
 .IR x\fR.ns.\fIfqdn
-as a name server for 
+as a name server for
 .IR fqdn
 and
 .P
@@ -308,34 +298,34 @@ as the IP address of
 
 Host
 .I fqdn
-with IP address 
+with IP address
 .IR ip .
 
 .B tinydns-data
 creates
 .IP
-an A record showing 
+an A record showing
 .I ip
 as
-the IP address of 
+the IP address of
 .IR fqdn
 and
 .P
 .IP
-a PTR (``pointer'') record showing 
+a PTR (``pointer'') record showing
 .I fqdn
 as
-the name of 
+the name of
 .IR d.c.b.a .in-addr.arpa
-if 
+if
 .I ip
-is 
+is
 .IR a.b.c.d .
 .P
 
 Remember to specify name servers for some suffix of
 .IR fqdn ;
-otherwise 
+otherwise
 .BR tinydns (8)
 will not respond
 to queries about
@@ -362,11 +352,11 @@ as the name of
 
 Alias
 .I fqdn
-with IP address 
+with IP address
 .IR ip .
-This is just like 
+This is just like
 .RI = fqdn\fR:\fIip\fR:\fIttl\fR
-except that 
+except that
 .B tinydns-data
 does not create the PTR record.
 
@@ -399,44 +389,44 @@ as another IP address for
 
 .RI @ fqdn\fR:\fIip\fR:\fIx\fR:\fIdist\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
 
-Mail exchanger for 
+Mail exchanger for
 .IR fqdn .
 
 .B tinydns-data
 creates
 .IP
 an MX (``mail exchanger'') record
-showing 
+showing
 .IR x\fR.mx.\fIfqdn
-as a mail exchanger for 
+as a mail exchanger for
 .I fqdn
-at distance 
+at distance
 .I dist
 and
 .P
 .IP
-an A record showing 
+an A record showing
 .I ip
 as the IP address
-of 
+of
 .IR x\fR.mx.\fIfqdn .
 .P
-You may omit 
+You may omit
 .IR dist ;
 the default distance is 0.
 
-If 
+If
 .I x
 contains a dot
 then it is treated specially; see above.
 
-You may create several MX records for 
+You may create several MX records for
 .IR fqdn ,
-with a different 
+with a different
 .I x
 for each server.
 Make sure to arrange for the SMTP server on each IP address
-to accept mail for 
+to accept mail for
 .IR fqdn .
 .P
 Example:
@@ -471,40 +461,99 @@ The line is ignored.
 
 .RI ' fqdn\fR:\fIs\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
 
-TXT (``text'') record for 
+TXT (``text'') record for
 .IR fqdn .
 .B tinydns-data
-creates a TXT record for 
+creates a TXT record for
 .I fqdn
-containing the string 
+containing the string
 .IR s .
-You may use octal 
+You may use octal
 .RI \ nnn
 codes
-to include arbitrary bytes inside 
+to include arbitrary bytes inside
 .IR s ;
-for example, 
+for example,
 .RI \ 072
 is a colon.
 
+.RI _fqdn\fR:\fIu\fR:\fIs\fR:\fIfingerprint\fR:\fIx\fR:\fIport\fR:\fIproto\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
+
+TLSA/DANE record for
+.IR fqdn .
+.B tinydns-data
+creates a TLSA record according to RFC 6698/7218/7671 for
+.IR fqdn .
+
+.P
+.I u
+denotes its usage and
+.I s
+the provided selector.
+In case
+.I s\ =\ 0
+is set, the fingerprint covers the full
+X.509 certificate, while for
+.I s\ =\ 1
+it is the hash of the public key (Subject Public Key Info) SPKI.
+Note: According to RFC 6698 `plain` X.509 certs shall not be
+used here; though
+.I tinydns
+allows this in principal.
+
+.B tinydns
+defaults to
+.I u\ =\ 3
+and
+.IR s\ =\ 0 ,
+thus they don't need to be provided.
+The required TLSA matching
+.I type
+parameter is automatically calculated from the fingerprint's length.
+For a SHA-256 it is 64 byte and for SHA-512 128 byte.
+
+The TLSA base domain is synthesized from the values
+.IR fqdn ,
+.IR x ,
+.I proto
+and
+.IR port
+yielding a final domain name
+.IR _port._proto.x.fqdn .
+In case those values are missing, automatically the
+following entry is generated:
+.IR _25._tcp.mail.fqdn .
+However, a typical choice for
+.I x
+is
+.I a.mx
+or
+.IR b.mx .
+If
+.I x
+starts with
+.I _
+it is taken unaltered prepending
+.IR fqdn .
+
 .RI ^ fqdn\fR:\fIp\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
 
-PTR record for 
+PTR record for
 .IR fqdn .
 .B tinydns-data
 creates a PTR record for
 .I fqdn
-pointing to the domain name 
+pointing to the domain name
 .IR p .
 
 .RI C fqdn\fR:\fIp\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
 
-CNAME (``canonical name'') record for 
+CNAME (``canonical name'') record for
 .IR fqdn .
 .B tinydns-data
-creates a CNAME record for 
+creates a CNAME record for
 .I fqdn
-pointing to the domain name 
+pointing to the domain name
 .IR p .
 
 Don't use
@@ -523,15 +572,15 @@ I do not think they mean what you think they mean.''
 
 .RI Z fqdn\fR:\fImname\fR:\fIrname\fR:\fIser\fR:\fIref\fR:\fIret\fR:\fIexp\fR:\fImin\fR:\fIttl\fR:\fItimestamp\fR:\fIlo\fR
 
-SOA record for 
+SOA record for
 .I fqdn
-showing 
+showing
 .I mname
 as the primary name server,
 .I rname
-(with the first 
+(with the first
 .I .
-converted to 
+converted to
 .IR @ )
 as the contact address,
 .I ser
@@ -552,7 +601,7 @@ and
 .I min
 may be omitted;
 they default to, respectively,
-the modification time of the 
+the modification time of the
 .I data
 file,
 16384 seconds,
@@ -565,33 +614,33 @@ file,
 Generic record for
 .IR fqdn .
 .B tinydns-data
-creates a record of type 
+creates a record of type
 .I n
-for 
+for
 .I fqdn
-showing 
+showing
 .IR rdata .
 .I n
 must be an integer between 1 and 65535;
 it must not be 2 (NS), 5 (CNAME), 6 (SOA), 12 (PTR), 15 (MX), or 252 (AXFR).
 The proper format of
 .I rdata
-depends on 
+depends on
 .IR n .
-You may use octal 
+You may use octal
 .RI \ nnn
 codes
-to include arbitrary bytes inside 
+to include arbitrary bytes inside
 .IR rdata .
 
 .SH Wildcards
 
 .I tinydns
-supports wildcards of the form 
+supports wildcards of the form
 .IR *.fqdn .
-Information for 
+Information for
 .I *.fqdn
-is provided for every name ending with 
+is provided for every name ending with
 .IR .fqdn ,
 .I except
 names that have their own records
@@ -688,7 +737,7 @@ with the two zones merged:
   panther.heaven.af.mil. 86400 IN A 1.2.3.249
 
 .SH Design notes
-The 
+The
 .I data
 format is very easy for programs to edit,
 and reasonably easy for humans to edit,
@@ -699,6 +748,12 @@ could support a name wherever an IP address is required;
 it would look up the name in DNS and use the resulting address.
 This would reliably track changes in offsite IP addresses
 if the database were rebuilt periodically.
+
+This is a reference page.
+For tutorial information, see the instructions for
+.br
+.B running a DNS server
+(http://cr.yp.to/djbdns/run-server.html).
 
 .SH SEE ALSO
 tinydns(8)

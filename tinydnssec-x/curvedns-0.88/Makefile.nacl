@@ -1,11 +1,14 @@
 # CurveDNS' Makefile template
 #
 # The @VAR@ tokens will be replaced by configure.curvedns
-
+prefix=@prefix@
+bindir=@bindir@
+sbindir=@sbindir@
+sysconfdir=@sysconfdir@
 ABI=@ABI@
 NACLLIB=nacl/build/lib/$(ABI)
 NACLINC=nacl/build/include/$(ABI)
-CDNSCFLAGS=-Wall -fno-strict-aliasing -O3 -I$(NACLINC)
+CDNSCFLAGS=-g -Wall -fno-strict-aliasing -O3 -I$(NACLINC)
 
 # If you have libev at a non-standard place, specify that here:
 #EV=
@@ -28,14 +31,30 @@ targets: $(TARGETS)
 
 clean:
 	rm -f *.a *.o $(TARGETS)
+
+distclean:
+	rm -f *.a *.o $(TARGETS) Makefile
 	rm -rf nacl/build
 
-distclean: clean
-	rm -f Makefile
+install: $(TARGETS)
+	install -m 0755 -d $(DESTDIR)$(bindir)
+	install -m 0755 -d $(DESTDIR)$(sbindir)
+	install -m 0755 -d $(DESTDIR)$(prefix)/share/man/man8
+	install -m 2755 -d $(DESTDIR)$(sysconfdir)
+	install -m 0755 curvedns $(DESTDIR)$(bindir)
+	install -m 0755 curvedns-keygen $(DESTDIR)$(sbindir)
+	install -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 $(DESTDIR)$(prefix)/share/man/man8
+	install -m 0644 curvedns.private.key $(DESTDIR)$(sysconfdir)/curvedns.private.key
 
-install:
-	@echo Sorry, no automated install. Copy the following binaries to your preferred destination path:
-	@echo "  $(TARGETS)"
+install-strip: $(TARGETS)
+	install -m 0755 -d $(DESTDIR)$(bindir)
+	install -m 0755 -d $(DESTDIR)$(sbindir)
+	install -m 0755 -d $(DESTDIR)$(prefix)/usr/share/man8
+	install -m 2755 -d $(DESTDIR)$(sysconfdir)
+	install -m 0755 -s curvedns $(DESTDIR)$(bindir)
+	install -m 0755 -s curvedns-keygen $(DESTDIR)$(sbindir)
+	install -m 0644 curvedns.8 curvedns-keygen.8 curvedns-conf.8 $(DESTDIR)$(prefix)/share/man/man8
+	install -m 0644 curvedns.private.key $(DESTDIR)$(sysconfdir)/curvedns.private.key
 
 debug.o: debug.c debug.h
 	$(CC) $(CFLAGS) -c debug.c
