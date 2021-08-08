@@ -76,3 +76,5 @@ Release 1.1 Start 11/04/2017
 47. installer.c: set default permissions when mode=-1
 - 05/08/2021
 48. added permission files for indimail-mta
+- 08/08/2021
+49. autotoolize curvedns and build with libsodium
