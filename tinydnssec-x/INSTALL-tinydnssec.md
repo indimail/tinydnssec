@@ -34,6 +34,7 @@ to install before the tinydnssec patch applies:
    `pod2man -s 8 -c '' "tinydns-sign.pl" >tinydns-sign.8`
 
    then install it in your preferred location for system manpages.
+   NOTE: On arch linux pod2man will be in /usr/bin/core\_perl
 
 
 ### Test
