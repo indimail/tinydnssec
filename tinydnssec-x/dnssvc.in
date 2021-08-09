@@ -203,7 +203,7 @@ linuxuseradd()
 	if [ -n "$shell" ] ; then
 		args="$args -s $shell"
 	fi
-	if [ -x /etc/alpine-release ] ; then
+	if [ -f /etc/alpine-release ] ; then
 		if [ -n "$group" ] ; then
 			args="$args -G $group"
 		fi
@@ -277,7 +277,7 @@ linuxgroupadd()
 	fi
 	getent group $1 >/dev/null && echo "group $1 exists" 1>&2 && return 0
 	echo "creating group $1"
-	if [ -x /etc/alpine-release ] ; then
+	if [ -f /etc/alpine-release ] ; then
 		echo /usr/sbin/addgroup -S $args $1
 		/usr/sbin/addgroup -S $args $1
 	else
