@@ -381,15 +381,15 @@ configure_resolvconf()
 dnscache_configured=0
 if [ -d %{_sysconfdir}/dnscache ] ; then
   dnscache_configured=1
-  if [ -d ${servicedir} ] ; then
-    if [ ! -h ${servicedir}/dnscache ] ; then
-      ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
+  if [ -d %{servicedir} ] ; then
+    if [ ! -h %{servicedir}/dnscache ] ; then
+      ln -s %{_sysconfdir}/dnscache %{servicedir}/dnscache
       if [ $? -ne 0 ] ; then
         dnscache_configured=0
       fi
     fi
-  elif [ -h ${servicedir} ] ; then
-    dir=`readlink ${servicedir}`
+  elif [ -h %{servicedir} ] ; then
+    dir=`readlink %{servicedir}`
     if [ -d $dir ] ; then
       if [ ! -h $dir/dnscache ] ; then
         ln -s %{_sysconfdir}/dnscache $dir/dnscache
@@ -401,12 +401,12 @@ if [ -d %{_sysconfdir}/dnscache ] ; then
   fi
 fi
 if [ $dnscache_configured -eq 1 ] ; then
-  if [ -d ${servicedir}/.svscan ] ; then
-    mkdir -p ${servicedir}/.svscan/variables
-    echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
-    if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
-      if [ -f ${servicedir}/.svscan/run ] ; then
-        /bin/chmod +x ${servicedir}/.svscan/run
+  if [ -d %{servicedir}/.svscan ] ; then
+    mkdir -p %{servicedir}/.svscan/variables
+    echo > %{servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    if [ -x /usr/bin/unshare -a -x %{servicedir}/dnscache/run ] ; then
+      if [ -f %{servicedir}/.svscan/run ] ; then
+        /bin/chmod +x %{servicedir}/.svscan/run
       fi
     fi
     grep resolvconf %{servicedir}/.svscan/variables/.options > /dev/null 2>&1
@@ -450,18 +450,18 @@ if [ ! -d %{_sysconfdir}/dnscache ] ; then
   %{_prefix}/sbin/dnscache-conf dnscache qmaill %{_sysconfdir}/dnscache 127.0.0.1
   if [ $? -eq 0 ] ; then
     dnscache_configured=1
-    if [ -d ${servicedir} ] ; then
-      if [ ! -h ${servicedir}/dnscache ] ; then
-        ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
+    if [ -d %{servicedir} ] ; then
+      if [ ! -h %{servicedir}/dnscache ] ; then
+        ln -s %{_sysconfdir}/dnscache %{servicedir}/dnscache
         if [ $? -ne 0 ] ; then
           dnscache_configured=0
         fi
       fi
-    elif [ -h ${servicedir} ] ; then
-      dir=`readlink ${servicedir}`
+    elif [ -h %{servicedir} ] ; then
+      dir=`readlink %{servicedir}`
       if [ -d $dir ] ; then
-        if [ ! -h ${servicedir}/dnscache ] ; then
-          ln -s %{_sysconfdir}/dnscache ${servicedir}/dnscache
+        if [ ! -h %{servicedir}/dnscache ] ; then
+          ln -s %{_sysconfdir}/dnscache %{servicedir}/dnscache
           if [ $? -ne 0 ] ; then
             dnscache_configured=0
           fi
@@ -523,19 +523,19 @@ if [ $argv1 -eq 1 ] ; then
 fi
 for i in tinydns dnscache curvedns dqcache
 do
-  if [ -L ${servicedir}/$i ] ; then
-    echo "Removing service ${servicedir}/$i"
-    %{__rm} -f ${servicedir}/$i
+  if [ -L %{servicedir}/$i ] ; then
+    echo "Removing service %{servicedir}/$i"
+    %{__rm} -f %{servicedir}/$i
   fi
   if [ -d %{_sysconfdir}/$i ] ; then
     echo "Removing preinstalled %{_sysconfdir}/$i"
     %{__rm} -rf %{_sysconfdir}/$i
   fi
 done
-if [ -d ${servicedir}/.svscan -a -d ${servicedir}/.svscan/variables ] ; then
-  > ${servicedir}/.svscan/variables/UNSHARE
-  if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run -a -f ${servicedir}/.svscan/run ] ; then
-    /bin/chmod -x ${servicedir}/.svscan/run
+if [ -d %{servicedir}/.svscan -a -d %{servicedir}/.svscan/variables ] ; then
+  > %{servicedir}/.svscan/variables/UNSHARE
+  if [ -x /usr/bin/unshare -a -x %{servicedir}/dnscache/run -a -f %{servicedir}/.svscan/run ] ; then
+    /bin/chmod -x %{servicedir}/.svscan/run
   fi
 fi
 for i in tinydns dnscache
