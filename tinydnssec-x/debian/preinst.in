@@ -38,6 +38,9 @@ case "$1" in
 	set -e
 	;;
     install)
+	mkdir -p /tmp/tinydnssec
+	chmod 700 /tmp/tinydnssec
+	touch /tmp/tinydnssec/.install
 	#
 	# Create a users and groups. Do not report any problems if they already
 	# exists.
