@@ -1,6 +1,6 @@
 [![Matrix](https://img.shields.io/matrix/indimail:matrix.org.svg)](https://matrix.to/#/#indimail:matrix.org)
 
-**Complation Status (from Github Actions)**
+**Compilation Status (from Github Actions)**
 
 [![tinydnssec Ubuntu CI](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-c-cpp.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-c-cpp.yml)
 [![tinydnssec FreeBSD CI](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-freebsd.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-freebsd.yml)
