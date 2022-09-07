@@ -14,4 +14,5 @@ TARGET_IP="127.0.0.1"
 # Authoritative name server port:
 TARGET_PORT="53"
 
-exec envuidgid "$USER" envdir env curvedns "$LISTEN_IPS" "$LISTEN_PORT" "$TARGET_IP" "$TARGET_PORT" 2>&1
+exec envuidgid "$USER" envdir ./variables curvedns \
+	"$LISTEN_IPS" "$LISTEN_PORT" "$TARGET_IP" "$TARGET_PORT" 2>&1

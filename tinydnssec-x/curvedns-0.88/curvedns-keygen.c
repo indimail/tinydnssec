@@ -80,7 +80,7 @@ int curvedns_env(char *path, char *name) {
 	}
 	if (snprintf(fullname, sizeof(fullname), "%s.%s", dnspublic, name) < 0) return 1;
 
-	if (snprintf(fullpath, sizeof(fullpath), "%s/env", path) < 0) return 1;
+	if (snprintf(fullpath, sizeof(fullpath), "%s/variables", path) < 0) return 1;
 	if (stat(fullpath, &st) < 0) {
 		if (errno != ENOENT) return 1;
 		mkdir(fullpath, 0700);

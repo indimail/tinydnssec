@@ -9,7 +9,11 @@ When you want to learn more, see the [documentation](docs).
 For people in a hurry, a (very) short instruction:
 
 1. Be sure to have [libev](http://software.schmorp.de/pkg/libev.html) (+ dev headers) installed
-2. `./configure.nacl` - this takes a while
+2. If your system has libsodium, install it
+   a) If libsodium is installed
+      ./default.configure
+   b) If libsodium is not installed, then you have to build libnacl included in this package
+      ./configure.nacl` - this takes a while
 3. `./configure.curvedns` - answer possible questions
 4. `make`
 5. Copy both `curvedns` and `curvedns-keygen` to your preferred path.
@@ -53,25 +57,21 @@ In the list below, you will find a list of prerequisites, together with a defini
   If this is not the case, you will need to compile libev by yourself.
   Get the latest stable release [here](http://dist.schmorp.de/libev/).
 
-* NaCl **mandatory**
+* NaCl or libsodium
 
   The [NaCl](http://nacl.cr.yp.to/) (Networking and Cryptography library, pronounced 'salt')
   supplies all the cryptographic primitives that DNSCurve — and thus CurveDNS — need.
   You do not have to fetch this, it will be delivered together with CurveDNS' source.
-  Compilation and installation of this library will be discussed later.
+  Compilation and installation of this library will be discussed later. If your
+  system has libsodium then you may choose to install that
 
 * daemontools recommended
 
-  [daemontools](http://cr.yp.to/daemontools.html) are a set of tools written by Daniel Bernstein.
-  They greatly simplify the way daemons are handled and maintained.
-  It is not mandatory to install this collection of tools, because almost everything daemontools does,
-  can also be achieved using your system's standard tools and some shell scripts.
-  It is however recommended because quite some CurveDNS features can easily be used and configured using daemontools.
+  [daemontools](http://cr.yp.to/daemontools.html) are a set of tools written by Daniel Bernstein. They greatly simplify the way daemons are handled and maintained. It is not mandatory to install this collection of tools, because almost everything daemontools does, can also be achieved using your system's standard tools and some shell scripts.  It is however recommended because quite some CurveDNS features can easily be used and configured using daemontools.
 
-  Just as with libev there is a big chance your system's package manager already has daemontools in its repository.
-  Be sure to check that first, before installing daemontools from source.
+  Just as with libev there is a big chance your system's package manager already has daemontools in its repository. Be sure to check that first, before installing daemontools from source.
 
-  If daemontools is not in your package manager's repository follow the [installation instructions](http://cr.yp.to/daemontools/install.html) from the deamontools install page.
+  We will be using a modified version of daemontools that comes with indimail-mta. If daemontools is not in your package manager's repository follow the [installation instructions](http://cr.yp.to/daemontools/install.html) from the deamontools install page.
 
 ### Getting CurveDNS
 
@@ -111,7 +111,8 @@ $ ./configure.nacl
 
 What this command did, is compile a static library file that will be linked with CurveDNS later on.
 This means that NaCl does not need to be known system-wide.
-That is also the reason why we deliver NaCl with CurveDNS.
+That is also the reason why we deliver NaCl with CurveDNS. You can choose
+to skip this step if you have libsodium installed.
 
 Once this is done, we are ready to configure CurveDNS itself.
 This is done by running CurveDNS' configure script.
@@ -150,7 +151,7 @@ two: `curvedns` and `curvedns-keygen`), we are ready to install them in an appro
 If you run would run the regular `make install` you will notice nothing is done.
 CurveDNS does not have a standard place to store its binaries, so it is up to you to install the binaries.
 
-In our believes `/usr/local/bin` is an appropriate location:
+In our belief `/usr/local/bin` is an appropriate location:
 
 ```
 (As root:)
@@ -276,7 +277,7 @@ There is however a way to let `curvedns-keygen` handle the storing of this infor
 ### Running CurveDNS
 
 Now that the binaries are ready and we have generated a keypair, it is time to start running CurveDNS.
-For now, we will only focus on running CurveDNS by using [daemontools](http://cr.yp.to/daemontools.html).
+For now, we will only focus on running CurveDNS by using [daemontools](https://build.opensuse.org/package/show/home:indimail/daemontools).
 The only four tools of daemontools we will use are `multilog`, `envdir`, `setuidgid`, and `envuidgid`.
 Besides, we will also implicitly use the `supervise` service to monitor our daemon (so we will write our own run file).
 
@@ -286,19 +287,19 @@ Let's create CurveDNS' working directory, a `curvedns` user, and setup the log e
 (Assuming you are root and in CurveDNS' source directory)
 # groupadd curvedns
 # useradd -g curvedns -s /bin/false -d /etc/curvedns curvedns
-# mkdir -p /etc/curvedns/log /etc/curvedns/env
-# cp contrib/curvedns-run /etc/curvedns/run
-# cp contrib/curvedns-log-run /etc/curvedns/log/run
-# chmod 755 /etc/curvedns/run /etc/curvedns/log/run
-# chown -R root:root /etc/curvedns
-# chown -R curvedns:curvedns /etc/curvedns/log
-# chmod 0700 /etc/curvedns/env
+# mkdir -p /service/curvedns/log /service/curvedns/variables
+# cp contrib/curvedns-run /service/curvedns/run
+# cp contrib/curvedns-log-run /service/curvedns/log/run
+# chmod 755 /etc/curvedns/run /service/curvedns/log/run
+# chown -R root:root /service/curvedns
+# chown -R curvedns:curvedns /service/curvedns/log
+# chmod 0700 /etc/curvedns/variables
 ```
 
-Now edit `/etc/curvedns/run`.
+Now edit `/service/curvedns/run`.
 All the five variable lines can be altered to suit your situation.
 
-The `env` directory will be used to supply environment options towards CurveDNS.
+The `variables` directory will be used to supply environment options towards CurveDNS.
 Every file in this directory will be transformed to an environment variable, while the contents
 of the file will act as the environment variable's value.
 
@@ -315,7 +316,7 @@ to generate a key for the just created CurveDNS environment works like this:
 
 ```
 (As root)
-# curvedns-keygen /etc/curvedns ns1.example.org
+# curvedns-keygen /service/curvedns ns1.example.org
 Authoritative name server name:
 uz5svv9j6p8j05ms321fjtdms06tw23uv5ck1n2650847c8t29up49.ns1.example.org
 Hex public key:
@@ -325,16 +326,16 @@ a6b1ca8efeb63024d5e92a356fb8967b091421ad9516006e339dcf495b49e13e
 ```
 
 Besides being displayed here, the private key was also written to
-`/etc/curvedns/env/CURVEDNS_PRIVATE_KEY`, so it can be used inside CurveDNS environment.
+`/service/curvedns/variables/CURVEDNS_PRIVATE_KEY`, so it can be used inside CurveDNS environment.
 If you look back at the [configuration options](#configuration-options), you can specify all
-the mentioned environment options in the `/etc/curvedns/env` directory.
+the mentioned environment options in the `/service/curvedns/variables` directory.
 So if you want to enable debug mode — which is recommended to easily test your new installation –, you can do this:
 
 ```
-$ echo 5 > /etc/curvedns/env/CURVEDNS_DEBUG
+$ echo 5 > /service/curvedns/variables/CURVEDNS_DEBUG
 ```
 
-All other **`CURVEDNS_*`** environment options can be set like this.
+All other `CURVEDNS_*` environment options can be set like this.
 
 We are now ready to run CurveDNS, so we link CurveDNS'  towards the daemontools supervise service directory.
 
@@ -349,8 +350,8 @@ ln -s /etc/curvedns /service/curvedns
 In a few seconds `curvedns` should pop up in your process list.
 If it does not, please check the `readproctitle` process whether any errors occurred (`ps ax | grep readproctitle`).
 
-Logging of CurveDNS can be found in `/etc/curvedns/log/main/current`.
-The main directory is an (by `multilog`) automatically rotated log file directory.
+Logging of CurveDNS can be found in `/var/log/curvedns/current`.
+The /var/log/svc/curvedns directory is an (by `multilog`) automatically rotated log file directory.
 To see what CurveDNS is doing live, run the following:
 
 > When no specific debug mode (i.e. the **`DNSCURVE_DEBUG`** environment variable) has been specified,
@@ -358,7 +359,7 @@ To see what CurveDNS is doing live, run the following:
 > As mentioned before, it is good to temporarily set the debug level to `4` (info), so you can see what is happening.
 
 ```
-$ tail -f /etc/curvedns/log/main/current | tai64nlocal
+$ tail -f /var/log/svc/curvedns/current | tai64nlocal
 ```
 
 `tai64nlocal` transforms the TAI timestamp (that `multilog` adds) to a human readable date.

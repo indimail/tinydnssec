@@ -10,4 +10,6 @@ config.status
 stamp-h1
 config.guess
 config.sub
+config.h.in
 config.h.in.BAK
+configure.BAK
