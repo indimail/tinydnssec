@@ -78,3 +78,5 @@ Release 1.1 Start 11/04/2017
 48. added permission files for indimail-mta
 - 08/08/2021
 49. autotoolize curvedns and build with libsodium
+- 22/11/2022
+59. cache_hashtable.c: function cache_destroy fixed usage of variable 'table' after free

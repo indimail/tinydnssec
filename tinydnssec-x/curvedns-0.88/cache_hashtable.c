@@ -229,13 +229,13 @@ int cache_destroy(struct cache_table *table) {
 	if (table) {
 		if (table->entries)
 			free(table->entries);
-		free(table);
 		table->headused = NULL;
 		table->headunused = NULL;
 		table->lastused = NULL;
 		table->nrbuckets = -1;
 		table->nrentries = -1;
 		table->nrused = -1;
+		free(table);
 	}
 	return 1;
 }
