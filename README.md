@@ -235,6 +235,8 @@ If you want to use DNF / YUM / apt-get, the corresponding install instructions f
 * [Stable](https://software.opensuse.org/download.html?project=home%3Aindimail&package=tinydnssec)
 * [Experimental](https://software.opensuse.org/download.html?project=home%3Ambhangui&package=tinydnssec)
 
+The binary build sets up supervised service directories for dnscache, tinydns, dqcache, and curvedns in /etc/indimail. You can create a link to the directory in /service to run them as supervised services under svscan.
+
 ```
 Currently, the list of supported binary distributions for tinydnssec is
 
@@ -279,6 +281,45 @@ Currently, the list of supported binary distributions for tinydnssec is
 ```
 
 NOTE: You can also build local binary packages. To generate RPM packages locally for all components refer to [Create Local Binary Packages](.github/CREATE-Packages.md)
+
+## IMPORTANT NOTE for binary builds on debian
+
+If you decide to use svscan / supervise to run dnscache, tinydns, dqcache, curvedns, you need to read this note. debian/ubuntu repositories already has daemontools which is far behind in terms of feature list that the indimail-mta repo provides. You need to ensure that the daemontools packages get installed from the indimail-mta repository instead of the debian repository. If you don't do this, tinydnssec many not function correctly as it depends on setting of proper global envirnoment variables. Global environment variables are not supported by daemontools from the official debian repository.
+
+All you need to do is set a higher preference for the indimail-mta repository by creating /etc/apt/preferences.d/preferences with the following contents
+
+```
+$ sudo /bin/bash
+# cat > /etc/apt/preferences.d/preferences <<EOF
+Package: *
+Pin: origin download.opensuse.org
+Pin-Priority: 1001
+EOF
+```
+
+You can verify this by doing
+
+```
+$ apt policy daemontools
+daemontools:
+  Installed: 2.11-1.1+1.1
+  Candidate: 2.11-1.1+1.1
+  Version table:
+     1:0.76-7 500
+        500 http://raspbian.raspberrypi.org/raspbian buster/main armhf Packages
+ *** 2.11-1.1+1.1 1001
+       1001 http://download.opensuse.org/repositories/home:/indimail/Debian_10  Packages
+        100 /var/lib/dpkg/status
+ucspi-tcp:
+  Installed: 2.11-1.1+1.1
+  Candidate: 2.11-1.1+1.1
+  Version table:
+     1:0.88-6 500
+        500 http://raspbian.raspberrypi.org/raspbian buster/main armhf Packages
+ *** 2.11-1.1+1.1 1001
+       1001 http://download.opensuse.org/repositories/home:/indimail/Debian_10/ Packages
+        100 /var/lib/dpkg/status
+```
 
 # SUPPORT INFORMATION
 
