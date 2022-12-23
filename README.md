@@ -223,6 +223,8 @@ For help in installing and setting up curvedns look at this [Document](https://g
 
 [![tinydnssec obs trigger](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-obs.yml/badge.svg)](https://github.com/mbhangui/tinydnssec/actions/workflows/tinydnssec-obs.yml)
 
+[![tinydnssec](https://build.opensuse.org/projects/home:mbhangui/packages/tinydnssec/badge.svg?type=percent)](https://build.opensuse.org/package/show/home:mbhangui/tinydnssec)
+
 You can get binary RPM / Debian packages at
 
 * [Stable Releases](http://download.opensuse.org/repositories/home:/indimail/)
@@ -230,8 +232,8 @@ You can get binary RPM / Debian packages at
 
 If you want to use DNF / YUM / apt-get, the corresponding install instructions for the two repositories, depending on whether you want to install a stable or an experimental release, are
 
-* [Stable](https://software.opensuse.org/download.html?project=home%3Aindimail&package=ezmlm-idx)
-* [Experimental](https://software.opensuse.org/download.html?project=home%3Ambhangui&package=ezmlm-idx)
+* [Stable](https://software.opensuse.org/download.html?project=home%3Aindimail&package=tinydnssec)
+* [Experimental](https://software.opensuse.org/download.html?project=home%3Ambhangui&package=tinydnssec)
 
 ```
 Currently, the list of supported binary distributions for tinydnssec is
