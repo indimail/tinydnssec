@@ -625,6 +625,8 @@ BIN SBIN LIBEXEC ETC MAN
 	grep "\-conf" SBIN.extra      | ./installer $(DESTDIR)$(prefix)
 	[ -z $(DESTDIR) ] && ./instcheck || true
 
+man: installer MAN
+
 socket.lib: \
 trylsock.c compile load
 	( ( ./compile trylsock.c && \
