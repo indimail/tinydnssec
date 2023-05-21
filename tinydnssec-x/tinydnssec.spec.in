@@ -20,7 +20,7 @@
 %global nodq               0
 %global nocurvedns         0
 %if %build_on_obs == 1
-%global packager Manvendra Bhangui <manvendra@indimail.org>
+%global packager Manvendra Bhangui <@email@>
 %endif
 %global fedorareview       0
 
@@ -49,7 +49,7 @@
 Name: tinydnssec
 Version: @version@
 Release: @release@%{?dist}
-Summary: DNS suite
+Summary: DNS suite with djbdns, dqcache and curvedns
 %if %{undefined suse_version} && %{undefined sles_version}
 Group: System Environment/Base
 %else
@@ -235,9 +235,6 @@ echo "PACKAGE_BUGREPORT=\"'@email@'\""
  /bin/chmod -R 755 %{buildroot}%{_prefix}/bin
  /bin/chmod -R 755 %{buildroot}%{_prefix}/sbin
 %endif
-
-%clean
-[ "%{buildroot}" != "/" ] && %{__rm} -fr %{buildroot}
 
 %files
 %defattr(-, root, root,-)
