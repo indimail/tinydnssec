@@ -1,3 +1,4 @@
+.\" vim: tw=75
 .TH dnsq 1
 
 .SH NAME
@@ -10,15 +11,12 @@ dnsq \- sends a non-recursive DNS query to DNS server
 .I s
 
 .SH DESCRIPTION
-.B dnsq
-sends a non-recursive DNS query
-to DNS server 
-.I s
-for records of type 
-.I t
-under the domain name 
-.IR fqdn .
-It prints the results in a human-readable format.
+\fBdnsq\fR sends a non-recursive DNS query to DNS server \fIs\fR for
+records of type \fIt\fR under the domain name \fIfqdn\fR. It prints the
+results in a human-readable format.
+
+\fBdnsqr\fR exits 111 if it is unable to parse, runs out of memory or
+unable to write results to descriptor 1.
 
 .SH SEE ALSO
 dnsip(1),

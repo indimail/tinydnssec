@@ -1,3 +1,4 @@
+.\" vim: tw=75
 .TH dnsmx 1
 
 .SH NAME
@@ -9,22 +10,14 @@ dnsmx \- prints the MX records of fqdn
 
 .SH DESCRIPTION
 
-.B dnsmx
-prints the MX records of
-.IR fqdn .
-If there are no MX records,
-.B dnsmx
-prints an artificial MX record,
-simulating the behavior of MTAs.
+\fBdnsmx\fR prints the MX records of \fIfqdn\fR.  If there are no MX
+records, \fBdnsmx\fR prints an artificial MX record, simulating the
+behavior of MTAs.
 
-Normally 
-.B dnsmx
-exits 0.
-If 
-.B dnsmx
-encounters a temporary problem
-that prevents it from determining the list of MX records,
-it prints an error message and exits 111.
+Normally \fBdnsmx\fR exits 0. If \fBdnsmx\fR encounters a temporary problem
+that prevents it from determining the list of MX records, it prints an
+error message and exits 111. It also exits 111 if it is not able to write
+the ip address to descriptor 1.
 
 .SH SEE ALSO
 dnsip(1),

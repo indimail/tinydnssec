@@ -80,3 +80,6 @@ Release 1.1 Start 11/04/2017
 49. autotoolize curvedns and build with libsodium
 - 22/11/2022
 59. cache_hashtable.c: function cache_destroy fixed usage of variable 'table' after free
+- 23/09/2022
+60. dnsip.c, dnsipq.c, dnsname.c, dnsmx.c, dnstxt.c, dnsqr.c, dnsq.c,
+    dnstrace.c: exit 111 if unable to write to subfdout

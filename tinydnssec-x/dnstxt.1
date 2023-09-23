@@ -1,3 +1,4 @@
+.\" vim: tw=75
 .TH dnstxt 1
 
 .SH NAME
@@ -8,22 +9,13 @@ dnstxt \- prints the TXT record of fqdn
 .I fqdn
 
 .SH DESCRIPTION
-.B dnstxt
-prints the TXT record of  
-.I fqdn
-on a single line.
-If there is no TXT record,
-.B dnstxt
-prints a blank line.
+\fBdnstxt\fR prints the TXT record of \fIfqdn\fR on a single line.  If
+there is no TXT record, \fBdnstxt\fR prints a blank line.
 
-Normally 
-.B dnstxt
-exits 0.
-If 
-.B dnstxt
-encounters a temporary problem
-that prevents it from determining the TXT record,
-it prints an error message and exits 111.
+Normally \fBdnstxt\fR exits 0. If \fBdnstxt\fR encounters a temporary
+problem that prevents it from determining the TXT record, it prints an
+error message and exits 111.  It also exits 111 if it is not able to write
+the ip address to descriptor 1.
 
 .SH SEE ALSO
 dnsip(1),

@@ -1,3 +1,4 @@
+.\" vim: tw=75
 .TH dnsipq 1
 
 .SH NAME
@@ -10,29 +11,16 @@ dnsipq \- dns lookup tool
 ]
 
 .SH DESCRIPTION
-\fBdnsipq\fR
-feeds the name  
-.I udn
-through
-.BR qualification (5).
-It prints the fully qualified domain name and IP addresses
-on a single line.
-If the fully qualified domain name does not exist,
-.B dnsipq
-prints no addresses.
-You can list several  
-.IR udn s;
-.B dnsipq
-prints each result on a separate line.
+\fBdnsipq\fR feeds the name  \fIudn\fR through \fBqualification\fR(5). It
+prints the fully qualified domain name and IP addresses on a single line.
+If the fully qualified domain name does not exist, \fBdnsipq\R prints no
+addresses. You can list several \fIudn\fR s; \fBdnsipq\fR prints each
+result on a separate line.
 
-Normally 
-.B dnsipq
-exits 0.
-If 
-.B dnsipq
-encounters a temporary problem
-that prevents it from determining the list of IP addresses,
-it prints an error message and exits 111.
+Normally \fBdnsipq\fR exits 0. If \fdnsipq\fR encounters a temporary
+problem that prevents it from determining the list of IP addresses, it
+prints an error message and exits 111. It also exits 111 if it is not able
+to write the ip address to descriptor 1.
 
 .SH SEE ALSO
 qualification(5),

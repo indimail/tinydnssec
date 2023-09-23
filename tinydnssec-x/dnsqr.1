@@ -1,3 +1,4 @@
+.\" vim: tw=75
 .TH dnsqr 1
 
 .SH NAME
@@ -12,19 +13,11 @@ under the domain name
 .I fqdn
 
 .SH DESCRIPTION
-.B dnsqr
-asks for records of type 
-.I t
-under the domain name 
-.IR fqdn .
-It prints the results in a human-readable format,
-more compact than the 
-.I dig
-output format.
+\fBdnsqr\fR asks for records of type \fIt\fR under the domain name
+\fIfqdn\fR. It prints the results in a human-readable format, more compact
+than the \fIdig\fR output format.
 
-.I t
-may be a name or number.
-Currently recognized names:
+\fIt\fR may be a name or number. Currently recognized names:
 .IR any ,
 .IR a ,
 .IR ns ,
@@ -39,14 +32,12 @@ Currently recognized names:
 .IR key ,
 .IR aaaa ,
 .IR axfr .
-Note that, if you want to
-perform a zone transfer, you should use
-.BR axfr-get (8),
-not
-.B dnsqr axfr\fR.
+Note that, if you want to perform a zone transfer, you should use
+\fBaxfr-get\fR(8), not \fBdnsqr\fR(1), \fBaxfrdns\fR(8).
 
-.B dnsqr
-is available in djbdns 1.01 and above.
+\fBdnsqr\fR is available in djbdns 1.01 and above. \fBdnsqr\fR exits 111 if
+it is unable to parse, runs out of memory or unable to write results to
+descriptor 1.
 
 .SH SEE ALSO
 dnsip(1),
