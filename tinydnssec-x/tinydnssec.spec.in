@@ -400,7 +400,10 @@ fi
 if [ $dnscache_configured -eq 1 ] ; then
   if [ -d %{servicedir}/.svscan ] ; then
     mkdir -p %{servicedir}/.svscan/variables
-    echo > %{servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    # make resolv.conf available only for svscan and descendants
+    if [ ! -f %{servicedir}/.svscan/variables/UNSHARE ] ; then
+      echo > %{servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    fi
     if [ -x /usr/bin/unshare -a -x %{servicedir}/dnscache/run ] ; then
       if [ -f %{servicedir}/.svscan/run ] ; then
         /bin/chmod +x %{servicedir}/.svscan/run
@@ -530,7 +533,9 @@ do
   fi
 done
 if [ -d %{servicedir}/.svscan -a -d %{servicedir}/.svscan/variables ] ; then
-  > %{servicedir}/.svscan/variables/UNSHARE
+  if [ -s %{servicedir}/.svscan/variables/UNSHARE ] ; then
+    /bin/rm -f %{servicedir}/.svscan/variables/UNSHARE
+  fi
   if [ -x /usr/bin/unshare -a -x %{servicedir}/dnscache/run -a -f %{servicedir}/.svscan/run ] ; then
     /bin/chmod -x %{servicedir}/.svscan/run
   fi

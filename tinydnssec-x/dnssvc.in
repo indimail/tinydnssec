@@ -10,326 +10,329 @@ chown=$(which chown)
 
 macOSgroupadd()
 {
-	echo "groupadd $*"
-	groupid=""
-	while test $# -gt 1; do
-		case "$1" in
-		-g)
-		groupid=$2
-		for i in `dscl . -list /Groups PrimaryGroupID | awk '{print $2}'`
-		do
-			if [ $i -eq $groupid ] ; then
-				echo "groupid $groupid not unique" 1>&2
-				return 1
-			fi
-		done
-		;;
-		esac
-		shift
-	done
-	/usr/bin/dscl . -list /Groups/$1 > /dev/null 2>&1
-	if [ $? -eq 0 ] ; then
-		echo "group $1 exists"
-		return 1
-	fi
-	if [ -n "$groupid" ] ; then
-		echo "dscl . -create /Groups/$1 PrimaryGroupID $groupid"
-		/usr/bin/dscl . -create /Groups/$1 PrimaryGroupID $groupid
-	else
-		echo "dseditgroup -o create $1"
-		/usr/sbin/dseditgroup -o create $1
-	fi
-	return $?
+  echo "groupadd $*"
+  groupid=""
+  while test $# -gt 1; do
+    case "$1" in
+    -g)
+    groupid=$2
+    for i in `dscl . -list /Groups PrimaryGroupID | awk '{print $2}'`
+    do
+      if [ $i -eq $groupid ] ; then
+        echo "groupid $groupid not unique" 1>&2
+        return 1
+      fi
+    done
+    ;;
+    esac
+    shift
+  done
+  /usr/bin/dscl . -list /Groups/$1 > /dev/null 2>&1
+  if [ $? -eq 0 ] ; then
+    echo "group $1 exists"
+    return 1
+  fi
+  if [ -n "$groupid" ] ; then
+    echo "dscl . -create /Groups/$1 PrimaryGroupID $groupid"
+    /usr/bin/dscl . -create /Groups/$1 PrimaryGroupID $groupid
+  else
+    echo "dseditgroup -o create $1"
+    /usr/sbin/dseditgroup -o create $1
+  fi
+  return $?
 }
 
 macOSuseradd()
 {
-	echo "useradd $*"
-	userid=""
-	group=""
-	members=""
-	homedir=""
-	shell=""
-	password=""
-	create_home=1
-	while test $# -gt 1; do
-		case "$1" in
-		-M)
-		create_home=0
-		;;
-		-u)
-		userid=$2
-		for i in `dscl . -list /Users UniqueID | awk '{print $2}'`
-		do
-			if [ $i -eq $userid ] ; then
-				echo "userid $userid not unique" 1>&2
-				return 1
-			fi
-		done
-		;;
-		-g)
-		group=$2
-		dscl . -read /Groups/$group PrimaryGroupID >/dev/null 2>&1
-		if [ $? -ne 0 ] ; then
-			echo "error with Group $group" 1>&2
-			return 1
-		fi
-		groupid=`dscl . -read /Groups/$group PrimaryGroupID | grep -v "No such key"| awk '{print $2}'`
-		;;
-		-G)
-		members=$2
-		;;
-		-d)
-		homedir=$2
-		;;
-		-s)
-		shell=$2
-		;;
-		-p)
-		password=$2
-		;;
-		esac
-		shift
-	done
-	dscl . -list /Users/$1 > /dev/null 2>&1
-	if [ $? -eq 0 ] ; then
-		echo "user $1 exists"
-		return 1
-	fi
-	echo "dscl . -create /Users/$1 UniqueID $userid"
-	dscl . -create /Users/$1 UniqueID $userid
-	echo "dscl . -create /Users/$1 home $homedir"
-	dscl . -create /Users/$1 home $homedir
-	echo "dscl . -create /Users/$1 PrimaryGroupID $groupid"
-	dscl . -create /Users/$1 PrimaryGroupID $groupid
-	echo "dscl . -create /Users/$1 UserShell $shell"
-	dscl . -create /Users/$1 UserShell $shell
-	echo "dscl . -create /Users/$1 RealName $1"
-	dscl . -create /Users/$1 RealName $1
-	if [ ! " $password" = " " ] ; then
-		echo "dscl . -passwd /Users/$1 xxxxxxxx"
-		dscl . -passwd /Users/$1 $password
-	fi
-	if [ ! " $members" = " " ] ; then
-		IFS=,
-		j=`echo $members`
-		unset IFS
-		for i in $j
-		do
-			echo "dscl . -append /Groups/$i GroupMembership $1"
-			dscl . -append /Groups/$i GroupMembership $1 >/dev/null 2>&1
-		done
-	fi
-	if [ $create_home -eq 1 ] ; then
-		if [ ! -d $homedir ] ; then
-			$mkdir -p $homedir
-			$chmod 700 $homedir
-			$chown $homedir $userid:$groupid
-		fi
-	fi
+  echo "useradd $*"
+  userid=""
+  group=""
+  members=""
+  homedir=""
+  shell=""
+  password=""
+  create_home=1
+  while test $# -gt 1; do
+    case "$1" in
+    -M)
+    create_home=0
+    ;;
+    -u)
+    userid=$2
+    for i in `dscl . -list /Users UniqueID | awk '{print $2}'`
+    do
+      if [ $i -eq $userid ] ; then
+        echo "userid $userid not unique" 1>&2
+        return 1
+      fi
+    done
+    ;;
+    -g)
+    group=$2
+    dscl . -read /Groups/$group PrimaryGroupID >/dev/null 2>&1
+    if [ $? -ne 0 ] ; then
+      echo "error with Group $group" 1>&2
+      return 1
+    fi
+    groupid=`dscl . -read /Groups/$group PrimaryGroupID | grep -v "No such key"| awk '{print $2}'`
+    ;;
+    -G)
+    members=$2
+    ;;
+    -d)
+    homedir=$2
+    ;;
+    -s)
+    shell=$2
+    ;;
+    -p)
+    password=$2
+    ;;
+    esac
+    shift
+  done
+  dscl . -list /Users/$1 > /dev/null 2>&1
+  if [ $? -eq 0 ] ; then
+    echo "user $1 exists"
+    return 1
+  fi
+  echo "dscl . -create /Users/$1 UniqueID $userid"
+  dscl . -create /Users/$1 UniqueID $userid
+  echo "dscl . -create /Users/$1 home $homedir"
+  dscl . -create /Users/$1 home $homedir
+  echo "dscl . -create /Users/$1 PrimaryGroupID $groupid"
+  dscl . -create /Users/$1 PrimaryGroupID $groupid
+  echo "dscl . -create /Users/$1 UserShell $shell"
+  dscl . -create /Users/$1 UserShell $shell
+  echo "dscl . -create /Users/$1 RealName $1"
+  dscl . -create /Users/$1 RealName $1
+  if [ ! " $password" = " " ] ; then
+    echo "dscl . -passwd /Users/$1 xxxxxxxx"
+    dscl . -passwd /Users/$1 $password
+  fi
+  if [ ! " $members" = " " ] ; then
+    IFS=,
+    j=`echo $members`
+    unset IFS
+    for i in $j
+    do
+      echo "dscl . -append /Groups/$i GroupMembership $1"
+      dscl . -append /Groups/$i GroupMembership $1 >/dev/null 2>&1
+    done
+  fi
+  if [ $create_home -eq 1 ] ; then
+    if [ ! -d $homedir ] ; then
+      $mkdir -p $homedir
+      $chmod 700 $homedir
+      $chown $homedir $userid:$groupid
+    fi
+  fi
 }
 
 linuxuseradd()
 {
-	userid=""
-	group=""
-	gecos=""
-	members=""
-	homedir=""
-	shell=""
-	password=""
-	create_home=1
-	nolastlog=0
-	args=""
+  userid=""
+  group=""
+  gecos=""
+  members=""
+  homedir=""
+  shell=""
+  password=""
+  create_home=1
+  nolastlog=0
+  args=""
 
-	case "$host" in
-		*-*-freebsd*)
-		pw=/usr/sbin/pw
-		opt1=""
-		opt3="-n"
-		;;
-		*)
-		pw=""
-		opt1="-r -M"
-		opt3=""
-		;;
-	esac
+  case "$host" in
+    *-*-freebsd*)
+    pw=/usr/sbin/pw
+    opt1=""
+    opt3="-n"
+    ;;
+    *)
+    pw=""
+    opt1="-r -M"
+    opt3=""
+    ;;
+  esac
 
-	while test $# -gt 1; do
-		case "$1" in
-		-M)
-		if [ -f /etc/debian_version -o -n "$pw" ] ; then
-			opt2=""
-		elif [ -f /etc/alpine-release ] ; then
-			opt2="-H"
-		else
-			opt2="-M"
-		fi
-		;;
-		-u)
-		userid=$2
-		;;
-		-g)
-		group=$2
-		;;
-		-G)
-		members=$2
-		;;
-		-c)
-		gecos=$2
-		;;
-		-d)
-		homedir=$2
-		;;
-		-s)
-		shell=$2
-		;;
-		-p)
-		password=$2
-		;;
-		-l)
-		if [ ! -f /etc/alpine-release ] ; then
-			nolastlog=1
-		fi
-		;;
-		esac
-		shift
-	done
-	getent passwd $1 >/dev/null && echo "user $1 exists" 1>&2 && return 0
-	echo "creating user $1"
-	if [ -n "$userid" ] ; then
-		args="$args -u $userid"
-	fi
-	if [ -n "$shell" ] ; then
-		args="$args -s $shell"
-	fi
-	if [ -f /etc/alpine-release ] ; then
-		if [ -n "$group" ] ; then
-			args="$args -G $group"
-		fi
-		if [ -n "$homedir" ] ; then
-			args="$args -h $homedir"
-		fi
-		if [ -n "$gecos" ] ; then
-			args="$args -g \"$gecos\""
-		fi
-		echo /usr/sbin/adduser $opt2 $args -D -S $1
-		eval /usr/sbin/adduser $opt2 $args -D -S $1
-		if [ $? -eq 0 -a -n "$members" ] ; then
-			echo /usr/sbin/adduser $1 $members
-			eval /usr/sbin/adduser $1 $members
-		fi
-	else
-		if [ -n "$group" ] ; then
-			args="$args -g $group"
-		fi
-		if [ -n "$homedir" ] ; then
-			args="$args -d $homedir"
-		fi
-		if [ -n "$members" ] ; then
-			args="$args -G $members"
-		fi
-		if [ -n "$gecos" ] ; then
-			args="$args -c \"$gecos\""
-		fi
-		if [ -n "$pw" ] ; then
-			echo $pw useradd $opt2 $args $opt3 $1
-			eval $pw useradd $opt2 $args $opt3 $1
-		else
-			[ $nolastlog -eq 1 ] && echo /usr/sbin/useradd -l $opt1 $opt2 $args $1 || \
-				echo /usr/sbin/useradd $opt1 $opt2 $args $1
-			[ $nolastlog -eq 1 ] && eval /usr/sbin/useradd -l $opt1 $opt2 $args $1 || \
-				eval /usr/sbin/useradd $opt1 $opt2 $args $1
-		fi
-	fi
-	return $?
+  while test $# -gt 1; do
+    case "$1" in
+    -M)
+    if [ -f /etc/debian_version -o -n "$pw" ] ; then
+      opt2=""
+    elif [ -f /etc/alpine-release ] ; then
+      opt2="-H"
+    else
+      opt2="-M"
+    fi
+    ;;
+    -u)
+    userid=$2
+    ;;
+    -g)
+    group=$2
+    ;;
+    -G)
+    members=$2
+    ;;
+    -c)
+    gecos=$2
+    ;;
+    -d)
+    homedir=$2
+    ;;
+    -s)
+    shell=$2
+    ;;
+    -p)
+    password=$2
+    ;;
+    -l)
+    if [ ! -f /etc/alpine-release ] ; then
+      nolastlog=1
+    fi
+    ;;
+    esac
+    shift
+  done
+  getent passwd $1 >/dev/null && echo "user $1 exists" 1>&2 && return 0
+  echo "creating user $1"
+  if [ -n "$userid" ] ; then
+    args="$args -u $userid"
+  fi
+  if [ -n "$shell" ] ; then
+    args="$args -s $shell"
+  fi
+  if [ -f /etc/alpine-release ] ; then
+    if [ -n "$group" ] ; then
+      args="$args -G $group"
+    fi
+    if [ -n "$homedir" ] ; then
+      args="$args -h $homedir"
+    fi
+    if [ -n "$gecos" ] ; then
+      args="$args -g \"$gecos\""
+    fi
+    echo /usr/sbin/adduser $opt2 $args -D -S $1
+    eval /usr/sbin/adduser $opt2 $args -D -S $1
+    if [ $? -eq 0 -a -n "$members" ] ; then
+      echo /usr/sbin/adduser $1 $members
+      eval /usr/sbin/adduser $1 $members
+    fi
+  else
+    if [ -n "$group" ] ; then
+      args="$args -g $group"
+    fi
+    if [ -n "$homedir" ] ; then
+      args="$args -d $homedir"
+    fi
+    if [ -n "$members" ] ; then
+      args="$args -G $members"
+    fi
+    if [ -n "$gecos" ] ; then
+      args="$args -c \"$gecos\""
+    fi
+    if [ -n "$pw" ] ; then
+      echo $pw useradd $opt2 $args $opt3 $1
+      eval $pw useradd $opt2 $args $opt3 $1
+    else
+      [ $nolastlog -eq 1 ] && echo /usr/sbin/useradd -l $opt1 $opt2 $args $1 || \
+        echo /usr/sbin/useradd $opt1 $opt2 $args $1
+      [ $nolastlog -eq 1 ] && eval /usr/sbin/useradd -l $opt1 $opt2 $args $1 || \
+        eval /usr/sbin/useradd $opt1 $opt2 $args $1
+    fi
+  fi
+  return $?
 }
 
 linuxgroupadd()
 {
-	args=""
-	case "$host" in
-		*-*-freebsd*)
-		pw=/usr/sbin/pw
-		opt1=""
-		opt2=""
-		opt3="-n"
-		;;
-		*)
-		pw=""
-		opt1="-r"
-		opt2=""
-		opt3=""
-		;;
-	esac
+  args=""
+  case "$host" in
+    *-*-freebsd*)
+    pw=/usr/sbin/pw
+    opt1=""
+    opt2=""
+    opt3="-n"
+    ;;
+    *)
+    pw=""
+    opt1="-r"
+    opt2=""
+    opt3=""
+    ;;
+  esac
 
-	groupid=""
-	while test $# -gt 1; do
-		case "$1" in
-		-g)
-		groupid=$2
-		;;
-		esac
-		shift
-	done
-	if [ -n "$groupid" ] ; then
-		args="$args -g $groupid"
-	fi
-	getent group $1 >/dev/null && echo "group $1 exists" 1>&2 && return 0
-	echo "creating group $1"
-	if [ -f /etc/alpine-release ] ; then
-		echo /usr/sbin/addgroup -S $args $1
-		/usr/sbin/addgroup -S $args $1
-	else
-		if [ -n "$pw" ] ; then
-			echo $pw groupadd $args $opt3 $1
-			$pw groupadd $args $opt3 $1
-		else
-			echo /usr/sbin/groupadd $opt1 $args $1
-			/usr/sbin/groupadd $opt1 $args $1
-		fi
-	fi
-	return $?
+  groupid=""
+  while test $# -gt 1; do
+    case "$1" in
+    -g)
+    groupid=$2
+    ;;
+    esac
+    shift
+  done
+  if [ -n "$groupid" ] ; then
+    args="$args -g $groupid"
+  fi
+  getent group $1 >/dev/null && echo "group $1 exists" 1>&2 && return 0
+  echo "creating group $1"
+  if [ -f /etc/alpine-release ] ; then
+    echo /usr/sbin/addgroup -S $args $1
+    /usr/sbin/addgroup -S $args $1
+  else
+    if [ -n "$pw" ] ; then
+      echo $pw groupadd $args $opt3 $1
+      $pw groupadd $args $opt3 $1
+    else
+      echo /usr/sbin/groupadd $opt1 $args $1
+      /usr/sbin/groupadd $opt1 $args $1
+    fi
+  fi
+  return $?
 }
 
 create_users()
 {
-	for i in dnscache tinydns
-	do
-    	/usr/bin/getent passwd $i > /dev/null || ( echo "adding tinydns user $i" && \
-			linuxuseradd -l -M -g nofiles  -d ${sysconfdir} -s /sbin/nologin $i )
-		${rm} -f /var/spool/mail/$i
-	done
+  for i in dnscache tinydns
+  do
+      /usr/bin/getent passwd $i > /dev/null || ( echo "adding tinydns user $i" && \
+      linuxuseradd -l -M -g nofiles  -d ${sysconfdir} -s /sbin/nologin $i )
+    ${rm} -f /var/spool/mail/$i
+  done
 }
 
 configure_resolvconf()
 {
 dnscache_configured=0
 if [ -d ${sysconfdir}/dnscache ] ; then
-	dnscache_configured=1
-	if [ -d ${servicedir} ] ; then
-		if [ ! -h ${servicedir}/dnscache ] ; then
-			ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache
-			if [ $? -ne 0 ] ; then
-				dnscache_configured=0
-			fi
-		fi
-	elif [ -h ${servicedir} ] ; then
-		dir=`readlink ${servicedir}`
-		if [ -d $dir ] ; then
-			if [ ! -h $dir/dnscache ] ; then
-				ln -sf ${sysconfdir}/dnscache $dir/dnscache
-				if [ $? -ne 0 ] ; then
-					dnscache_configured=0
-				fi
-			fi
-		fi
-	fi
+  dnscache_configured=1
+  if [ -d ${servicedir} ] ; then
+    if [ ! -h ${servicedir}/dnscache ] ; then
+      ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache
+      if [ $? -ne 0 ] ; then
+        dnscache_configured=0
+      fi
+    fi
+  elif [ -h ${servicedir} ] ; then
+    dir=`readlink ${servicedir}`
+    if [ -d $dir ] ; then
+      if [ ! -h $dir/dnscache ] ; then
+        ln -sf ${sysconfdir}/dnscache $dir/dnscache
+        if [ $? -ne 0 ] ; then
+          dnscache_configured=0
+        fi
+      fi
+    fi
+  fi
 fi
 if [ $dnscache_configured -eq 1 ] ; then
   if [ -d ${servicedir}/.svscan ] ; then
     $mkdir -p ${servicedir}/.svscan/variables
-    echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    # make resolv.conf available only for svscan and descendants
+    if [ ! -f ${servicedir}/.svscan/variables/UNSHARE ] ; then
+      echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    fi
     if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
       if [ -f ${servicedir}/.svscan/run ] ; then
         $chmod +x ${servicedir}/.svscan/run
@@ -342,9 +345,9 @@ if [ $dnscache_configured -eq 1 ] ; then
       mv ${servicedir}/.svscan/variables/.options \
         ${servicedir}/.svscan/variables/.options.noresolvconf
       echo $options > ${servicedir}/.svscan/variables/.options
-	  if [ -d ${servicedir}/resolvconf/variables ] ; then
-    	  echo $options > ${servicedir}/resolvconf/variables/.options
-	  fi
+      if [ -d ${servicedir}/resolvconf/variables ] ; then
+        echo $options > ${servicedir}/resolvconf/variables/.options
+      fi
       if [ -x ${prefix}/sbin/minisvc ] ; then
         echo ${prefix}/sbin/minisvc --refreshsvc=/service/.svscan
         ${prefix}/sbin/minisvc --refreshsvc=/service/.svscan --force
@@ -386,9 +389,9 @@ if [ ! -d ${sysconfdir}/dnscache ] ; then
 else
   dnscache_configured=1
 fi
-configure_resolvconf
 }
 ############################
 
 create_users
 configure_dnscache
+configure_resolvconf

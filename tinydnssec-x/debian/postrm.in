@@ -59,7 +59,9 @@ case "$1" in
     ;;
 esac
 if [ -d ${servicedir}/.svscan -a -d ${servicedir}/.svscan/variables ] ; then
-  > ${servicedir}/.svscan/variables/UNSHARE
+  if [ -s ${servicedir}/.svscan/variables/UNSHARE ] ; then
+    /bin/rm -f ${servicedir}/.svscan/variables/UNSHARE
+  fi
   if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run -a -f ${servicedir}/.svscan/run ] ; then
     /bin/chmod -x ${servicedir}/.svscan/run
   fi

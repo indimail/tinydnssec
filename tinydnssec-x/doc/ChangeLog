@@ -83,3 +83,6 @@ Release 1.1 Start 11/04/2017
 - 23/09/2022
 60. dnsip.c, dnsipq.c, dnsname.c, dnsmx.c, dnstxt.c, dnsqr.c, dnsq.c,
     dnstrace.c: exit 111 if unable to write to subfdout
+- 21/10/2023
+61. dnssvc.in, tinydnssec.in, debian/postinst, debian/postrm: Fixed setting
+    UNSHARE environment variable in /service/.svscan/variables

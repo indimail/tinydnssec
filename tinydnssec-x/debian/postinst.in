@@ -7,8 +7,8 @@ servicedir=@servicedir@
 
 ID=`id -u`
 if [ $ID -ne 0 ] ; then
-	echo "You are not root" >&2
-	exit 1
+  echo "You are not root" >&2
+  exit 1
 fi
 
 # dh_installdeb will replace this with shell code automatically
@@ -20,55 +20,57 @@ fi
 
 upgrade=0
 case "$1" in
-	configure)
-	if [ -f /tmp/tinydnssec/.install ] ; then
-		/bin/rm -rf /tmp/tinydnssec
-		upgrade=0
-	else
-		if [ -n "$2" ] ; then
-			upgrade=1
-		fi
-	fi
-	;;
+  configure)
+  if [ -f /tmp/tinydnssec/.install ] ; then
+    /bin/rm -rf /tmp/tinydnssec
+    upgrade=0
+  else
+    if [ -n "$2" ] ; then
+      upgrade=1
+    fi
+  fi
+  ;;
 
-	abort-upgrade|abort-remove|abort-deconfigure)
-	exit 0
-	;;
+  abort-upgrade|abort-remove|abort-deconfigure)
+  exit 0
+  ;;
 
-	*)
-	echo "postinst called with unknown argument \`$1'" >&2
-	exit 1
-	;;
+  *)
+  echo "postinst called with unknown argument \`$1'" >&2
+  exit 1
+  ;;
 esac
 
 configure_resolvconf()
 {
 dnscache_configured=0
 if [ -d ${sysconfdir}/dnscache ] ; then
-	dnscache_configured=1
-	if [ -d ${servicedir} ] ; then
-		if [ ! -h ${servicedir}/dnscache ] ; then
-			ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
-			if [ $? -ne 0 ] ; then
-				dnscache_configured=0
-			fi
-		fi
-	elif [ -h ${servicedir} ] ; then
-		dir=`readlink ${servicedir}`
-		if [ -d $dir ] ; then
-			if [ ! -h $dir/dnscache ] ; then
-				ln -sf ${sysconfdir}/dnscache $dir/dnscache || true
-				if [ $? -ne 0 ] ; then
-					dnscache_configured=0
-				fi
-			fi
-		fi
-	fi
+  dnscache_configured=1
+  if [ -d ${servicedir} ] ; then
+    if [ ! -h ${servicedir}/dnscache ] ; then
+      ln -sf ${sysconfdir}/dnscache ${servicedir}/dnscache || true
+      if [ $? -ne 0 ] ; then
+        dnscache_configured=0
+      fi
+    fi
+  elif [ -h ${servicedir} ] ; then
+    dir=`readlink ${servicedir}`
+    if [ -d $dir ] ; then
+      if [ ! -h $dir/dnscache ] ; then
+        ln -sf ${sysconfdir}/dnscache $dir/dnscache || true
+        if [ $? -ne 0 ] ; then
+          dnscache_configured=0
+        fi
+      fi
+    fi
+  fi
 fi
 if [ $dnscache_configured -eq 1 ] ; then
   if [ -d ${servicedir}/.svscan ] ; then
     mkdir -p ${servicedir}/.svscan/variables
-    echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    if [ ! -f ${servicedir}/.svscan/variables/UNSHARE ] ; then
+      echo > ${servicedir}/.svscan/variables/UNSHARE # used by svscanboot
+    fi
     if [ -x /usr/bin/unshare -a -x ${servicedir}/dnscache/run ] ; then
       if [ -f ${servicedir}/.svscan/run ] ; then
         /bin/chmod +x ${servicedir}/.svscan/run
@@ -93,21 +95,21 @@ fi
 }
 
 if [ $upgrade -eq 1 ] ; then
-	set +e
-	configure_resolvconf
-	# end of of resolvconf config
-	if [ -f ${prefix}/bin/svok ] ; then
-		for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
-		do
-			${prefix}/bin/svok ${sysconfdir}/$i >/dev/null 2>&1
-			if [ $? -eq 0 -a -f ${sysconfdir}/$i/.down ] ; then
-				/bin/rm -f ${sysconfdir}/$i/.down
-				${prefix}/bin/svc -u ${sysconfdir}/$i >/dev/null 2>&1
-			fi
-		done
-	fi
-	set -e
-	exit 0
+  set +e
+  configure_resolvconf
+  # end of of resolvconf config
+  if [ -f ${prefix}/bin/svok ] ; then
+    for i in tinydns tinydns/log dnscache dnscache/log curvedns curvedns/log dqcache dqcache/log
+    do
+      ${prefix}/bin/svok ${sysconfdir}/$i >/dev/null 2>&1
+      if [ $? -eq 0 -a -f ${sysconfdir}/$i/.down ] ; then
+        /bin/rm -f ${sysconfdir}/$i/.down
+        ${prefix}/bin/svc -u ${sysconfdir}/$i >/dev/null 2>&1
+      fi
+    done
+  fi
+  set -e
+  exit 0
 fi
 
 /bin/rmdir --ignore-fail-on-non-empty ${sysconfdir}/dnscache 2>/dev/null
