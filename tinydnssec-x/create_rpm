@@ -110,12 +110,12 @@ if [ -z "$release" ] ; then
 		release=1
 	fi
 fi
-echo -n "Build RPM for tinydnssec-"$version"-1."$release" (Y/N) - "
+echo -n "Build RPM for tinydnssec-"$version"-2."$release" (Y/N) - "
 read key
 if [ " $key" = " Y" -o " $key" = " y" ] ; then
 	tmprel=`cat tinydnssec-$version/conf-release 2>/dev/null`
-	if [ ! " $tmprel" = " 1.$release" ] ; then
-		echo 1.$release > tinydnssec-x/conf-release
+	if [ ! " $tmprel" = " 2.$release" ] ; then
+		echo 2.$release > tinydnssec-x/conf-release
 		cd tinydnssec-x
 		make tinydnssec.spec
 		cp tinydnssec.spec /tmp
@@ -134,17 +134,17 @@ if [ " $key" = " Y" -o " $key" = " y" ] ; then
 	if [ $? -eq 0 ] ; then
 		/bin/rm -f /tmp/tinydnssec.spec
 		build_arch=`rpmbuild --showrc|grep "^build arch" | awk '{print $4}'`
-		rpm --addsign $rpmbuild/RPMS/$build_arch/tinydnssec-"$version"-"1.$release".$dist.$build_arch.rpm
-		rpm --addsign $rpmbuild/SRPMS/tinydnssec-"$version"-"1.$release".$dist.src.rpm
-		echo -n "RPM lint for tinydnssec-"$version"-1."$release" (Y/N) - "
+		rpm --addsign $rpmbuild/RPMS/$build_arch/tinydnssec-"$version"-"2.$release".$dist.$build_arch.rpm
+		rpm --addsign $rpmbuild/SRPMS/tinydnssec-"$version"-"2.$release".$dist.src.rpm
+		echo -n "RPM lint for tinydnssec-"$version"-2."$release" (Y/N) - "
 		read key
 		if [ " $key" = " Y" -o " $key" = " y" ] ; then
 			(
-			echo tinydnssec-"$version"-"1.$release".$dist.$build_arch
-			rpmlint $rpmbuild/RPMS/$build_arch/tinydnssec-"$version"-"1.$release".$dist.$build_arch.rpm
+			echo tinydnssec-"$version"-"2.$release".$dist.$build_arch
+			rpmlint $rpmbuild/RPMS/$build_arch/tinydnssec-"$version"-"2.$release".$dist.$build_arch.rpm
 			echo ------------------------
-			echo tinydnssec-"$version"-"1.$release".$dist.src.rpm
-			rpmlint $rpmbuild/SRPMS/tinydnssec-"$version"-"1.$release".$dist.src.rpm
+			echo tinydnssec-"$version"-"2.$release".$dist.src.rpm
+			rpmlint $rpmbuild/SRPMS/tinydnssec-"$version"-"2.$release".$dist.src.rpm
 			echo ------------------------
 			) 2>&1 | less
 		fi
