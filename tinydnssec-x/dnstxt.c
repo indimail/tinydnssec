@@ -24,6 +24,7 @@ main(int argc, char **argv)
 			strerr_die4sys(111, FATAL, "unable to find TXT records for ", *argv, ": ");
 		if (substdio_put(subfdout, out.s, out.len) == -1 ||
 				substdio_puts(subfdout, "\n") == -1)
+			_exit(111);
 		++argv;
 	}
 	if (substdio_flush(subfdout) == -1)
