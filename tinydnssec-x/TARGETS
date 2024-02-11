@@ -165,7 +165,6 @@ tinydns-edit.o
 tinydns-get
 tinydns-get.o
 tinydns.o
-tinydnssec.spec
 utime
 utime.o
 walldns
