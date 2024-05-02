@@ -40,13 +40,13 @@ jobs:
         path: libqmail
 
     - name: install_qmail
-      run: cd libqmail;env CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" ./default.configure; env CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" make; sudo make install-strip
+      run: cd libqmail;env CPPFLAGS="-I/opt/homebrew/Cellar/openssl@3/3.3.0/include" LDFLAGS="-L/opt/homebrew/Cellar/openssl@3/3.3.0/lib" ./default.configure; env CPPFLAGS="-I/opt/homebrew/Cellar/openssl@3/3.3.0/include" LDFLAGS="-L/opt/homebrew/Cellar/openssl@3/3.3.0/lib" make; sudo make install-strip
     - name: build_tinydnssec
-      run: cd main/tinydnssec-x; env CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" ./default.configure; env CPPFLAGS="-I/usr/local/opt/openssl@1.1/include" LDFLAGS="-L/usr/local/opt/openssl@1.1/lib" make
+      run: cd main/tinydnssec-x; env CPPFLAGS="-I/opt/homebrew/Cellar/openssl@3/3.3.0/include" LDFLAGS="-L/opt/homebrew/Cellar/openssl@3/3.3.0/lib" ./default.configure; env CPPFLAGS="-I/opt/homebrew/Cellar/openssl@3/3.3.0/include" LDFLAGS="-L/opt/homebrew/Cellar/openssl@3/3.3.0/lib" make
     - name: build_dq
       run: cd main/tinydnssec-x/dq-20161210; make
     - name: build_curvedns
-      run: cd main/tinydnssec-x/curvedns-0.88; ./default.configure; make
+      run: cd main/tinydnssec-x/curvedns-0.88; env CPPFLAGS="-I/opt/homebrew/Cellar/libev/4.33/include -I/opt/homebrew/Cellar/libsodium/1.0.19/include/sodium" LDFLAGS="-L/opt/homebrew/Cellar/libev/4.33/lib -L/opt/homebrew/Cellar/libsodium/1.0.19/lib" ./default.configure; make
       env:
         OS: ${{ matrix.host }}
 

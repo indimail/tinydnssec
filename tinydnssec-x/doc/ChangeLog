@@ -88,3 +88,5 @@ Release 1.1 Start 11/04/2017
     UNSHARE environment variable in /service/.svscan/variables
 - 04/01/2024
 62. dnstxt.c: fixed infinite loop
+- 12/02/2024
+63. added instcheck-tinydnssec man page
