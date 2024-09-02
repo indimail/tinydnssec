@@ -48,7 +48,7 @@ case "$host" in
 	;;
 *-*-linux*)
 	CPPFLAGS="$CPPFLAGS -DLINUX -I/usr/include/sodium"
-	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC -fpie"
+	CFLAGS="$CFLAGS -g -O4 -Wall -fPIC -fpie -fpermissive"
 	LDFLAGS="$LDFLAGS -pie"
 	SYSTEM=Linux
 	;;
@@ -61,7 +61,7 @@ case "$host" in
 *-*-darwin*)
 	CPPFLAGS="$CPPFLAGS -DDARWIN -I/opt/local/include -I/opt/local/include/qmail -I/opt/local/include/sodium"
 	CPPFLAGS="$CPPFLAGS -I/usr/local/include -I/usr/local/include/sodium"
-	CFLAGS="$CFLAGS -g -O3 -Wall"
+	CFLAGS="$CFLAGS -g -O3 -Wall -fpermissive"
 	LDFLAGS="$LDFLAGS -L/opt/local/lib -L/usr/local/lib"
 	SYSTEM=Darwin
 	;;

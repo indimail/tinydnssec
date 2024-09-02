@@ -90,3 +90,5 @@ Release 1.1 Start 11/04/2017
 62. dnstxt.c: fixed infinite loop
 - 12/02/2024
 63. added instcheck-tinydnssec man page
+- 02/09/2024
+64. fixed compiler warnings for gcc14

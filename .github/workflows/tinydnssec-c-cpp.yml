@@ -46,7 +46,7 @@ jobs:
     - name: build_dq
       run: cd main/tinydnssec-x/dq-20161210; make
     - name: build_curvedns
-      run: cd main/tinydnssec-x/curvedns-0.88; env CPPFLAGS="-I/opt/homebrew/Cellar/libev/4.33/include -I/opt/homebrew/Cellar/libsodium/1.0.19/include/sodium" LDFLAGS="-L/opt/homebrew/Cellar/libev/4.33/lib -L/opt/homebrew/Cellar/libsodium/1.0.19/lib" ./default.configure; make
+      run: if [ "${OS}" = "ubuntu-latest" ] ; then cd main/tinydnssec-x/curvedns-0.88; env CPPFLAGS="-I/opt/homebrew/Cellar/libev/4.33/include -I/opt/homebrew/Cellar/libsodium/1.0.19/include/sodium" LDFLAGS="-L/opt/homebrew/Cellar/libev/4.33/lib -L/opt/homebrew/Cellar/libsodium/1.0.19/lib" ./default.configure; make; fi
       env:
         OS: ${{ matrix.host }}
 

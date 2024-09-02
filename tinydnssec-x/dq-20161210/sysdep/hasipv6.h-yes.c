@@ -9,7 +9,7 @@
 
 int main() {
 
-    int s, r;
+    int s;
     struct sockaddr_in6 sa;
     int opt = 1;
 

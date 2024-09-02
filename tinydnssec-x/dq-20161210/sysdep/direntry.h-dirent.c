@@ -4,11 +4,6 @@
 
 int main(int argc,char **argv){
 
-  DIR *dir;
-  struct dirent *d;
-
-  dir=0; d = 0;
-
   printf("/* Public domain. */\n\n");
   printf("#ifndef _DIRENTRY_H____\n");
   printf("#define _DIRENTRY_H____\n\n");

@@ -368,7 +368,7 @@ static void doit(void) {
         u[j].io = io + iolen++;
         query_io(&u[j].q,u[j].io,&deadline);
       }
-    for (j = 0;j < MAXTCP;++j)
+    for (j = 0;j < MAXTCP;++j) {
       if (t[j].active) {
         t[j].io = io + iolen++;
         if (t[j].state == 0)
@@ -379,6 +379,7 @@ static void doit(void) {
           t[j].io->events = (t[j].state > 0) ? POLLIN : POLLOUT;
         }
       }
+    }
 
       timeout = deadline - stamp;
       if (timeout < 0) timeout = 10;
