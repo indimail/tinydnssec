@@ -21,4 +21,4 @@
    # ln -s /etc/indimail/dnscache /service/dnscache
 ```
 
-4. wget -O dns_get-roots.sh https://raw.githubusercontent.com/alexh-name/admin_duct_tape/master/dns_get-roots.sh
+4. wget -O dns\_get-roots.sh https://raw.githubusercontent.com/alexh-name/admin\_duct\_tape/master/dns\_get-roots.sh

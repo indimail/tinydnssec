@@ -1,3 +1,5 @@
+<!-- # vim: wrap
+-->
 # tinydnssec
 
 djbdns with dnssec, dnscurve support - a collection of Domain Name System tools
