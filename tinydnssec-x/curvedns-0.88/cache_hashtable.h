@@ -42,7 +42,15 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <ev.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef EV_HEADER
+#include EV_HEADER			/* libev */
+#else
+#include <ev.h>				/* libev */
+#endif
 #include "crypto_box_curve25519xsalsa20poly1305.h"
 #include "debug.h"
 

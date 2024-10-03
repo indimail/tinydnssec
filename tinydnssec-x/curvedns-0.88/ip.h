@@ -51,7 +51,15 @@
 #include <fcntl.h>			/* fcntl() */
 #include <netdb.h>			/* getaddrinfo() */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef EV_HEADER
+#include EV_HEADER			/* libev */
+#else
 #include <ev.h>				/* libev */
+#endif
 
 typedef union {
 	struct sockaddr sa;

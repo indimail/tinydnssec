@@ -42,7 +42,15 @@
 #include <stdint.h>
 #include <string.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef EV_HEADER
+#include EV_HEADER			/* libev */
+#else
 #include <ev.h>
+#endif
 #include "ip.h"
 #include "cache_hashtable.h"
 

@@ -73,6 +73,22 @@ esac
 # Checks for libraries.
 AC_CHECK_LIB(ev, ev_io_start, [AC_SUBST([LIB_EV], ["-lev"]) AC_DEFINE([HAVE_LIBEV], [1],[libevent])],,-lev)
 AC_CHECK_LIB(sodium, crypto_box_curve25519xsalsa20poly1305_beforenm, [AC_SUBST([LIB_SODIUM], ["-lsodium"]) AC_DEFINE([HAVE_LIBSODIUM], [1],[sodium library])],,-lsodium)
+evdir=""
+for f in /usr/include /usr/local/include /opt/local/include
+do
+	if test -f $f/ev.h
+	then
+		break
+	fi
+	if test -f $f/libev/ev.h
+	then
+		evdir="libev"
+	fi
+done
+if test -n "$evdir"
+then
+	AC_DEFINE_UNQUOTED(EV_HEADER, "$evdir/ev.h", libev directory)
+fi
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
