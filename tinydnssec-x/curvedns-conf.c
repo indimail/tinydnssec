@@ -83,7 +83,7 @@ int main(int argc,char **argv)
   outs(auto_home); outs("/bin/curvedns $LISTEN_IPS $LISTEN_PORT $TARGET_IP $TARGET_PORT\n'\n"); finish();
   perm(0755);
   start("private.key");
-  substdio_fdbuf(&sspbuf,read,privatekeyfd,pbuf,sizeof pbuf);
+  substdio_fdbuf(&sspbuf,(ssize_t (*)(int,  char *, size_t)) read,privatekeyfd,pbuf,sizeof pbuf);
   copyfrom(&sspbuf);
   finish();
   perm(0600);

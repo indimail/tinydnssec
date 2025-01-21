@@ -140,7 +140,7 @@ int main()
 
   fd = open_read("data");
   if (fd == -1) strerr_die2sys(111,FATAL,"unable to open data: ");
-  substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,(ssize_t (*)(int,  char *, size_t)) read,fd,bspace,sizeof bspace);
 
   fdcdb = open_trunc("data.tmp");
   if (fdcdb == -1) die_datatmp();

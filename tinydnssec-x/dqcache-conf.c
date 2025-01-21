@@ -79,7 +79,7 @@ int main(int argc,char **argv)
   makedir("root/servers");
   perm(02755);
   start("root/servers/@");
-  substdio_fdbuf(&ssrootservers,read,fdrootservers,rootserversbuf,sizeof rootserversbuf);
+  substdio_fdbuf(&ssrootservers,(ssize_t (*)(int,  char *, size_t)) read,fdrootservers,rootserversbuf,sizeof rootserversbuf);
   copyfrom(&ssrootservers);
   finish();
   perm(0644);

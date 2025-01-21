@@ -67,7 +67,7 @@ void start(const char *s)
   fn = s;
   fd = open_trunc(fn);
   if (fd == -1) fail();
-  substdio_fdbuf(&ss,write,fd,buf,sizeof buf);
+  substdio_fdbuf(&ss,(ssize_t (*)(int,  char *, size_t)) write,fd,buf,sizeof buf);
 }
 
 void outs(const char *s)

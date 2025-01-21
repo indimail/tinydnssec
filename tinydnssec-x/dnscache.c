@@ -428,7 +428,7 @@ static void doit(void)
 char seed[128];
 
 void
-SigTerm()
+SigTerm(int x)
 {
 	_exit(0);
 }

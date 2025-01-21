@@ -2,7 +2,7 @@
 #include <unistd.h>
 
 char bspace[256];
-substdio b = SUBSTDIO_FDBUF(write,1,bspace,sizeof bspace);
+substdio b = SUBSTDIO_FDBUF((ssize_t (*)(int,  char *, size_t)) write,1,bspace,sizeof bspace);
 
 void myputs(const char *s)
 {
