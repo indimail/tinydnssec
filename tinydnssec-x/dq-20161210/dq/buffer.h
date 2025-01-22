@@ -6,7 +6,7 @@ typedef struct buffer {
     long long p;
     long long n;
     int fd;
-    long long (*op)();
+    long long (*op)(int, char *, unsigned long long);
 } buffer;
 
 #define BUFFER_INIT(op, fd, buf, len) { (buf), 0, (len), (fd), (op) }
@@ -14,12 +14,12 @@ typedef struct buffer {
 #define BUFFER_OUTSIZE 8192
 #define BUFFER_ERRSIZE 256
 
-extern void buffer_init(buffer *, long long (*op)(), int, char *, long long);
+extern void buffer_init(buffer *, long long (*op)(int, char *, unsigned long long), int, char *, unsigned long long);
 
 extern int buffer_flush(buffer *);
-extern int buffer_putalign(buffer *, const char *, long long);
-extern int buffer_put(buffer *, const char *, long long);
-extern int buffer_putflush(buffer *, const char *, long long);
+extern int buffer_putalign(buffer *, const char *, unsigned long long);
+extern int buffer_put(buffer *, const char *, unsigned long long);
+extern int buffer_putflush(buffer *, const char *, unsigned long long);
 extern int buffer_putsalign(buffer *, const char *);
 extern int buffer_puts(buffer *, const char *);
 extern int buffer_putsflush(buffer *, const char *);
@@ -30,12 +30,12 @@ extern int buffer_putsflush(buffer *, const char *);
     : buffer_put((s),&(c),1) \
   )
 
-extern long long buffer_get(buffer *, char *, long long);
-extern long long buffer_bget(buffer *, char *, long long);
+extern long long buffer_get(buffer *, char *, unsigned long long);
+extern long long buffer_bget(buffer *, char *, unsigned long long);
 extern long long buffer_feed(buffer *);
 
 extern char *buffer_peek(buffer *);
-extern void buffer_seek(buffer *, long long);
+extern void buffer_seek(buffer *, unsigned long long);
 
 #define buffer_PEEK(s) ( (s)->x + (s)->n )
 #define buffer_SEEK(s,len) ( ( (s)->p -= (len) ) , ( (s)->n += (len) ) )
@@ -48,8 +48,8 @@ extern void buffer_seek(buffer *, long long);
 
 extern int buffer_copy(buffer *,buffer *);
 
-extern long long buffer_unixread(int, char *, long long);
-extern long long buffer_unixwrite(int, const char *, long long);
+extern long long buffer_unixread(int, char *, unsigned long long);
+extern long long buffer_unixwrite(int, const char *, unsigned long long);
 
 #define buffer_PEEK(s) ( (s)->x + (s)->n )
 #define buffer_SEEK(s, len) ( ( (s)->p -= (len) ) , ( (s)->n += (len) ) )

@@ -239,7 +239,7 @@ int main()
     strerr_die2sys(111,FATAL,"unable to open data: ");
   defaultsoa_init(fddata);
 
-  substdio_fdbuf(&b,read,fddata,bspace,sizeof bspace);
+  substdio_fdbuf(&b,(ssize_t (*)(int,  char *, size_t)) read,fddata,bspace,sizeof bspace);
 
   fdcdb = open_trunc("data.tmp");
   if (fdcdb == -1) die_datatmp();

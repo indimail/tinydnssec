@@ -255,7 +255,7 @@ int cache_dump(void) {
     fd = open_trunc(fntmp);
     if (fd == -1) return -1;
 
-    buffer_init(&b, buffer_unixwrite, fd, bspace, sizeof bspace);
+    buffer_init(&b, (long long (*)(int, char *, unsigned long long)) buffer_unixwrite, fd, bspace, sizeof bspace);
 
     pos = oldest;
     while (pos < unused) {

@@ -127,7 +127,7 @@ int main(int argc,char **argv)
   seed_addtime(); makedir("root/servers");
   seed_addtime(); perm(02755);
   seed_addtime(); start("root/servers/@");
-  substdio_fdbuf(&ssrootservers,read,fdrootservers,rootserversbuf,sizeof rootserversbuf);
+  substdio_fdbuf(&ssrootservers,(ssize_t (*)(int,  char *, size_t)) read,fdrootservers,rootserversbuf,sizeof rootserversbuf);
   copyfrom(&ssrootservers);
   finish();
   seed_addtime(); perm(0644);

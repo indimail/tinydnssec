@@ -90,9 +90,9 @@ ssize_t safewrite(int fd,char *buf,unsigned int len)
   return r;
 }
 char netreadspace[1024];
-substdio netread = SUBSTDIO_FDBUF(saferead,6,netreadspace,sizeof netreadspace);
+substdio netread = SUBSTDIO_FDBUF((ssize_t (*)(int,  char *, size_t)) saferead,6,netreadspace,sizeof netreadspace);
 char netwritespace[1024];
-substdio netwrite = SUBSTDIO_FDBUF(safewrite,7,netwritespace,sizeof netwritespace);
+substdio netwrite = SUBSTDIO_FDBUF((ssize_t (*)(int,  char *, size_t)) safewrite,7,netwritespace,sizeof netwritespace);
 
 void netget(char *buf,unsigned int len)
 {
@@ -317,7 +317,7 @@ int main(int argc,char **argv)
     if (errno != error_noent) die_read();
   }
   else {
-    substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
+    substdio_fdbuf(&b,(ssize_t (*)(int,  char *, size_t)) read,fd,bspace,sizeof bspace);
     if (getln(&b,&line,&match,'\n') == -1) die_read();
     if (!stralloc_0(&line)) die_read();
     if (line.s[0] == '#') {
@@ -370,7 +370,7 @@ int main(int argc,char **argv)
 
   fd = open_trunc(fntmp);
   if (fd == -1) die_write();
-  substdio_fdbuf(&b,write,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,(ssize_t (*)(int,  char *, size_t)) write,fd,bspace,sizeof bspace);
 
   if (!stralloc_copyb(&packet,"\0\0\0\0\0\1\0\0\0\0\0\0",12)) die_generate();
   if (!stralloc_catb(&packet,zone,zonelen)) die_generate();

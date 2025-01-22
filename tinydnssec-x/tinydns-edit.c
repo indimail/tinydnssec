@@ -122,12 +122,12 @@ int main(int argc,char **argv)
   fd = open_read(fn);
   if (fd == -1) die_read();
   if (fstat(fd,&st) == -1) die_read();
-  substdio_fdbuf(&b,read,fd,bspace,sizeof bspace);
+  substdio_fdbuf(&b,(ssize_t (*)(int,  char *, size_t)) read,fd,bspace,sizeof bspace);
 
   fdnew = open_trunc(fnnew);
   if (fdnew == -1) die_write();
   if (fchmod(fdnew,st.st_mode & 0644) == -1) die_write();
-  substdio_fdbuf(&bnew,write,fdnew,bnewspace,sizeof bnewspace);
+  substdio_fdbuf(&bnew,(ssize_t (*)(int,  char *, size_t)) write,fdnew,bnewspace,sizeof bnewspace);
 
   switch(mode) {
     case '.': case '&':

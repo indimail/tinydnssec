@@ -70,7 +70,7 @@ ssize_t safewrite(int fd,char *buf,unsigned int len)
 }
 
 char netwritespace[1024];
-substdio netwrite = SUBSTDIO_FDBUF(safewrite,1,netwritespace,sizeof netwritespace);
+substdio netwrite = SUBSTDIO_FDBUF((ssize_t (*)(int,  char *, size_t)) safewrite,1,netwritespace,sizeof netwritespace);
 
 void print(char *buf,unsigned int len)
 {
@@ -256,7 +256,7 @@ void doaxfr(char id[2])
   print(soa.s,soa.len);
 
   seek_begin(fdcdb);
-  substdio_fdbuf(&bcdb,read,fdcdb,bcdbspace,sizeof bcdbspace);
+  substdio_fdbuf(&bcdb,(ssize_t (*)(int,  char *, size_t)) read,fdcdb,bcdbspace,sizeof bcdbspace);
 
   pos = 0;
   get(num,4); pos += 4;
